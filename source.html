@@ -1,0 +1,63 @@
+<html>
+    <script>
+        var request;
+        var products = [];
+        var otherWindow;
+        var boolean = false;
+        var myVar;
+        var datafromparent;
+
+        window.addEventListener("message", function(event) {
+            // alert("The other window's function executed."+event.data);
+            datafromparent = event.data;
+            openOther(datafromparent);
+
+        }, false);
+
+////
+        function sendMessage(productString) {
+            //frame.onload = function(){};
+            otherWindow.postMessage(productString, "*");
+            clearInterval(myVar)
+        }
+        function openOther(productString) {
+//otherWindow = window.open("child.html", "otherWindowt","200","200","_blank");
+//get source url.
+            var jsonResponse = JSON.parse(datafromparent);
+            var providerArry = jsonResponse.productProviders;
+            var providerObject;
+            for (var i = 0; i < providerArry.length; i++) {
+                providerObject = providerArry[0].externalURL;
+            }
+
+
+
+            var div = document.getElementById("to_add_frame");
+            var frame = document.createElement("iframe");
+            frame.src = providerObject;
+            frame.setAttribute("style", "border: 0; position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 90%; height: 100%");
+            div.appendChild(frame);
+            otherWindow = window.open('child.html', '_blank', "width=600,height=900,screenX=50,left=1000,screenY=50,top=50,status=yes,menubar=yes");
+            myVar = setInterval(function() {
+                sendMessage(productString)
+            }, 1000);
+
+        }
+
+
+/////
+
+        function dataloader() {
+            var val = document.getElementById('divid');
+            val.innerHTML = datafromparent;
+            console.log(datafromparent);
+            var jsonResponse = JSON.parse(datafromparent);
+            alert(" title " + jsonResponse.title);
+        }
+
+    </script>
+</head>
+<body> 
+    <div id="to_add_frame"></div>
+</body>
+</html>

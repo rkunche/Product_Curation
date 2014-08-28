@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            var datafromparent;
+            var jsonObject;
+            window.addEventListener("message", function(event) {
+                //alert("The other window's function executed."+event.data);
+                datafromparent = event.data;
+                jsonObject = JSON.parse(datafromparent);
+                afterLoadingThePopup();
+
+            }, false);
+            function dataloader() {
+
+
+                var val = document.getElementById('divid');
+                val.innerHTML = datafromparent;
+                console.log(datafromparent);
+                //var jsonResponse = JSON.parse(datafromparent);
+                // alert(" title " + jsonResponse.title);
+            }
+            function afterLoadingThePopup() {
+                var jsonResponse = JSON.parse(datafromparent);
+                document.getElementById('id_id').value = jsonResponse.id;
+                document.getElementById('id_ownerAisleId').value = jsonResponse.ownerAisleId;
+                document.getElementById('id_ownerProductListId').value = jsonResponse.ownerProductListId;
+
+                document.getElementById('id_title').value = jsonResponse.title;
+
+
+
+                document.getElementById('id_description').value = jsonResponse.description;
+                document.getElementById('id_creatorID').value = jsonResponse.creatorID;
+                document.getElementById('id_relatedProductIds').value = jsonResponse.relatedProductIds;
+                //  document.getElementById('id_currentProductState').value = jsonResponse.currentProductState;
+
+
+
+                document.getElementById('id_comments').value = jsonResponse.comments;
+                document.getElementById('id_ratings').value = jsonResponse.ratings;
+                var images_array = jsonResponse.productImages;
+
+                var tabl_div = document.getElementById('image_table_id');
+
+                for (var i = 0; i < images_array.length; i++) {
+
+                    var br0 = document.createElement('br');
+                    var br1 = document.createElement('br');
+
+                    tabl_div.appendChild(br0);
+                    tabl_div.appendChild(br1);
+
+                    var table = document.createElement('table');
+                    table.className = "altrowstable";
+                    table.setAttribute('width', '600')
+
+
+                    var caption = document.createElement('caption');
+                    caption.textContent = 'For The Image: ' + (i + 1);
+                    table.appendChild(caption);
+
+                    table.appendChild(getElemnt('id', images_array[i].id));
+
+                    table.appendChild(getElemnt('ownerProductId', images_array[i].ownerProductId));
+                    table.appendChild(getElemnt('externalURL', images_array[i].externalURL));
+                    table.appendChild(getElemnt('internalURL', images_array[i].internalURL));
+                    table.appendChild(getElemnt('originalHeight', images_array[i].originalHeight));
+                    table.appendChild(getElemnt('originalWidth', images_array[i].originalWidth));
+                    table.appendChild(getElemnt('modifiedHeight', images_array[i].modifiedHeight));
+                    table.appendChild(getElemnt('modifiedWidth', images_array[i].modifiedWidth));
+                    table.appendChild(getElemnt('modifiedWidth', images_array[i].modifiedWidth));
+
+                    tabl_div.appendChild(table);
+                }
+                var product_provider_div = document.getElementById('product_providers_div_id');
+
+                var providers_array = jsonResponse.productProviders;
+
+                for (var i = 0; i < providers_array.length; i++) {
+                    var br0 = document.createElement('br');
+                    var br1 = document.createElement('br');
+
+                    product_provider_div.appendChild(br0);
+                    product_provider_div.appendChild(br1);
+
+                    var table = document.createElement('table');
+                    table.className = "altrowstable";
+                    table.setAttribute('width', '600')
+
+
+                    var caption = document.createElement('caption');
+                    caption.textContent = 'For The Provider: ' + (i + 1);
+                    table.appendChild(caption);
+
+                    table.appendChild(getElemnt('id', providers_array[i].id));
+
+                    table.appendChild(getElemnt('ownerProductId', providers_array[i].ownerProductId));
+
+                    table.appendChild(getElemnt('externalURL', providers_array[i].externalURL));
+                    table.appendChild(getElemnt('quantity', providers_array[i].quantity));
+                    table.appendChild(getElemnt('currencyCode', providers_array[i].currencyCode));
+                    table.appendChild(getElemnt('store', providers_array[i].store));
+                    table.appendChild(getElemnt('availability', providers_array[i].availability));
+                    table.appendChild(getElemnt('onSale', providers_array[i].onSale));
+                    table.appendChild(getElemnt('salePrice', providers_array[i].salePrice));
+
+                    table.appendChild(getElemnt('saleExpiryDate', providers_array[i].saleExpiryDate));
+                    table.appendChild(getElemnt('availableColors', providers_array[i].availableColors));
+                    table.appendChild(getElemnt('availableSizes', providers_array[i].availableSizes));
+                    table.appendChild(getElemnt('availableAtZipCodes', providers_array[i].availableAtZipCodes));
+
+                    product_provider_div.appendChild(table);
+                }
+
+            }
+
+
+
+
+            function getElemnt(key, value) {
+                var tr = document.createElement('tr');
+                var th_key = document.createElement('th');
+                th_key.textContent = key;
+                tr.appendChild(th_key);
+
+                var th_val = document.createElement('th');
+                var input = document.createElement('input');
+                input.value = value;
+                input.type = 'text'
+                th_val.appendChild(input);
+                tr.appendChild(th_val);
+
+                return tr;
+            }
+            function getCuratedInfo() {
+                var title = document.getElementById("id_title").value;
+                if (title === undefined || title.length < 1) {
+                    showAlert("Please fill the title");
+                    return;
+                }
+                jsonObject.title = title;
+                var description = document.getElementById("id_description").value;
+                if (description === undefined || description.length < 1) {
+                    showAlert("Please fill the description");
+                    return;
+                }
+                jsonObject.description = description;
+
+                var curatorId = document.getElementById("id_curatorID").value;
+
+                if (curatorId === undefined || curatorId.length < 1) {
+                    showAlert("Please fill the CuratorId");
+                    return;
+                }
+                jsonObject.curatorId = curatorId;
+                curateProduct();
+            }
+            function showAlert(message) {
+                alert(message);
+            }
+            function curateProduct() {
+                var url = "https://vue-server-dev.appspot.com/api/product/" + jsonObject.id;
+                if (XMLHttpRequest) {
+                    request = new XMLHttpRequest();
+                    if ("withCredentials" in request) {
+                        // Firefox 3.5 and Safari 4
+                        request.open('PUT', url, true);
+                        request.setRequestHeader('Custom-Header', 'javascript-client');
+                        request.setRequestHeader('Content-Type', 'application/json');
+                        request.onreadystatechange = update_handler;
+//product update request:
+                        alert(JSON.stringify({id: jsonObject.id, ownerAisleId: jsonObject.ownerAisleId, ownerProductListId: jsonObject.ownerProductListId, creatorId: jsonObject.creatorId, curatorId: jsonObject.curatorId, title: jsonObject.title, description: jsonObject.description, currentProductState: jsonObject.currentProductState, relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
+                        request.send(JSON.stringify({id: jsonObject.id, ownerAisleId: jsonObject.ownerAisleId, ownerProductListId: jsonObject.ownerProductListId, creatorId: jsonObject.creatorId, curatorId: jsonObject.curatorId, title: jsonObject.title, description: jsonObject.description, currentProductState: jsonObject.currentProductState, relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
+
+                    }
+                }
+
+            }
+
+            function update_handler() {
+                if (request.readyState != 4)
+                    return;
+                if (request.status == 200)
+                {
+                    alert("Curated Successfully " + request.responseText);
+                }
+                if (request.status != 200 && request.status != 304) {
+                    alert('HTTP POST error ' + request.status + 'Response ' + request.responseText);
+
+                    return;
+                }
+            }
+
+///
+            function myNewFunction(sel) {
+
+                jsonObject.currentProductState = sel;
+
+            }
+
+
+
+///
+        </script>
+    </head>
+    <body onblur="window.focus()" >
+        <button>Product details</button>
+        <form action="" method="post" class="smart-green">
+            <h1>
+                Product Information <span>Please fill all the texts in the
+                    fields.</span>
+            </h1>
+            <label> <span>id: </span> <input id="id_id" type="text"
+                                             name="name" placeholder="Id of the product" />
+            </label> <label> <span>ownerAisleId: </span> <input id="id_ownerAisleId"
+                                                                type="text" name="name" placeholder="Id of the owner aisle" />
+            </label> <label> <span>ownerProductListId: </span> <input id="id_ownerProductListId"
+                                                                      type="text" name="name" placeholder="Id of the owner product" />
+            </label> <label> <span>title: </span> <input id="id_title" type="text" name="name" placeholder="Title of the product" />
+            </label> <label> <span>description: </span> <textarea id="id_description"
+                                                                  name="name" placeholder="Description of the product"></textarea>
+            </label> <label> <span>creatorID: </span> <input id="id_creatorID" type="text"
+                                                             name="name" placeholder="Id of the product creator" />
+            </label> <label> <span>curatorID: </span> <input id="id_curatorID" type="text"
+                                                             name="name" placeholder="Id of the product curator" />
+            </label> <label> <span>currentProductState: </span> 
+
+                <select name="selection"    onChange="myNewFunction(this.value)">
+                    <option value="CRAWLED">CRAWLED</option>
+                    <option value="CURATED">CURATED</option>
+                    <option value="CURATED_AND_VERIFIED">CURATED_AND_VERIFIED</option>
+                    <option value="NEEDS_RECURATION">NEEDS_RECURATION</option>
+                </select>
+
+                <!--                <input id="id_currentProductState"
+                                                                                       type="text" name="name" placeholder="Product curation state" />-->
+            </label> <label> <span>relatedProductIds: </span> <input id="id_relatedProductIds"
+                                                                     type="text" name="name" placeholder="List of related products" />
+            </label> <label> <span>comments: </span> <input id="id_comments" type="text"
+                                                            name="name" placeholder="Comments of the product" />
+            </label> <label> <span>ratings: </span> <input id="id_ratings" type="text"
+                                                           name="name" placeholder="Rating of the product" />
+
+            </label> <label> <span><strong>ProductImages: </strong></span> </label>
+
+            <div id="image_table_id"></div>
+            <!--           <br> <br>
+                         Table goes in the document BODY 
+                        <table class="altrowstable" id="alternatecolor" width="600">
+                            <caption>for image1</caption>
+            
+                            <tr>
+                                <th>id</th>
+                                <th><input type="text" placeholder="id of the image" /></th>
+                            </tr>
+                            <tr>
+                                <th>ownerProductId</th>
+                                <th><input type="text" placeholder="id of the owner product" /></th>
+                            </tr>
+                            <tr>
+                                <th>externalURL</th>
+                                <th><input type="text" placeholder="external url" /></th>
+                            </tr>
+                            <tr>
+                                <th>internalURL</th>
+                                <th><input type="text" placeholder="internal url" /></th>
+                            </tr>
+                            <tr>
+                                <th>originalHeight</th>
+                                <th><input type="text"
+                                           placeholder="Original height of the image" /></th>
+                            </tr>
+            
+                            <tr>
+                                <th>originalWidth</th>
+                                <th><input type="text"
+                                           placeholder="original width of the image" /></th>
+                            </tr>
+            
+                            <tr>
+                                <th>modifiedHeight</th>
+                                <th><input type="text"
+                                           placeholder="Modified height of the image" /></th>
+                            </tr>
+                            <tr>
+                                <th>modifiedWidth</th>
+                                <th><input type="text"
+                                           placeholder="Modified width of the image" /></th>
+                            </tr>
+                            <tr>
+                                <th>description</th>
+                                <th><textarea type="text"
+                                              placeholder="Description for the image"></textarea></th>
+                            </tr>
+            
+                        </table>
+                        <br> <br>
+                        <table class="altrowstable" id="alternatecolor" width="600">
+                            <caption>for image1</caption>
+            
+                            <tr>
+                                <th>id</th>
+                                <th><input type="text" placeholder="id of the image" /></th>
+                            </tr>
+                            <tr>
+                                <th>ownerProductId</th>
+                                <th><input type="text" placeholder="id of the owner product" /></th>
+                            </tr>
+                            <tr>
+                                <th>externalURL</th>
+                                <th><input type="text" placeholder="external url" /></th>
+                            </tr>
+                            <tr>
+                                <th>internalURL</th>
+                                <th><input type="text" placeholder="internal url" /></th>
+                            </tr>
+                            <tr>
+                                <th>originalHeight</th>
+                                <th><input type="text"
+                                           placeholder="Original height of the image" /></th>
+                            </tr>
+            
+                            <tr>
+                                <th>originalWidth</th>
+                                <th><input type="text"
+                                           placeholder="original width of the image" /></th>
+                            </tr>
+            
+                            <tr>
+                                <th>modifiedHeight</th>
+                                <th><input type="text"
+                                           placeholder="Modified height of the image" /></th>
+                            </tr>
+                            <tr>
+                                <th>modifiedWidth</th>
+                                <th><input type="text"
+                                           placeholder="Modified width of the image" /></th>
+                            </tr>
+                            <tr>
+                                <th>description</th>
+                                <th><textarea type="text"
+                                              placeholder="Description for the image"></textarea></th>
+                            </tr>
+            
+                        </table>-->
+
+            <br> <br> <label> <span><strong>productTags:
+                    </strong></span>
+
+            </label> <br> <br>
+            <table class="altrowstable" id="alternatecolor" width="600">
+                <caption>for Tag1</caption>
+
+                <tr>
+                    <th>tagCategory:</th>
+                    <th><input type="text" placeholder="id of the image" /></th>
+                </tr>
+                <tr>
+                    <th>tagString:</th>
+                    <th><input type="text" placeholder="id of the owner product" /></th>
+                </tr>
+                <tr>
+                    <th>tagSubCategory:</th>
+                    <th><input type="text" placeholder="external url" /></th>
+                </tr>
+
+            </table>
+            <br>
+            <table class="altrowstable" id="alternatecolor" width="600">
+                <caption>for Tag2</caption>
+
+                <tr>
+                    <th>tagCategory:</th>
+                    <th><input type="text" placeholder="id of the image" /></th>
+                </tr>
+                <tr>
+                    <th>tagString:</th>
+                    <th><input type="text" placeholder="id of the owner product" /></th>
+                </tr>
+                <tr>
+                    <th>tagSubCategory:</th>
+                    <th><input type="text" placeholder="external url" /></th>
+                </tr>
+
+            </table>
+            <br>
+            <table class="altrowstable" id="alternatecolor" width="600">
+                <caption>for Tag3</caption>
+
+                <tr>
+                    <th>tagCategory:</th>
+                    <th><input type="text" placeholder="id of the image" /></th>
+                </tr>
+                <tr>
+                    <th>tagString:</th>
+                    <th><input type="text" placeholder="id of the owner product" /></th>
+                </tr>
+                <tr>
+                    <th>tagSubCategory:</th>
+                    <th><input type="text" placeholder="external url" /></th>
+                </tr>
+
+            </table>
+
+
+            <br> <br> <label> <span><strong>productProviders:
+                    </strong></span></label>
+            <div id ="product_providers_div_id"></div>
+
+            <!--             <br> <br>
+                        <table class="altrowstable" id="alternatecolor" width="600">
+                            <caption>for Provider1</caption>
+            
+                            <tr>
+                                <th>id:</th>
+                                <th><input type="text" placeholder="id of the provider" /></th>
+                            </tr>
+                            <tr>
+                                <th>ownerProductId:</th>
+                                <th><input type="text" placeholder="id of the owner product" /></th>
+                            </tr>
+                            <tr>
+                                <th>externalURL:</th>
+                                <th><input type="text" placeholder="external url" /></th>
+                            </tr>
+            
+                            <tr>
+                                <th>quantity:</th>
+                                <th><input type="text" placeholder="quantity of product" /></th>
+                            </tr>
+                            <tr>
+                                <th>currencyCode:</th>
+                                <th><input type="text" placeholder="currency cod eof the product price" /></th>
+                            </tr>
+                            <tr>
+                                <th>store:</th>
+                                <th><input type="text" placeholder="strore of the product" /></th>
+                            </tr>
+                            <tr>
+                                <th>availability:</th>
+                                <th><input type="text" placeholder="whether the product is in stock" /></th>
+                            </tr>
+                            <tr>
+                                <th>price:</th>
+                                <th><input type="text" placeholder="Price of the product" /></th>
+                            </tr>
+                            <tr>
+                                <th>onSale:</th>
+                                <th><input type="text" placeholder="whether the product is on sale or not" /></th>
+                            </tr>
+                            <tr>
+                                <th>salePrice:</th>
+                                <th><input type="text" placeholder="sale price of product" /></th>
+                            </tr>
+                            <tr>
+                                <th>saleExpiryDate:</th>
+                                <th><input type="text" placeholder="expiry date of the product" /></th>
+                            </tr>
+                            <tr>
+                                <th>availableColors:</th>
+                                <th><input type="text" placeholder="list of colors in which the product is available" /></th>
+                            </tr>
+                            <tr>
+                                <th>availableSizes:</th>
+                                <th><input type="text" placeholder="List of available sizes of product" /></th>
+                            </tr>
+                            <tr>
+                                <th>availableAtZipCodes:</th>
+                                <th><input type="text" placeholder="Available places of product" /></th>
+                            </tr>
+                        </table>-->
+
+
+            <!-- 
+         <label>
+            <span>title: </span><select name="selection">
+            <option value="Job Inquiry">Job Inquiry</option>
+            <option value="General Question">General Question</option>
+            </select>
+        </label>  -->
+            <label> <span>&nbsp;</span> <input type="button"
+                                               class="button" value="Send" onClick="getCuratedInfo()"/>
+            </label>
+        </form>
+    </body>
+    <style>
+        /*######## Smart Green ########*/
+        .smart-green {
+            margin-left: 10px;
+            margin-right: auto;
+            max-width: 650px;
+            background: #F8F8F8;
+            padding: 30px 30px 20px 30px;
+            font: 12px Arial, Helvetica, sans-serif;
+            color: #666;
+            border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+        }
+
+        .smart-green h1 {
+            font: 24px "Trebuchet MS", Arial, Helvetica, sans-serif;
+            padding: 20px 0px 20px 40px;
+            display: block;
+            margin: -30px -30px 10px -30px;
+            color: #FFF;
+            background: #9DC45F;
+            text-shadow: 1px 1px 1px #949494;
+            border-radius: 5px 5px 0px 0px;
+            -webkit-border-radius: 5px 5px 0px 0px;
+            -moz-border-radius: 5px 5px 0px 0px;
+            border-bottom: 1px solid #89AF4C;
+        }
+
+        .smart-green h1>span {
+            display: block;
+            font-size: 11px;
+            color: #FFF;
+        }
+
+        .smart-green label {
+            display: block;
+            margin: 0px 0px 5px;
+        }
+
+        .smart-green label>span {
+            float: left;
+            margin-top: 10px;
+            color: #5E5E5E;
+        }
+
+        .smart-green input[type="text"], .smart-green input[type="email"],
+        .smart-green textarea, .smart-green select {
+            color: #555;
+            height: 30px;
+            line-height: 15px;
+            width: 100%;
+            padding: 0px 0px 0px 10px;
+            margin-top: 2px;
+            border: 1px solid #E5E5E5;
+            background: #FBFBFB;
+            outline: 0;
+            -webkit-box-shadow: inset 1px 1px 2px rgba(238, 238, 238, 0.2);
+            box-shadow: inset 1px 1px 2px rgba(238, 238, 238, 0.2);
+            font: normal 14px/14px Arial, Helvetica, sans-serif;
+        }
+
+        .smart-green textarea {
+            height: 100px;
+            padding-top: 10px;
+        }
+
+        .smart-green select {
+            background: url('down-arrow.png') no-repeat right,
+                -moz-linear-gradient(top, #FBFBFB 0%, #E9E9E9 100%);
+            background: url('down-arrow.png') no-repeat right,
+                -webkit-gradient(linear, left top, left bottom, color-stop(0%, #FBFBFB),
+                color-stop(100%, #E9E9E9));
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            text-indent: 0.01px;
+            text-overflow: '';
+            width: 100%;
+            height: 30px;
+        }
+
+        .smart-green .button {
+            background-color: #9DC45F;
+            border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-border-border-radius: 5px;
+            border: none;
+            padding: 10px 25px 10px 25px;
+            color: #FFF;
+            text-shadow: 1px 1px 1px #949494;
+        }
+
+        .smart-green .button:hover {
+            background-color: #80A24A;
+        }
+
+        table.altrowstable {
+            font-family: verdana, arial, sans-serif;
+            font-size: 11px;
+            color: #333333;
+            border-width: 1px;
+            border-color: #a9c6c9;
+            border-collapse: collapse;
+        }
+
+        table.altrowstable th {
+            border-width: 1px;
+            padding: 8px;
+            border-style: solid;
+            border-color: #a9c6c9;
+        }
+
+        table.altrowstable td {
+            border-width: 1px;
+            padding: 8px;
+            border-style: solid;
+            border-color: #a9c6c9;
+        }
+
+        .oddrowcolor {
+            background-color: #d4e3e5;
+        }
+
+        .evenrowcolor {
+            background-color: #c3dde0;
+        }
+    </style>
+</html>
