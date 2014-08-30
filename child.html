@@ -1,6 +1,153 @@
-<!DOCTYPE html>
-<html>
+ <!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml">
     <head>
+        <style>
+            /*######## Smart Green ########*/
+            .smart-green {
+                margin-left: 10px;
+                margin-right: auto;
+                max-width: 650px;
+                background: #F8F8F8;
+                padding: 30px 30px 20px 30px;
+                font: 12px Arial, Helvetica, sans-serif;
+                color: #666;
+                border-radius: 5px;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+            }
+
+            .smart-green h1 {
+                font: 24px "Trebuchet MS", Arial, Helvetica, sans-serif;
+                padding: 20px 0px 20px 40px;
+                display: block;
+                margin: -30px -30px 10px -30px;
+                color: #FFF;
+                background: #9DC45F;
+                text-shadow: 1px 1px 1px #949494;
+                border-radius: 5px 5px 0px 0px;
+                -webkit-border-radius: 5px 5px 0px 0px;
+                -moz-border-radius: 5px 5px 0px 0px;
+                border-bottom: 1px solid #89AF4C;
+            }
+
+            .smart-green h1>span {
+                display: block;
+                font-size: 11px;
+                color: #FFF;
+            }
+
+            .smart-green label {
+                display: block;
+                margin: 0px 0px 5px;
+            }
+
+            .smart-green label>span {
+                float: left;
+                margin-top: 10px;
+                color: #5E5E5E;
+            }
+
+            .smart-green input[type="text"], .smart-green input[type="email"],
+            .smart-green textarea, .smart-green select {
+                color: #555;
+                height: 30px;
+                line-height: 15px;
+                width: 100%;
+                padding: 0px 0px 0px 10px;
+                margin-top: 2px;
+                border: 1px solid #E5E5E5;
+                background: #FBFBFB;
+                outline: 0;
+                -webkit-box-shadow: inset 1px 1px 2px rgba(238, 238, 238, 0.2);
+                box-shadow: inset 1px 1px 2px rgba(238, 238, 238, 0.2);
+                font: normal 14px/14px Arial, Helvetica, sans-serif;
+            }
+
+            .smart-green textarea {
+                height: 100px;
+                padding-top: 10px;
+            }
+
+            .smart-green select {
+                background: url('down-arrow.png') no-repeat right,
+                    -moz-linear-gradient(top, #FBFBFB 0%, #E9E9E9 100%);
+                background: url('down-arrow.png') no-repeat right,
+                    -webkit-gradient(linear, left top, left bottom, color-stop(0%, #FBFBFB),
+                    color-stop(100%, #E9E9E9));
+                appearance: none;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                text-indent: 0.01px;
+                text-overflow: '';
+                width: 100%;
+                height: 30px;
+            }
+
+            .smart-green .button {
+                background-color: #9DC45F;
+                border-radius: 5px;
+                -webkit-border-radius: 5px;
+                -moz-border-border-radius: 5px;
+                border: none;
+                padding: 10px 25px 10px 25px;
+                color: #FFF;
+                text-shadow: 1px 1px 1px #949494;
+            }
+
+            .smart-green .button:hover {
+                background-color: #80A24A;
+            }
+
+            table.altrowstable {
+                font-family: verdana, arial, sans-serif;
+                font-size: 11px;
+                color: #333333;
+                border-width: 1px;
+                border-color: #a9c6c9;
+                border-collapse: collapse;
+            }
+
+            table.altrowstable th {
+                border-width: 1px;
+                padding: 8px;
+                border-style: solid;
+                border-color: #a9c6c9;
+            }
+
+            table.altrowstable td {
+                border-width: 1px;
+                padding: 8px;
+                border-style: solid;
+                border-color: #a9c6c9;
+            }
+
+            .oddrowcolor {
+                background-color: #d4e3e5;
+            }
+
+            .evenrowcolor {
+                background-color: #c3dde0;
+            }
+
+
+            .multiselect {
+                width:20em;
+                height:15em;
+                border:solid 1px #c0c0c0;
+                overflow:auto;
+            }
+
+            .multiselect label {
+                display:block;
+            }
+
+            .multiselect-on {
+                color:#ffffff;
+                background-color:#000099;
+            }
+
+
+        </style>
         <script>
             var datafromparent;
             var jsonObject;
@@ -32,6 +179,8 @@
 
                 document.getElementById('id_description').value = jsonResponse.description;
                 document.getElementById('id_creatorID').value = jsonResponse.creatorID;
+                document.getElementById('id_curatorID').value = '5505177142427648';
+
                 document.getElementById('id_relatedProductIds').value = jsonResponse.relatedProductIds;
                 //  document.getElementById('id_currentProductState').value = jsonResponse.currentProductState;
 
@@ -133,6 +282,44 @@
 
                 return tr;
             }
+
+            function getAvailability(key, value) {
+                var el = getElemnt(key, value);
+
+                var th = document.createElement('th');
+
+                var sel = document.createElement('select');
+
+                var optionINS = document.createElement('option');
+                optionINS.value = 'IN_STOCK';
+
+                var optionXI = document.createElement('option');
+                optionXI.value = 'EXCESS_INVENTORY';
+
+                var optionRL = document.createElement('option');
+                optionRL.value = 'RUNNING_LOW';
+
+                var optionTU = document.createElement('option');
+                optionTU.value = 'TEMPORARY_UNAVAILABLE';
+
+                var optionOS = document.createElement('option');
+                optionOS.value = 'OUT_OF_STOCK';
+
+                var optionPU = document.createElement('option');
+                optionPU.value = 'PERMANENTLY_UNAVAILABLE';
+
+                sel.appendChild(optionINS);
+                sel.appendChild(optionXI);
+                sel.appendChild(optionRL);
+                sel.appendChild(optionTU);
+                sel.appendChild(optionOS);
+                sel.appendChild(optionPU);
+
+                th.appendChild(sel);
+                el.appendChild(th);
+                return sel;
+            }
+
             function getCuratedInfo() {
                 var title = document.getElementById("id_title").value;
                 if (title === undefined || title.length < 1) {
@@ -169,7 +356,7 @@
                         request.setRequestHeader('Custom-Header', 'javascript-client');
                         request.setRequestHeader('Content-Type', 'application/json');
                         request.onreadystatechange = update_handler;
-//product update request:
+                        //product update request:
                         alert(JSON.stringify({id: jsonObject.id, ownerAisleId: jsonObject.ownerAisleId, ownerProductListId: jsonObject.ownerProductListId, creatorId: jsonObject.creatorId, curatorId: jsonObject.curatorId, title: jsonObject.title, description: jsonObject.description, currentProductState: jsonObject.currentProductState, relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
                         request.send(JSON.stringify({id: jsonObject.id, ownerAisleId: jsonObject.ownerAisleId, ownerProductListId: jsonObject.ownerProductListId, creatorId: jsonObject.creatorId, curatorId: jsonObject.curatorId, title: jsonObject.title, description: jsonObject.description, currentProductState: jsonObject.currentProductState, relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
 
@@ -198,13 +385,48 @@
                 jsonObject.currentProductState = sel;
 
             }
-
-
-
-///
         </script>
+
+
+
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.css">
+            <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+            <script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
+
+
+            <script type="text/javascript">
+            $(function() {
+                //                $("select").multiselect();
+                //
+                //                $("select_tagCategory").multiselect({
+                //                    multiple: false,
+                //                    header: "Select an option",
+                //                    noneSelectedText: "Select an Option",
+                //                    selectedList: 1
+                //
+                //                });
+                //                $("select_tagString").multiselect();
+
+
+
+            });
+
+            $(function() {
+
+                $('#select_tagString').multiselect({
+                    includeSelectAllOption: true
+                });
+                $('#select_tagSubCategory').multiselect({
+                    includeSelectAllOption: true
+                });
+
+            });
+
+
+            </script>
+
     </head>
-    <body onblur="window.focus()" >
+    <body onblur="window.focus()" onload="prettyPrint();" >
         <button>Product details</button>
         <form action="" method="post" class="smart-green">
             <h1>
@@ -226,12 +448,14 @@
                                                              name="name" placeholder="Id of the product curator" />
             </label> <label> <span>currentProductState: </span> 
 
-                <select name="selection"    onChange="myNewFunction(this.value)">
+                <select id="single_select_1" name="selection" onchange="myNewFunction(this.value)"   style="width: 300px">
                     <option value="CRAWLED">CRAWLED</option>
                     <option value="CURATED">CURATED</option>
                     <option value="CURATED_AND_VERIFIED">CURATED_AND_VERIFIED</option>
                     <option value="NEEDS_RECURATION">NEEDS_RECURATION</option>
                 </select>
+
+
 
                 <!--                <input id="id_currentProductState"
                                                                                        type="text" name="name" placeholder="Product curation state" />-->
@@ -245,371 +469,126 @@
             </label> <label> <span><strong>ProductImages: </strong></span> </label>
 
             <div id="image_table_id"></div>
-            <!--           <br> <br>
-                         Table goes in the document BODY 
-                        <table class="altrowstable" id="alternatecolor" width="600">
-                            <caption>for image1</caption>
-            
-                            <tr>
-                                <th>id</th>
-                                <th><input type="text" placeholder="id of the image" /></th>
-                            </tr>
-                            <tr>
-                                <th>ownerProductId</th>
-                                <th><input type="text" placeholder="id of the owner product" /></th>
-                            </tr>
-                            <tr>
-                                <th>externalURL</th>
-                                <th><input type="text" placeholder="external url" /></th>
-                            </tr>
-                            <tr>
-                                <th>internalURL</th>
-                                <th><input type="text" placeholder="internal url" /></th>
-                            </tr>
-                            <tr>
-                                <th>originalHeight</th>
-                                <th><input type="text"
-                                           placeholder="Original height of the image" /></th>
-                            </tr>
-            
-                            <tr>
-                                <th>originalWidth</th>
-                                <th><input type="text"
-                                           placeholder="original width of the image" /></th>
-                            </tr>
-            
-                            <tr>
-                                <th>modifiedHeight</th>
-                                <th><input type="text"
-                                           placeholder="Modified height of the image" /></th>
-                            </tr>
-                            <tr>
-                                <th>modifiedWidth</th>
-                                <th><input type="text"
-                                           placeholder="Modified width of the image" /></th>
-                            </tr>
-                            <tr>
-                                <th>description</th>
-                                <th><textarea type="text"
-                                              placeholder="Description for the image"></textarea></th>
-                            </tr>
-            
-                        </table>
-                        <br> <br>
-                        <table class="altrowstable" id="alternatecolor" width="600">
-                            <caption>for image1</caption>
-            
-                            <tr>
-                                <th>id</th>
-                                <th><input type="text" placeholder="id of the image" /></th>
-                            </tr>
-                            <tr>
-                                <th>ownerProductId</th>
-                                <th><input type="text" placeholder="id of the owner product" /></th>
-                            </tr>
-                            <tr>
-                                <th>externalURL</th>
-                                <th><input type="text" placeholder="external url" /></th>
-                            </tr>
-                            <tr>
-                                <th>internalURL</th>
-                                <th><input type="text" placeholder="internal url" /></th>
-                            </tr>
-                            <tr>
-                                <th>originalHeight</th>
-                                <th><input type="text"
-                                           placeholder="Original height of the image" /></th>
-                            </tr>
-            
-                            <tr>
-                                <th>originalWidth</th>
-                                <th><input type="text"
-                                           placeholder="original width of the image" /></th>
-                            </tr>
-            
-                            <tr>
-                                <th>modifiedHeight</th>
-                                <th><input type="text"
-                                           placeholder="Modified height of the image" /></th>
-                            </tr>
-                            <tr>
-                                <th>modifiedWidth</th>
-                                <th><input type="text"
-                                           placeholder="Modified width of the image" /></th>
-                            </tr>
-                            <tr>
-                                <th>description</th>
-                                <th><textarea type="text"
-                                              placeholder="Description for the image"></textarea></th>
-                            </tr>
-            
-                        </table>-->
 
             <br> <br> <label> <span><strong>productTags:
-                    </strong></span>
+                            </strong></span>
 
-            </label> <br> <br>
-            <table class="altrowstable" id="alternatecolor" width="600">
-                <caption>for Tag1</caption>
-
-                <tr>
-                    <th>tagCategory:</th>
-                    <th><input type="text" placeholder="id of the image" /></th>
-                </tr>
-                <tr>
-                    <th>tagString:</th>
-                    <th><input type="text" placeholder="id of the owner product" /></th>
-                </tr>
-                <tr>
-                    <th>tagSubCategory:</th>
-                    <th><input type="text" placeholder="external url" /></th>
-                </tr>
-
-            </table>
-            <br>
-            <table class="altrowstable" id="alternatecolor" width="600">
-                <caption>for Tag2</caption>
-
-                <tr>
-                    <th>tagCategory:</th>
-                    <th><input type="text" placeholder="id of the image" /></th>
-                </tr>
-                <tr>
-                    <th>tagString:</th>
-                    <th><input type="text" placeholder="id of the owner product" /></th>
-                </tr>
-                <tr>
-                    <th>tagSubCategory:</th>
-                    <th><input type="text" placeholder="external url" /></th>
-                </tr>
-
-            </table>
-            <br>
-            <table class="altrowstable" id="alternatecolor" width="600">
-                <caption>for Tag3</caption>
-
-                <tr>
-                    <th>tagCategory:</th>
-                    <th><input type="text" placeholder="id of the image" /></th>
-                </tr>
-                <tr>
-                    <th>tagString:</th>
-                    <th><input type="text" placeholder="id of the owner product" /></th>
-                </tr>
-                <tr>
-                    <th>tagSubCategory:</th>
-                    <th><input type="text" placeholder="external url" /></th>
-                </tr>
-
-            </table>
+                    </label> <br> <br>
 
 
-            <br> <br> <label> <span><strong>productProviders:
-                    </strong></span></label>
-            <div id ="product_providers_div_id"></div>
+                            <table class="altrowstable" id="created_tags_table" width="600">
+                                <caption>Tags Created</caption>
 
-            <!--             <br> <br>
-                        <table class="altrowstable" id="alternatecolor" width="600">
-                            <caption>for Provider1</caption>
-            
-                            <tr>
-                                <th>id:</th>
-                                <th><input type="text" placeholder="id of the provider" /></th>
-                            </tr>
-                            <tr>
-                                <th>ownerProductId:</th>
-                                <th><input type="text" placeholder="id of the owner product" /></th>
-                            </tr>
-                            <tr>
-                                <th>externalURL:</th>
-                                <th><input type="text" placeholder="external url" /></th>
-                            </tr>
-            
-                            <tr>
-                                <th>quantity:</th>
-                                <th><input type="text" placeholder="quantity of product" /></th>
-                            </tr>
-                            <tr>
-                                <th>currencyCode:</th>
-                                <th><input type="text" placeholder="currency cod eof the product price" /></th>
-                            </tr>
-                            <tr>
-                                <th>store:</th>
-                                <th><input type="text" placeholder="strore of the product" /></th>
-                            </tr>
-                            <tr>
-                                <th>availability:</th>
-                                <th><input type="text" placeholder="whether the product is in stock" /></th>
-                            </tr>
-                            <tr>
-                                <th>price:</th>
-                                <th><input type="text" placeholder="Price of the product" /></th>
-                            </tr>
-                            <tr>
-                                <th>onSale:</th>
-                                <th><input type="text" placeholder="whether the product is on sale or not" /></th>
-                            </tr>
-                            <tr>
-                                <th>salePrice:</th>
-                                <th><input type="text" placeholder="sale price of product" /></th>
-                            </tr>
-                            <tr>
-                                <th>saleExpiryDate:</th>
-                                <th><input type="text" placeholder="expiry date of the product" /></th>
-                            </tr>
-                            <tr>
-                                <th>availableColors:</th>
-                                <th><input type="text" placeholder="list of colors in which the product is available" /></th>
-                            </tr>
-                            <tr>
-                                <th>availableSizes:</th>
-                                <th><input type="text" placeholder="List of available sizes of product" /></th>
-                            </tr>
-                            <tr>
-                                <th>availableAtZipCodes:</th>
-                                <th><input type="text" placeholder="Available places of product" /></th>
-                            </tr>
-                        </table>-->
+                                <tr>
+                                    <th><strong>Tag Category:</strong>
+                                    </th>
+                                    <th><strong>Tag String:</strong>
+                                    </th>
+                                    <th><strong>Tag Sub Category:</strong>                      
+                                    </th>
+                                    <th><strong>Tag Deletion:</strong>                      
+                                    </th>
+                                </tr>
+                            </table>
 
 
-            <!-- 
-         <label>
-            <span>title: </span><select name="selection">
-            <option value="Job Inquiry">Job Inquiry</option>
-            <option value="General Question">General Question</option>
-            </select>
-        </label>  -->
-            <label> <span>&nbsp;</span> <input type="button"
-                                               class="button" value="Send" onClick="getCuratedInfo()"/>
-            </label>
-        </form>
-    </body>
-    <style>
-        /*######## Smart Green ########*/
-        .smart-green {
-            margin-left: 10px;
-            margin-right: auto;
-            max-width: 650px;
-            background: #F8F8F8;
-            padding: 30px 30px 20px 30px;
-            font: 12px Arial, Helvetica, sans-serif;
-            color: #666;
-            border-radius: 5px;
-            -webkit-border-radius: 5px;
-            -moz-border-radius: 5px;
-        }
+                            <table class="altrowstable" id="alternatecolor" width="600">
+                                <caption>we can create tags from here</caption>
 
-        .smart-green h1 {
-            font: 24px "Trebuchet MS", Arial, Helvetica, sans-serif;
-            padding: 20px 0px 20px 40px;
-            display: block;
-            margin: -30px -30px 10px -30px;
-            color: #FFF;
-            background: #9DC45F;
-            text-shadow: 1px 1px 1px #949494;
-            border-radius: 5px 5px 0px 0px;
-            -webkit-border-radius: 5px 5px 0px 0px;
-            -moz-border-radius: 5px 5px 0px 0px;
-            border-bottom: 1px solid #89AF4C;
-        }
+                                <tr>
+                                    <th><strong>tagCategory:</strong>
 
-        .smart-green h1>span {
-            display: block;
-            font-size: 11px;
-            color: #FFF;
-        }
+                                        <select id="select_tagCategory" name="selection"   style="width: 200px">
+                                            <option value="Occasions">Occasions</option>
+                                            <option value="Party">Party</option>
+                                            <option value="Wedding">Wedding</option>
+                                            <option value="Honeymoon">Honeymoon</option>
+                                        </select>
+                                    </th>
+                                    <th><strong>tagString:</strong>
+                                        <div style="padding:20px">
+                                            <select id="select_tagString" name="selection" multiple="multiple"  style="width: 200px" data-native-menu="false">
+                                                <option value="Wedding Reception">Wedding Reception</option>
+                                                <option value="Community Block">Community Block</option>
+                                                <option value="Baby Shower">Baby Shower</option>
+                                                <option value="Costume Party">Costume Party</option>
 
-        .smart-green label {
-            display: block;
-            margin: 0px 0px 5px;
-        }
+                                                <option value="Costume Party">Costume Party</option>
+                                                <option value="Retirement Party">Retirement Party</option>
+                                                <option value="Graduation Party">Graduation Party</option>
+                                                <option value="Invitation only party">Invitation only party</option>
+                                            </select>
+                                        </div>
 
-        .smart-green label>span {
-            float: left;
-            margin-top: 10px;
-            color: #5E5E5E;
-        }
+                                    </th>
+                                    <th><strong>tagSubCategory:</strong>
+                                        <div style="padding:20px">
+                                            <select id="select_tagSubCategory" name="selection" multiple="multiple"  style="width: 200px,height: 20px" data-native-menu="false">
+                                                <option value="Shirts">Shirts</option>
+                                                <option value="Jeans">Jeans</option>
+                                                <option value="Sarees">Sarees</option>
+                                                <option value="Leggings">Leggings</option>
 
-        .smart-green input[type="text"], .smart-green input[type="email"],
-        .smart-green textarea, .smart-green select {
-            color: #555;
-            height: 30px;
-            line-height: 15px;
-            width: 100%;
-            padding: 0px 0px 0px 10px;
-            margin-top: 2px;
-            border: 1px solid #E5E5E5;
-            background: #FBFBFB;
-            outline: 0;
-            -webkit-box-shadow: inset 1px 1px 2px rgba(238, 238, 238, 0.2);
-            box-shadow: inset 1px 1px 2px rgba(238, 238, 238, 0.2);
-            font: normal 14px/14px Arial, Helvetica, sans-serif;
-        }
+                                                <option value="Skirts">Skirts</option>
+                                                <option value="Scarfs">Scarfs</option>
+                                                <option value="Caps">Caps</option>
+                                            </select>
+                                            </
 
-        .smart-green textarea {
-            height: 100px;
-            padding-top: 10px;
-        }
+                                    </th>
 
-        .smart-green select {
-            background: url('down-arrow.png') no-repeat right,
-                -moz-linear-gradient(top, #FBFBFB 0%, #E9E9E9 100%);
-            background: url('down-arrow.png') no-repeat right,
-                -webkit-gradient(linear, left top, left bottom, color-stop(0%, #FBFBFB),
-                color-stop(100%, #E9E9E9));
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            text-indent: 0.01px;
-            text-overflow: '';
-            width: 100%;
-            height: 30px;
-        }
+                                </tr>
 
-        .smart-green .button {
-            background-color: #9DC45F;
-            border-radius: 5px;
-            -webkit-border-radius: 5px;
-            -moz-border-border-radius: 5px;
-            border: none;
-            padding: 10px 25px 10px 25px;
-            color: #FFF;
-            text-shadow: 1px 1px 1px #949494;
-        }
+                            </table>
 
-        .smart-green .button:hover {
-            background-color: #80A24A;
-        }
+                            <input type="button" class="button" value="Create Tag" onclick="addTagsToTable()" />
+                            <script>
+                                var valC, valS, valSC;
 
-        table.altrowstable {
-            font-family: verdana, arial, sans-serif;
-            font-size: 11px;
-            color: #333333;
-            border-width: 1px;
-            border-color: #a9c6c9;
-            border-collapse: collapse;
-        }
 
-        table.altrowstable th {
-            border-width: 1px;
-            padding: 8px;
-            border-style: solid;
-            border-color: #a9c6c9;
-        }
 
-        table.altrowstable td {
-            border-width: 1px;
-            padding: 8px;
-            border-style: solid;
-            border-color: #a9c6c9;
-        }
 
-        .oddrowcolor {
-            background-color: #d4e3e5;
-        }
+                                function addTagsToTable() {
+                                    valC = $("#select_tagCategory").val();
+                                    valS = $("#select_tagString").val();
+                                    valSC = $("#select_tagSubCategory").val();
+                                    var row = document.createElement('tr');
+                                    var thC = document.createElement('th');
+                                    thC.textContent = valC;
+                                    var thS = document.createElement('th');
+                                    thS.textContent = valS;
+                                    var thSC = document.createElement('th');
+                                    thSC.textContent = valSC;
 
-        .evenrowcolor {
-            background-color: #c3dde0;
-        }
-    </style>
-</html>
+                                    var del = document.createElement('th')
+                                    var btn = document.createElement('Button');
+                                    btn.textContent = 'delete';
+                                    btn.onclick = function() {
+                                        document.getElementById('created_tags_table').removeChild(row);
+                                    };
+                                    del.appendChild(btn);
+
+                                    row.appendChild(thC);
+                                    row.appendChild(thS);
+                                    row.appendChild(thSC);
+                                    row.appendChild(del);
+                                    document.getElementById('created_tags_table').appendChild(row);
+
+                                }
+                            </script>
+
+                            <br> <br> <label> <span><strong>productProviders:
+                                            </strong></span></label>
+                                    <div id ="product_providers_div_id"></div>
+
+
+
+
+
+                                    <label> <span>&nbsp;</span> <input type="button"
+                                                                       class="button" value="Send" onClick="getCuratedInfo()" />
+                                    </label>
+                                    </form>
+                                    </body>
+
+                                    </html>
