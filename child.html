@@ -1,5 +1,5 @@
- <!DOCTYPE html>
-<html  xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
     <head>
         <style>
             /*######## Smart Green ########*/
@@ -149,25 +149,33 @@
 
         </style>
         <script>
- //prototype for clear the array values.
-Array.prototype.clear = function() {
-    this.length = 0;
-};
+            var available_colors = ["Red", "Green", "Blue", "Cyn", "Orange", "Purple", "Black"];
+            var available_sizes = ["S", "M", "L", "XL", "XXL", "XXXL"];
+
+            //prototype for clear the array values.
+            Array.prototype.clear = function() {
+                this.length = 0;
+            };
+
             var datafromparent;
             var jsonObject;
-var providerUpdaterequest;
-var tagCreateRequest;  
-var tagCreationReqeustCount = 0;
-var productTagAssociateReq;
-var appendtagToProduct;
-var tagObject = {tagCategory: "",tagString: "",tagSubCategory: ""};
+
+            var providerUpdaterequest;
+            var tagCreateRequest;
+            var tagCreationReqeustCount = 0;
+            var productTagAssociateReq;
+            var appendtagToProduct;
+            var tagObject = {tagCategory: "", tagString: "", tagSubCategory: ""};
             var tagArray = [];
             window.addEventListener("message", function(event) {
-                 alert("The other window's function executed."+event.data);
+
+
                 datafromparent = event.data;
                 jsonObject = JSON.parse(datafromparent);
+
                 tagCreationReqeustCount = 0;
                 tagArray.clear();
+
                 afterLoadingThePopup();
 
             }, false);
@@ -234,6 +242,7 @@ var tagObject = {tagCategory: "",tagString: "",tagSubCategory: ""};
                     table.appendChild(getElemnt('modifiedWidth', images_array[i].modifiedWidth));
 
                     tabl_div.appendChild(table);
+
                 }
                 var product_provider_div = document.getElementById('product_providers_div_id');
 
@@ -263,13 +272,20 @@ var tagObject = {tagCategory: "",tagString: "",tagSubCategory: ""};
                     table.appendChild(getElemnt('quantity', providers_array[i].quantity));
                     table.appendChild(getElemnt('currencyCode', providers_array[i].currencyCode));
                     table.appendChild(getElemnt('store', providers_array[i].store));
-                    table.appendChild(getElemnt('availability', providers_array[i].availability));
+
+                    var availability_1 = getAvailability('availability', providers_array[i].availability);
+                    table.appendChild(availability_1);
+
                     table.appendChild(getElemnt('onSale', providers_array[i].onSale));
                     table.appendChild(getElemnt('salePrice', providers_array[i].salePrice));
-
                     table.appendChild(getElemnt('saleExpiryDate', providers_array[i].saleExpiryDate));
-                    table.appendChild(getElemnt('availableColors', providers_array[i].availableColors));
-                    table.appendChild(getElemnt('availableSizes', providers_array[i].availableSizes));
+
+                    var available_clrs = getAvailableColors('availableColors', providers_array[i].availableColors);
+                    table.appendChild(available_clrs);
+
+                    var available_sizes_1 = getAvailableSizes('availableSizes', providers_array[i].availableSizes);
+                    table.appendChild(available_sizes_1);
+
                     table.appendChild(getElemnt('availableAtZipCodes', providers_array[i].availableAtZipCodes));
 
                     product_provider_div.appendChild(table);
@@ -296,30 +312,35 @@ var tagObject = {tagCategory: "",tagString: "",tagSubCategory: ""};
                 return tr;
             }
 
+
+
             function getAvailability(key, value) {
-                var el = getElemnt(key, value);
+                var tr = document.createElement('tr');
+                var th_key = document.createElement('th');
+                th_key.textContent = key;
+                tr.appendChild(th_key);
 
                 var th = document.createElement('th');
 
                 var sel = document.createElement('select');
 
                 var optionINS = document.createElement('option');
-                optionINS.value = 'IN_STOCK';
+                optionINS.textContent = 'IN_STOCK';
 
                 var optionXI = document.createElement('option');
-                optionXI.value = 'EXCESS_INVENTORY';
+                optionXI.textContent = 'EXCESS_INVENTORY';
 
                 var optionRL = document.createElement('option');
-                optionRL.value = 'RUNNING_LOW';
+                optionRL.textContent = 'RUNNING_LOW';
 
                 var optionTU = document.createElement('option');
-                optionTU.value = 'TEMPORARY_UNAVAILABLE';
+                optionTU.textContent = 'TEMPORARY_UNAVAILABLE';
 
                 var optionOS = document.createElement('option');
-                optionOS.value = 'OUT_OF_STOCK';
+                optionOS.textContent = 'OUT_OF_STOCK';
 
                 var optionPU = document.createElement('option');
-                optionPU.value = 'PERMANENTLY_UNAVAILABLE';
+                optionPU.textContent = 'PERMANENTLY_UNAVAILABLE';
 
                 sel.appendChild(optionINS);
                 sel.appendChild(optionXI);
@@ -329,8 +350,97 @@ var tagObject = {tagCategory: "",tagString: "",tagSubCategory: ""};
                 sel.appendChild(optionPU);
 
                 th.appendChild(sel);
-                el.appendChild(th);
-                return sel;
+                tr.appendChild(th);
+                return tr;
+            }
+
+
+            function getAvailableColors(key, value) {
+
+
+                var tr = document.createElement('tr');
+                var th_key = document.createElement('th');
+                th_key.textContent = key;
+                tr.appendChild(th_key);
+
+                var th_val = document.createElement('th');
+                var input = document.createElement('input');
+                input.value = value;
+                input.type = 'text';
+                input.id = "colors_text_id";
+                th_val.appendChild(input);
+                tr.appendChild(th_val);
+
+                var th = document.createElement('th');
+
+                var sel = document.createElement('select');
+                sel.id = "color_selector";
+                sel.onchange = function() {
+                    var vl = $("#color_selector").val();
+                    var current_val = document.getElementById('colors_text_id').value;
+
+
+                    if (current_val === '')
+                        document.getElementById('colors_text_id').value = vl;
+                    else
+                        document.getElementById('colors_text_id').value = current_val + "," + vl;
+                    //alert(vl);
+                };
+
+                available_colors.forEach(function(entry) {
+                    var option = document.createElement('option');
+                    option.textContent = entry;
+                    sel.appendChild(option);
+                });
+
+
+                th.appendChild(sel);
+                tr.appendChild(th);
+                return tr;
+            }
+
+            function getAvailableSizes(key, value) {
+
+
+                var tr = document.createElement('tr');
+                var th_key = document.createElement('th');
+                th_key.textContent = key;
+                tr.appendChild(th_key);
+
+                var th_val = document.createElement('th');
+                var input = document.createElement('input');
+                input.value = value;
+                input.type = 'text';
+                input.id = "sizes_text_id";
+                th_val.appendChild(input);
+                tr.appendChild(th_val);
+
+                var th = document.createElement('th');
+
+                var sel = document.createElement('select');
+                sel.id = "sizes_selector";
+                sel.onchange = function() {
+                    var vl = $("#sizes_selector").val();
+                    var current_val = document.getElementById('sizes_text_id').value;
+
+
+                    if (current_val === '')
+                        document.getElementById('sizes_text_id').value = vl;
+                    else
+                        document.getElementById('sizes_text_id').value = current_val + "," + vl;
+                    //alert(vl);
+                };
+
+                available_sizes.forEach(function(entry) {
+                    var option = document.createElement('option');
+                    option.textContent = entry;
+                    sel.appendChild(option);
+                });
+
+
+                th.appendChild(sel);
+                tr.appendChild(th);
+                return tr;
             }
 
             function getCuratedInfo() {
@@ -384,7 +494,7 @@ var tagObject = {tagCategory: "",tagString: "",tagSubCategory: ""};
                 if (request.status == 200)
                 {
                     alert("Curated Successfully " + request.responseText);
-                     updateProvider ();
+                    updateProvider();
                 }
                 if (request.status != 200 && request.status != 304) {
                     alert('HTTP POST error ' + request.status + 'Response ' + request.responseText);
@@ -392,111 +502,122 @@ var tagObject = {tagCategory: "",tagString: "",tagSubCategory: ""};
                     return;
                 }
             }
- 
-    function updateProvider () {
- var url = "https://vue-server-dev.appspot.com/api/productprovider/"+jsonObject.productProviders[0].id;
-        if(XMLHttpRequest) {
-            providerUpdaterequest = new XMLHttpRequest();
-            if ("withCredentials" in providerUpdaterequest) {
-                // Firefox 3.5 and Safari 4
-                providerUpdaterequest.open('PUT', url, true);
-                providerUpdaterequest.setRequestHeader('Custom-Header', 'javascript-client');
-                providerUpdaterequest.setRequestHeader('Content-Type','application/json');
-                providerUpdaterequest.onreadystatechange =   function providerHandler() {
-        if (providerUpdaterequest.readyState != 4) return;
-        if (providerUpdaterequest.status == 200)
-        {
-            alert('HTTP POST success: ' + providerUpdaterequest.responseText);
- 
-        }
-        if (providerUpdaterequest.status != 200 && providerUpdaterequest.status != 304) {
-            alert('HTTP POST error ' + providerUpdaterequest.status + 'Response ' + providerUpdaterequest.responseText);
 
-            return;
-        }
-    };
- 
- providerUpdaterequest.send(JSON.stringify({id:jsonObject.productProviders[0].id,ownerProductId:jsonObject.id,externalURL:jsonObject.productProviders[0].externalURL,quantity:0,currencyCode:"USD",store:"shop.nordstrom.com",availability:"IN_STOCK",
-price:29.0,onSale:false,salePrice:0.0,saleExpirtyDate:0,availableColors:["blue","green"],availableSizes:null,availableAtZipCodes:null}));
- 
-}
-  }     
-    }
+            function updateProvider() {
+                alert("provider");
+                var colors = document.getElementById('colors_text_id').value;
+                var sizes = document.getElementById('sizes_text_id').value;
+
+                var colorArray = colors.split(",");
+                var sizesArray = sizes.split(",");
+                var url = "https://vue-server-dev.appspot.com/api/productprovider/" + jsonObject.productProviders[0].id;
+                if (XMLHttpRequest) {
+                    providerUpdaterequest = new XMLHttpRequest();
+                    if ("withCredentials" in providerUpdaterequest) {
+                        // Firefox 3.5 and Safari 4
+                        providerUpdaterequest.open('PUT', url, true);
+                        providerUpdaterequest.setRequestHeader('Custom-Header', 'javascript-client');
+                        providerUpdaterequest.setRequestHeader('Content-Type', 'application/json');
+                        providerUpdaterequest.onreadystatechange = function providerHandler() {
+                            if (providerUpdaterequest.readyState != 4)
+                                return;
+                            if (providerUpdaterequest.status == 200)
+                            {
+                                alert('HTTP POST success: ' + providerUpdaterequest.responseText);
+
+                            }
+                            if (providerUpdaterequest.status != 200 && providerUpdaterequest.status != 304) {
+                                alert('HTTP POST error ' + providerUpdaterequest.status + 'Response ' + providerUpdaterequest.responseText);
+
+                                return;
+                            }
+                        };
+
+                        providerUpdaterequest.send(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: 0, currencyCode: "USD", store: "shop.nordstrom.com", availability: "IN_STOCK",
+                            price: 29.0, onSale: false, salePrice: 0.0, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: null}));
+                        console.log(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: 0, currencyCode: "USD", store: "shop.nordstrom.com", availability: "IN_STOCK",
+                            price: 29.0, onSale: false, salePrice: 0.0, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: null}));
+                    }
+                }
+            }
 
 
-function createTagRequest(category,string,subcat){
- 
- // alert(JSON.stringify( {tagCategory:category ,tagString:string,tagSubCategory:subcat}) );
-var url = "https://vue-server-dev.appspot.com/api/producttag";
-        if(XMLHttpRequest) {
-            tagCreateRequest = new XMLHttpRequest();
-            if ("withCredentials" in tagCreateRequest) {
-                tagCreateRequest.open('POST', url, true);
-                tagCreateRequest.setRequestHeader('Custom-Header', 'javascript-client');
-                tagCreateRequest.setRequestHeader('Content-Type','application/json');
-                tagCreateRequest.onreadystatechange = tagHandler
- 
-  tagCreateRequest.send(JSON.stringify( {tagCategory:category ,tagString:string,tagSubCategory:subcat}));
- 
-}
-  } 
-}
-    function tagHandler() {
-        if (tagCreateRequest.readyState != 4) return;
- if (tagCreateRequest.status != 200 && tagCreateRequest.status != 304) {
-            alert('HTTP POST error ' + tagCreateRequest.status + 'Response ' + tagCreateRequest.responseText);
- 
-          //ToDO: if tag is created already just append to product.  appendtagToProduct  
-  if(appendtagToProduct != undefined){
- tagAssociateWithProduct(appendtagToProduct,"tag");
-}
-            return;
-        }
-        if (tagCreateRequest.status == 200)
-        {
-alert('HTTP POST success: ' + tagCreateRequest.responseText);
- var jsonTagObject = JSON.parse(tagCreateRequest.responseText);
-tagAssociateWithProduct(jsonTagObject.tagString,"tag");
- 
-            
-        }
-       
-    }
+            function createTagRequest(category, string, subcat) {
 
-function tagAssociateWithProduct(tagString,tag) {
- 
-    var url = "https://vue-server-dev.appspot.com/api/product/"+tag+"/"+jsonObject.id+"/"+tagString;
-      if(XMLHttpRequest) {
-            productTagAssociateReq = new XMLHttpRequest();
-            if ("withCredentials" in productTagAssociateReq) {
-                // Firefox 3.5 and Safari 4
-                productTagAssociateReq.open('PUT', url, true);
-                productTagAssociateReq.setRequestHeader('Custom-Header', 'javascript-client');
-                productTagAssociateReq.setRequestHeader('Content-Type','application/json');
-                productTagAssociateReq.onreadystatechange = tagAssociatHandler;
- 
- productTagAssociateReq.send();
- 
-}
-  }
- 
-}
+                // alert(JSON.stringify( {tagCategory:category ,tagString:string,tagSubCategory:subcat}) );
+                var url = "https://vue-server-dev.appspot.com/api/producttag";
+                if (XMLHttpRequest) {
+                    tagCreateRequest = new XMLHttpRequest();
+                    if ("withCredentials" in tagCreateRequest) {
+                        tagCreateRequest.open('POST', url, true);
+                        tagCreateRequest.setRequestHeader('Custom-Header', 'javascript-client');
+                        tagCreateRequest.setRequestHeader('Content-Type', 'application/json');
+                        tagCreateRequest.onreadystatechange = tagHandler
 
-  function tagAssociatHandler() {
-        if (productTagAssociateReq.readyState != 4) return;
- if (productTagAssociateReq.status != 200 && productTagAssociateReq.status != 304) {
-            alert('HTTP POST error ' + productTagAssociateReq.status + 'Response ' + productTagAssociateReq.responseText);
-         
-            return;
-        }
-        if (productTagAssociateReq.status == 200)
-        {
-alert('HTTP POST success: ' + productTagAssociateReq.responseText);
- 
-            
-        }
-       
-    }
+                        tagCreateRequest.send(JSON.stringify({tagCategory: category, tagString: string, tagSubCategory: subcat}));
+
+                    }
+                }
+            }
+            function tagHandler() {
+                if (tagCreateRequest.readyState != 4)
+                    return;
+                if (tagCreateRequest.status != 200 && tagCreateRequest.status != 304) {
+                    alert('HTTP POST error ' + tagCreateRequest.status + 'Response ' + tagCreateRequest.responseText);
+
+                    //ToDO: if tag is created already just append to product.  appendtagToProduct  
+                    if (appendtagToProduct != undefined) {
+                        tagAssociateWithProduct(appendtagToProduct, "tag");
+                    }
+                    return;
+                }
+                if (tagCreateRequest.status == 200)
+                {
+                    alert('HTTP POST success: ' + tagCreateRequest.responseText);
+                    var jsonTagObject = JSON.parse(tagCreateRequest.responseText);
+                    tagAssociateWithProduct(jsonTagObject.tagString, "tag");
+
+
+                }
+
+            }
+
+            function tagAssociateWithProduct(tagString, tag) {
+
+                var url = "https://vue-server-dev.appspot.com/api/product/" + tag + "/" + jsonObject.id + "/" + tagString;
+                if (XMLHttpRequest) {
+                    productTagAssociateReq = new XMLHttpRequest();
+                    if ("withCredentials" in productTagAssociateReq) {
+                        // Firefox 3.5 and Safari 4
+                        productTagAssociateReq.open('PUT', url, true);
+                        productTagAssociateReq.setRequestHeader('Custom-Header', 'javascript-client');
+                        productTagAssociateReq.setRequestHeader('Content-Type', 'application/json');
+                        productTagAssociateReq.onreadystatechange = tagAssociatHandler;
+
+                        productTagAssociateReq.send();
+
+                    }
+                }
+
+            }
+
+            function tagAssociatHandler() {
+                if (productTagAssociateReq.readyState != 4)
+                    return;
+                if (productTagAssociateReq.status != 200 && productTagAssociateReq.status != 304) {
+                    alert('HTTP POST error ' + productTagAssociateReq.status + 'Response ' + productTagAssociateReq.responseText);
+
+                    return;
+                }
+                if (productTagAssociateReq.status == 200)
+                {
+                    alert('HTTP POST success: ' + productTagAssociateReq.responseText);
+
+
+                }
+
+            }
+
 
             function myNewFunction(sel) {
 
@@ -508,11 +629,11 @@ alert('HTTP POST success: ' + productTagAssociateReq.responseText);
 
 
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.css">
-            <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-            <script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
+        <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+        <script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
 
 
-            <script type="text/javascript">
+        <script type="text/javascript">
             $(function() {
                 //                $("select").multiselect();
                 //
@@ -541,7 +662,41 @@ alert('HTTP POST success: ' + productTagAssociateReq.responseText);
             });
 
 
-            </script>
+        </script>
+        <script>
+            var valC, valS, valSC;
+
+
+
+
+            function addTagsToTable() {
+                valC = $("#select_tagCategory").val();
+                valS = $("#select_tagString").val();
+                valSC = $("#select_tagSubCategory").val();
+                var row = document.createElement('tr');
+                var thC = document.createElement('th');
+                thC.textContent = valC;
+                var thS = document.createElement('th');
+                thS.textContent = valS;
+                var thSC = document.createElement('th');
+                thSC.textContent = valSC;
+
+                var del = document.createElement('th')
+                var btn = document.createElement('Button');
+                btn.textContent = 'delete';
+                btn.onclick = function() {
+                    document.getElementById('created_tags_table').removeChild(row);
+                };
+                del.appendChild(btn);
+
+                row.appendChild(thC);
+                row.appendChild(thS);
+                row.appendChild(thSC);
+                row.appendChild(del);
+                document.getElementById('created_tags_table').appendChild(row);
+
+            }
+        </script>
 
     </head>
     <body onblur="window.focus()" onload="prettyPrint();" >
@@ -589,155 +744,157 @@ alert('HTTP POST success: ' + productTagAssociateReq.responseText);
             <div id="image_table_id"></div>
 
             <br> <br> <label> <span><strong>productTags:
-                            </strong></span>
 
-                    </label> <br> <br>
+                    </strong></span>
 
-
-                            <table class="altrowstable" id="created_tags_table" width="600">
-                                <caption>Tags Created</caption>
-
-                                <tr>
-                                    <th><strong>Tag Category:</strong>
-                                    </th>
-                                    <th><strong>Tag String:</strong>
-                                    </th>
-                                    <th><strong>Tag Sub Category:</strong>                      
-                                    </th>
-                                    <th><strong>Tag Deletion:</strong>                      
-                                    </th>
-                                </tr>
-                            </table>
+            </label> <br> <br>
 
 
-                            <table class="altrowstable" id="alternatecolor" width="600">
-                                <caption>we can create tags from here</caption>
+            <table class="altrowstable" id="created_tags_table" width="600">
+                <caption>Tags Created</caption>
 
-                                <tr>
-                                    <th><strong>tagCategory:</strong>
-
-                                        <select id="select_tagCategory" name="selection"   style="width: 200px">
-                                            <option value="Occasions">Occasions</option>
-                                            <option value="Party">Party</option>
-                                            <option value="Wedding">Wedding</option>
-                                            <option value="Honeymoon">Honeymoon</option>
-                                        </select>
-                                    </th>
-                                    <th><strong>tagString:</strong>
-                                        <div style="padding:20px">
-                                            <select id="select_tagString" name="selection" multiple="multiple"  style="width: 200px" data-native-menu="false">
-                                                <option value="Wedding Reception">Wedding Reception</option>
-                                                <option value="Community Block">Community Block</option>
-                                                <option value="Baby Shower">Baby Shower</option>
-                                                <option value="Costume Party">Costume Party</option>
-
-                                                <option value="Costume Party">Costume Party</option>
-                                                <option value="Retirement Party">Retirement Party</option>
-                                                <option value="Graduation Party">Graduation Party</option>
-                                                <option value="Invitation only party">Invitation only party</option>
-                                            </select>
-                                        </div>
-
-                                    </th>
-                                    <th><strong>tagSubCategory:</strong>
-                                        <div style="padding:20px">
-                                            <select id="select_tagSubCategory" name="selection" multiple="multiple"  style="width: 200px,height: 20px" data-native-menu="false">
-                                                <option value="Shirts">Shirts</option>
-                                                <option value="Jeans">Jeans</option>
-                                                <option value="Sarees">Sarees</option>
-                                                <option value="Leggings">Leggings</option>
-
-                                                <option value="Skirts">Skirts</option>
-                                                <option value="Scarfs">Scarfs</option>
-                                                <option value="Caps">Caps</option>
-                                            </select>
-                                            </
-
-                                    </th>
-
-                                </tr>
-
-                            </table>
-
-                            <input type="button" class="button" value="Create Tag" onclick="addTagsToTable()" />
-                            <script>
-                                var valC, valS, valSC;
+                <tr>
+                    <th><strong>Tag Category:</strong>
+                    </th>
+                    <th><strong>Tag String:</strong>
+                    </th>
+                    <th><strong>Tag Sub Category:</strong>                      
+                    </th>
+                    <th><strong>Tag Deletion:</strong>                      
+                    </th>
+                </tr>
+            </table>
 
 
+            <table class="altrowstable" id="alternatecolor" width="600">
+                <caption>we can create tags from here</caption>
 
+                <tr>
+                    <th><strong>tagCategory:</strong>
 
-                                function addTagsToTable() {
-                                    valC = $("#select_tagCategory").val();
-                                    valS = $("#select_tagString").val();
-                                    valSC = $("#select_tagSubCategory").val();
-                                    var row = document.createElement('tr');
-                                    var thC = document.createElement('th');
-                                    thC.textContent = valC;
-                                    var thS = document.createElement('th');
-                                    thS.textContent = valS;
-                                    var thSC = document.createElement('th');
-                                    thSC.textContent = valSC;
+                        <select id="select_tagCategory" name="selection"   style="width: 200px">
+                            <option value="Occasions">Occasions</option>
+                            <option value="Party">Party</option>
+                            <option value="Wedding">Wedding</option>
+                            <option value="Honeymoon">Honeymoon</option>
+                        </select>
+                    </th>
+                    <th><strong>tagString:</strong>
+                <div style="padding:20px">
+                    <select id="select_tagString" name="selection" multiple="multiple"  style="width: 200px" data-native-menu="false">
+                        <option value="Wedding Reception">Wedding Reception</option>
+                        <option value="Community Block">Community Block</option>
+                        <option value="Baby Shower">Baby Shower</option>
+                        <option value="Costume Party">Costume Party</option>
 
-                                    var del = document.createElement('th')
-                                    var btn = document.createElement('Button');
-                                    btn.textContent = 'delete';
-                                    btn.onclick = function() {
-                                        document.getElementById('created_tags_table').removeChild(row);
-                                       var unTagString;
-                          for(var i=0;i<valS.length;i++){
-                          if(unTagString === undefined ){
-                              unTagString = valS[i];
-                              } else{
-                         unTagString = unTagString + ","+valS[i];
-                                   }
-                       }
-                                     //delete TAG
-                                  tagAssociateWithProduct(unTagString,"untag");
-                                    };
-                                    del.appendChild(btn);
+                        <option value="Costume Party">Costume Party</option>
+                        <option value="Retirement Party">Retirement Party</option>
+                        <option value="Graduation Party">Graduation Party</option>
+                        <option value="Invitation only party">Invitation only party</option>
+                    </select>
+                </div>
 
-                                    row.appendChild(thC);
-                                    row.appendChild(thS);
-                                    row.appendChild(thSC);
-                                    row.appendChild(del);
-                                    document.getElementById('created_tags_table').appendChild(row);
-var tagString;
-                          for(var i=0;i<valS.length;i++){
-                          if(tagString === undefined ){
-                              tagString = valS[i];
-                              } else{
-                         tagString = tagString + ","+valS[i];
-                                   }
-                       }
-appendtagToProduct = tagString;
-var subCatString;
-  for(var i=0;i<valSC.length;i++){
-                          if(subCatString === undefined ){
-                              subCatString = valSC[i];
-                              } else{
-                         subCatString = subCatString + ","+valSC[i];
-                                   }
-                       }
-  
-                                     //create TAG.
-                                    createTagRequest(valC,tagString,subCatString);
- 
+                </th>
+                <th><strong>tagSubCategory:</strong>
+                <div style="padding:20px">
+                    <select id="select_tagSubCategory" name="selection" multiple="multiple"  style="width: 200px,height: 20px" data-native-menu="false">
+                        <option value="Shirts">Shirts</option>
+                        <option value="Jeans">Jeans</option>
+                        <option value="Sarees">Sarees</option>
+                        <option value="Leggings">Leggings</option>
 
-                                }
-                            </script>
+                        <option value="Skirts">Skirts</option>
+                        <option value="Scarfs">Scarfs</option>
+                        <option value="Caps">Caps</option>
+                    </select>
+                    </
 
-                            <br> <br> <label> <span><strong>productProviders:
-                                            </strong></span></label>
-                                    <div id ="product_providers_div_id"></div>
+                    </th>
+
+                    </tr>
+
+            </table>
+
+            <input type="button" class="button" value="Create Tag" onclick="addTagsToTable()" />
+            <script>
+                var valC, valS, valSC;
 
 
 
 
+                function addTagsToTable() {
+                    valC = $("#select_tagCategory").val();
+                    valS = $("#select_tagString").val();
+                    valSC = $("#select_tagSubCategory").val();
+                    var row = document.createElement('tr');
+                    var thC = document.createElement('th');
+                    thC.textContent = valC;
+                    var thS = document.createElement('th');
+                    thS.textContent = valS;
+                    var thSC = document.createElement('th');
+                    thSC.textContent = valSC;
 
-                                    <label> <span>&nbsp;</span> <input type="button"
-                                                                       class="button" value="Send" onClick="getCuratedInfo()" />
-                                    </label>
-                                    </form>
-                                    </body>
+                    var del = document.createElement('th')
+                    var btn = document.createElement('Button');
+                    btn.textContent = 'delete';
+                    btn.onclick = function() {
+                        document.getElementById('created_tags_table').removeChild(row);
+                        var unTagString;
+                        for (var i = 0; i < valS.length; i++) {
+                            if (unTagString === undefined) {
+                                unTagString = valS[i];
+                            } else {
+                                unTagString = unTagString + "," + valS[i];
+                            }
+                        }
+                        //delete TAG
+                        tagAssociateWithProduct(unTagString, "untag");
+                    };
+                    del.appendChild(btn);
 
-                                    </html>
+                    row.appendChild(thC);
+                    row.appendChild(thS);
+                    row.appendChild(thSC);
+                    row.appendChild(del);
+                    document.getElementById('created_tags_table').appendChild(row);
+                    var tagString;
+                    for (var i = 0; i < valS.length; i++) {
+                        if (tagString === undefined) {
+                            tagString = valS[i];
+                        } else {
+                            tagString = tagString + "," + valS[i];
+                        }
+                    }
+                    appendtagToProduct = tagString;
+                    var subCatString;
+                    for (var i = 0; i < valSC.length; i++) {
+                        if (subCatString === undefined) {
+                            subCatString = valSC[i];
+                        } else {
+                            subCatString = subCatString + "," + valSC[i];
+                        }
+                    }
+
+                    //create TAG.
+                    createTagRequest(valC, tagString, subCatString);
+
+
+                }
+            </script>
+
+            <br> <br> <label> <span><strong>productProviders:
+                    </strong></span></label>
+            <div id ="product_providers_div_id"></div>
+
+
+
+
+
+            <label> <span>&nbsp;</span> <input type="button"
+                                               class="button" value="Send" onClick="getCuratedInfo()" />
+            </label>
+        </form>
+    </body>
+
+
+</html>
