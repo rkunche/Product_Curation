@@ -1,0 +1,48 @@
+<html>
+<script>
+var request;
+function create_user(){
+var url = "https://vue-server-dev.appspot.com/api/user";
+ var name = document.getElementById("usernameId").value;
+ var email = document.getElementById("useremailId").value;
+ if(name.length < 1){
+alert("Please Enter Your Name");
+ return;
+  }
+ if(email.length < 1){
+alert("Please Enter Your Email");
+ return;
+  }
+  if(XMLHttpRequest) {
+            request = new XMLHttpRequest();
+            if ("withCredentials" in request) {
+                // Firefox 3.5 and Safari 4
+                request.open('POST', url, true);
+                request.setRequestHeader('Custom-Header', 'javascript-client');
+                request.setRequestHeader('Content-Type','application/json');
+                request.onreadystatechange = post_handler;
+
+
+ request.send(JSON.stringify({id:null, email:email, firstName:name,lastName:" ", joinTime:null, deviceId:"140862159968112",gcmRegistrationId:null,facebookId:"FACEBOOK_ID_UNKNOWN",googlePlusId:"GOOGLE_PLUS_ID_UNKNOWN",facebookShortTermAcessToken:null,facebookLongTermAcessToken:null,userImageURL:null}));
+}
+}
+}
+  function post_handler() {
+        if (request.readyState != 4) return;
+        if (request.status == 200)
+        {
+            alert('HTTP POST success: ' + request.responseText);
+        }
+        if (request.status != 200 && request.status != 304) {
+            alert('HTTP POST error ' + request.status + 'Response ' + request.responseText);
+
+            return;
+        }
+    }
+</script>
+<body>
+User Name <input type="text" placeholder ="enter Name" id ="usernameId"> </input><br>
+    Email <input type ="text" placeholder ="enter Email" id ="useremailId"></input><br>
+ <Button type = "button" onClick="create_user()">Create User</button>
+</body>
+</html>
