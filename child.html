@@ -663,40 +663,7 @@
 
 
         </script>
-        <script>
-            var valC, valS, valSC;
-
-
-
-
-            function addTagsToTable() {
-                valC = $("#select_tagCategory").val();
-                valS = $("#select_tagString").val();
-                valSC = $("#select_tagSubCategory").val();
-                var row = document.createElement('tr');
-                var thC = document.createElement('th');
-                thC.textContent = valC;
-                var thS = document.createElement('th');
-                thS.textContent = valS;
-                var thSC = document.createElement('th');
-                thSC.textContent = valSC;
-
-                var del = document.createElement('th')
-                var btn = document.createElement('Button');
-                btn.textContent = 'delete';
-                btn.onclick = function() {
-                    document.getElementById('created_tags_table').removeChild(row);
-                };
-                del.appendChild(btn);
-
-                row.appendChild(thC);
-                row.appendChild(thS);
-                row.appendChild(thSC);
-                row.appendChild(del);
-                document.getElementById('created_tags_table').appendChild(row);
-
-            }
-        </script>
+   
 
     </head>
     <body onblur="window.focus()" onload="prettyPrint();" >
