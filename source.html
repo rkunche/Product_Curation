@@ -19,7 +19,7 @@
             //frame.onload = function(){};
             otherWindow.postMessage(productString, "*");
             clearInterval(myVar)
-           
+             
         }
         function openOther(productString) {
 //otherWindow = window.open("child.html", "otherWindowt","200","200","_blank");
@@ -41,7 +41,7 @@
             otherWindow = window.open('child.html', '_blank', "width=600,height=900,screenX=50,left=1000,screenY=50,top=50,status=yes,menubar=yes");
             myVar = setInterval(function() {
                 sendMessage(productString)
-            }, 1000);
+            }, 2000);
 
         }
 

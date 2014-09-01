@@ -150,13 +150,29 @@
         </style>
         <script>
             var available_colors = ["Color1", "Color2", "Color3", "Color4", "Color5", "Color6", "Color7"];
+            var available_sizes = ["Size1", "Size2", "Size3", "Size4", "Size5", "Size6", "Size7"];
+
+            //prototype for clear the array values.
+            Array.prototype.clear = function() {
+                this.length = 0;
+            };
+
             var datafromparent;
             var jsonObject;
+            var providerUpdaterequest;
+            var tagCreateRequest;
+            var tagCreationReqeustCount = 0;
+            var productTagAssociateReq;
+            var tagObject = {tagCategory: "", tagString: "", tagSubCategory: ""};
+            var tagArray = [];
             window.addEventListener("message", function(event) {
-                //alert("The other window's function executed."+event.data);
+                // alert("The other window's function executed.");
                 datafromparent = event.data;
                 jsonObject = JSON.parse(datafromparent);
-                alert(event.data);
+
+                tagCreationReqeustCount = 0;
+                tagArray.clear();
+
                 afterLoadingThePopup();
 
             }, false);
@@ -254,14 +270,19 @@
                     table.appendChild(getElemnt('currencyCode', providers_array[i].currencyCode));
                     table.appendChild(getElemnt('store', providers_array[i].store));
 
-                    var availability_1 = getElemnt('availability', providers_array[i].availability);
+                    var availability_1 = getAvailability('availability', providers_array[i].availability);
                     table.appendChild(availability_1);
 
                     table.appendChild(getElemnt('onSale', providers_array[i].onSale));
                     table.appendChild(getElemnt('salePrice', providers_array[i].salePrice));
                     table.appendChild(getElemnt('saleExpiryDate', providers_array[i].saleExpiryDate));
-                    table.appendChild(getElemnt('availableColors', providers_array[i].availableColors));
-                    table.appendChild(getElemnt('availableSizes', providers_array[i].availableSizes));
+
+                    var available_clrs = getAvailableColors('availableColors', providers_array[i].availableColors);
+                    table.appendChild(available_clrs);
+
+                    var available_sizes_1 = getAvailableSizes('availableSizes', providers_array[i].availableSizes);
+                    table.appendChild(available_sizes_1);
+
                     table.appendChild(getElemnt('availableAtZipCodes', providers_array[i].availableAtZipCodes));
 
                     product_provider_div.appendChild(table);
@@ -342,50 +363,82 @@
                 var th_val = document.createElement('th');
                 var input = document.createElement('input');
                 input.value = value;
-                input.type = 'text'
+                input.type = 'text';
+                input.id = "colors_text_id";
                 th_val.appendChild(input);
                 tr.appendChild(th_val);
-
-
-                for (val v in available_colors) {
-                    alert(v);
-                }
 
                 var th = document.createElement('th');
 
                 var sel = document.createElement('select');
+                sel.id = "color_selector";
+                sel.onchange = function() {
+                    var vl = $("#color_selector").val();
+                    var current_val = document.getElementById('colors_text_id').value;
 
-                var optionINS = document.createElement('option');
-                optionINS.textContent = 'IN_STOCK';
 
-                var optionXI = document.createElement('option');
-                optionXI.textContent = 'EXCESS_INVENTORY';
+                    if (current_val === '')
+                        document.getElementById('colors_text_id').value = vl;
+                    else
+                        document.getElementById('colors_text_id').value = current_val + "," + vl;
+                    //alert(vl);
+                };
 
-                var optionRL = document.createElement('option');
-                optionRL.textContent = 'RUNNING_LOW';
+                available_colors.forEach(function(entry) {
+                    var option = document.createElement('option');
+                    option.textContent = entry;
+                    sel.appendChild(option);
+                });
 
-                var optionTU = document.createElement('option');
-                optionTU.textContent = 'TEMPORARY_UNAVAILABLE';
-
-                var optionOS = document.createElement('option');
-                optionOS.textContent = 'OUT_OF_STOCK';
-
-                var optionPU = document.createElement('option');
-                optionPU.textContent = 'PERMANENTLY_UNAVAILABLE';
-
-                sel.appendChild(optionINS);
-                sel.appendChild(optionXI);
-                sel.appendChild(optionRL);
-                sel.appendChild(optionTU);
-                sel.appendChild(optionOS);
-                sel.appendChild(optionPU);
 
                 th.appendChild(sel);
                 tr.appendChild(th);
                 return tr;
             }
 
+            function getAvailableSizes(key, value) {
 
+
+                var tr = document.createElement('tr');
+                var th_key = document.createElement('th');
+                th_key.textContent = key;
+                tr.appendChild(th_key);
+
+                var th_val = document.createElement('th');
+                var input = document.createElement('input');
+                input.value = value;
+                input.type = 'text';
+                input.id = "sizes_text_id";
+                th_val.appendChild(input);
+                tr.appendChild(th_val);
+
+                var th = document.createElement('th');
+
+                var sel = document.createElement('select');
+                sel.id = "sizes_selector";
+                sel.onchange = function() {
+                    var vl = $("#sizes_selector").val();
+                    var current_val = document.getElementById('sizes_text_id').value;
+
+
+                    if (current_val === '')
+                        document.getElementById('sizes_text_id').value = vl;
+                    else
+                        document.getElementById('sizes_text_id').value = current_val + "," + vl;
+                    //alert(vl);
+                };
+
+                available_sizes.forEach(function(entry) {
+                    var option = document.createElement('option');
+                    option.textContent = entry;
+                    sel.appendChild(option);
+                });
+
+
+                th.appendChild(sel);
+                tr.appendChild(th);
+                return tr;
+            }
 
             function getCuratedInfo() {
                 var title = document.getElementById("id_title").value;
@@ -438,6 +491,7 @@
                 if (request.status == 200)
                 {
                     alert("Curated Successfully " + request.responseText);
+                    updateProvider();
                 }
                 if (request.status != 200 && request.status != 304) {
                     alert('HTTP POST error ' + request.status + 'Response ' + request.responseText);
@@ -446,7 +500,115 @@
                 }
             }
 
-///
+            function updateProvider() {
+                var url = "https://vue-server-dev.appspot.com/api/productprovider/" + jsonObject.productProviders[0].id;
+                if (XMLHttpRequest) {
+                    providerUpdaterequest = new XMLHttpRequest();
+                    if ("withCredentials" in providerUpdaterequest) {
+                        // Firefox 3.5 and Safari 4
+                        providerUpdaterequest.open('PUT', url, true);
+                        providerUpdaterequest.setRequestHeader('Custom-Header', 'javascript-client');
+                        providerUpdaterequest.setRequestHeader('Content-Type', 'application/json');
+                        providerUpdaterequest.onreadystatechange = function providerHandler() {
+                            if (providerUpdaterequest.readyState != 4)
+                                return;
+                            if (providerUpdaterequest.status == 200)
+                            {
+                                alert('HTTP POST success: ' + providerUpdaterequest.responseText);
+                                createTagRequest();
+                            }
+                            if (providerUpdaterequest.status != 200 && providerUpdaterequest.status != 304) {
+                                alert('HTTP POST error ' + providerUpdaterequest.status + 'Response ' + providerUpdaterequest.responseText);
+
+                                return;
+                            }
+                        };
+
+                        providerUpdaterequest.send(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: 0, currencyCode: "USD", store: "shop.nordstrom.com", availability: "IN_STOCK",
+                            price: 29.0, onSale: false, salePrice: 0.0, saleExpirtyDate: 0, availableColors: ["blue", "green"], availableSizes: null, availableAtZipCodes: null}));
+
+                    }
+                }
+            }
+
+
+            function createTagRequest() {
+
+                var url = "https://vue-server-dev.appspot.com/api/producttag";
+                if (XMLHttpRequest) {
+                    tagCreateRequest = new XMLHttpRequest();
+                    if ("withCredentials" in request) {
+                        tagCreateRequest.open('POST', url, true);
+                        tagCreateRequest.setRequestHeader('Custom-Header', 'javascript-client');
+                        tagCreateRequest.setRequestHeader('Content-Type', 'application/json');
+                        tagCreateRequest.onreadystatechange = tagHandler();
+
+                        tagCreateRequest.send(JSON.stringify({tagCategory: tagArray[tagCreationReqeustCount].tagCategory, tagString: tagArray[tagCreationReqeustCount].tagString, tagSubCategory: tagArray[tagCreationReqeustCount].tagSubCategory}));
+
+                    }
+                }
+            }
+            function tagHandler() {
+                if (tagCreateRequest.readyState != 4)
+                    return;
+                if (tagCreateRequest.status != 200 && tagCreateRequest.status != 304) {
+                    alert('HTTP POST error ' + tagCreateRequest.status + 'Response ' + tagCreateRequest.responseText);
+                    tagAssociateWithProduct(tagArray[tagCreationReqeustCount].tagString);
+                    tagCreationReqeustCount = tagCreationReqeustCount + 1;
+                    if (tagCreationReqeustCount < tagArray.length) {
+                        createTagRequest();
+                    }
+                    return;
+                }
+                if (tagCreateRequest.status == 200)
+                {
+                    alert('HTTP POST success: ' + tagCreateRequest.responseText);
+                    tagAssociateWithProduct();
+                    tagCreationReqeustCount = tagCreationReqeustCount + 1;
+                    if (tagCreationReqeustCount < tagArray.length) {
+                        createTagRequest();
+                    }
+
+                }
+
+            }
+
+            function tagAssociateWithProduct(tagString) {
+
+                var url = "https://vue-server-dev.appspot.com/api/product/tag/" + jsonObject.id + "/" + tagString;
+                if (XMLHttpRequest) {
+                    productTagAssociateReq = new XMLHttpRequest();
+                    if ("withCredentials" in request) {
+                        // Firefox 3.5 and Safari 4
+                        productTagAssociateReq.open('PUT', url, true);
+                        productTagAssociateReq.setRequestHeader('Custom-Header', 'javascript-client');
+                        productTagAssociateReq.setRequestHeader('Content-Type', 'application/json');
+                        productTagAssociateReq.onreadystatechange = tagAssociatHandler;
+
+                        productTagAssociateReq.send();
+
+                    }
+                }
+
+            }
+
+            function tagAssociatHandler() {
+                if (productTagAssociateReq.readyState != 4)
+                    return;
+                if (productTagAssociateReq.status != 200 && productTagAssociateReq.status != 304) {
+                    alert('HTTP POST error ' + productTagAssociateReq.status + 'Response ' + productTagAssociateReq.responseText);
+
+                    return;
+                }
+                if (productTagAssociateReq.status == 200)
+                {
+                    alert('HTTP POST success: ' + productTagAssociateReq.responseText);
+
+
+                }
+
+            }
+
             function myNewFunction(sel) {
 
                 jsonObject.currentProductState = sel;
@@ -462,32 +624,32 @@
 
 
         <script type="text/javascript">
-        $(function() {
-            //                $("select").multiselect();
-            //
-            //                $("select_tagCategory").multiselect({
-            //                    multiple: false,
-            //                    header: "Select an option",
-            //                    noneSelectedText: "Select an Option",
-            //                    selectedList: 1
-            //
-            //                });
-            //                $("select_tagString").multiselect();
+            $(function() {
+                //                $("select").multiselect();
+                //
+                //                $("select_tagCategory").multiselect({
+                //                    multiple: false,
+                //                    header: "Select an option",
+                //                    noneSelectedText: "Select an Option",
+                //                    selectedList: 1
+                //
+                //                });
+                //                $("select_tagString").multiselect();
 
 
 
-        });
-
-        $(function() {
-
-            $('#select_tagString').multiselect({
-                includeSelectAllOption: true
-            });
-            $('#select_tagSubCategory').multiselect({
-                includeSelectAllOption: true
             });
 
-        });
+            $(function() {
+
+                $('#select_tagString').multiselect({
+                    includeSelectAllOption: true
+                });
+                $('#select_tagSubCategory').multiselect({
+                    includeSelectAllOption: true
+                });
+
+            });
 
 
         </script>

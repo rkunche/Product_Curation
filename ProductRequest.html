@@ -1,6 +1,21 @@
 <html>
     <body>
+        <style>
+            .content {
+                width: 400px;
+                height: 600px;
+                background-color: blue;
 
+                position:absolute;
+                left:0; right:0;
+                top:0; bottom:0;
+                margin:auto;
+
+                max-width:100%;
+                max-height:100%;
+                overflow:auto;
+            }
+        </style>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
         <script>
@@ -145,23 +160,8 @@
 
         </script>
         <Button onclick="getCrawledProducts();">Get CrawledPoducts</Button>
-        <table id="productId">
+        <table id="productId"></table>
 
-    </bodY>
+    </body>
 </html>
-<style>
-    .content {
-        width: 400px;
-        height: 600px;
-        background-color: blue;
 
-        position:absolute;
-        left:0; right:0;
-        top:0; bottom:0;
-        margin:auto;
-
-        max-width:100%;
-        max-height:100%;
-        overflow:auto;
-    }
-</style>
