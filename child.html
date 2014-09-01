@@ -600,7 +600,24 @@
                 }
 
             }
+                function unTag(tagString){
+                  var url = "https://vue-server-dev.appspot.com/api/product/untag/"+jsonObject.id+"/"+tagString;
+                  console.log(url);
+                if(XMLHttpRequest) {
+            productTagAssociateReq = new XMLHttpRequest();
+                if ("withCredentials" in productTagAssociateReq) {
+                // Firefox 3.5 and Safari 4
+                productTagAssociateReq.open('PUT', url, true);
+                productTagAssociateReq.setRequestHeader('Custom-Header', 'javascript-client');
+                productTagAssociateReq.setRequestHeader('Content-Type','application/json');
+                productTagAssociateReq.onreadystatechange = tagAssociatHandler;
+                productTagAssociateReq.send();
+ 
+            }
+       } 
 
+
+    }
             function tagAssociatHandler() {
                 if (productTagAssociateReq.readyState != 4)
                     return;
@@ -815,7 +832,8 @@
                             }
                         }
                         //delete TAG
-                        tagAssociateWithProduct(unTagString, "untag");
+                        unTag(unTagString);
+                       // tagAssociateWithProduct(unTagString, "untag");
                     };
                     del.appendChild(btn);
 
