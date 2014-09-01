@@ -11,7 +11,7 @@
             // alert("The other window's function executed."+event.data);
             datafromparent = event.data;
             openOther(datafromparent);
-         
+
         }, false);
 
 ////
@@ -19,7 +19,7 @@
             //frame.onload = function(){};
             otherWindow.postMessage(productString, "*");
             clearInterval(myVar)
-             
+
         }
         function openOther(productString) {
 //otherWindow = window.open("child.html", "otherWindowt","200","200","_blank");
