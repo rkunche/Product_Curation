@@ -480,7 +480,7 @@
                         request.setRequestHeader('Content-Type', 'application/json');
                         request.onreadystatechange = update_handler;
                         //product update request:
-                        alert(JSON.stringify({id: jsonObject.id, ownerAisleId: jsonObject.ownerAisleId, ownerProductListId: jsonObject.ownerProductListId, creatorId: jsonObject.creatorId, curatorId: jsonObject.curatorId, title: jsonObject.title, description: jsonObject.description, currentProductState: jsonObject.currentProductState, relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
+                        //alert(JSON.stringify({id: jsonObject.id, ownerAisleId: jsonObject.ownerAisleId, ownerProductListId: jsonObject.ownerProductListId, creatorId: jsonObject.creatorId, curatorId: jsonObject.curatorId, title: jsonObject.title, description: jsonObject.description, currentProductState: jsonObject.currentProductState, relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
                         request.send(JSON.stringify({id: jsonObject.id, ownerAisleId: jsonObject.ownerAisleId, ownerProductListId: jsonObject.ownerProductListId, creatorId: jsonObject.creatorId, curatorId: jsonObject.curatorId, title: jsonObject.title, description: jsonObject.description, currentProductState: jsonObject.currentProductState, relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
 
                     }
@@ -493,11 +493,11 @@
                     return;
                 if (request.status == 200)
                 {
-                    alert("Curated Successfully " + request.responseText);
+                    //alert("Curated Successfully " + request.responseText);
                     updateProvider();
                 }
                 if (request.status != 200 && request.status != 304) {
-                    alert('HTTP POST error ' + request.status + 'Response ' + request.responseText);
+                    //alert('HTTP POST error ' + request.status + 'Response ' + request.responseText);
 
                     return;
                 }
@@ -523,11 +523,11 @@
                                 return;
                             if (providerUpdaterequest.status == 200)
                             {
-                                alert('HTTP POST success: ' + providerUpdaterequest.responseText);
+                                //alert('HTTP POST success: ' + providerUpdaterequest.responseText);
 
                             }
                             if (providerUpdaterequest.status != 200 && providerUpdaterequest.status != 304) {
-                                alert('HTTP POST error ' + providerUpdaterequest.status + 'Response ' + providerUpdaterequest.responseText);
+                               // alert('HTTP POST error ' + providerUpdaterequest.status + 'Response ' + providerUpdaterequest.responseText);
 
                                 return;
                             }
@@ -563,7 +563,7 @@
                 if (tagCreateRequest.readyState != 4)
                     return;
                 if (tagCreateRequest.status != 200 && tagCreateRequest.status != 304) {
-                    alert('HTTP POST error ' + tagCreateRequest.status + 'Response ' + tagCreateRequest.responseText);
+                    //alert('HTTP POST error ' + tagCreateRequest.status + 'Response ' + tagCreateRequest.responseText);
 
                     //ToDO: if tag is created already just append to product.  appendtagToProduct  
                     if (appendtagToProduct != undefined) {
@@ -573,7 +573,7 @@
                 }
                 if (tagCreateRequest.status == 200)
                 {
-                    alert('HTTP POST success: ' + tagCreateRequest.responseText);
+                    //alert('HTTP POST success: ' + tagCreateRequest.responseText);
                     var jsonTagObject = JSON.parse(tagCreateRequest.responseText);
                     tagAssociateWithProduct(jsonTagObject.tagString, "tag");
 
@@ -622,13 +622,13 @@
                 if (productTagAssociateReq.readyState != 4)
                     return;
                 if (productTagAssociateReq.status != 200 && productTagAssociateReq.status != 304) {
-                    alert('HTTP POST error ' + productTagAssociateReq.status + 'Response ' + productTagAssociateReq.responseText);
+                    //alert('HTTP POST error ' + productTagAssociateReq.status + 'Response ' + productTagAssociateReq.responseText);
 
                     return;
                 }
                 if (productTagAssociateReq.status == 200)
                 {
-                    alert('HTTP POST success: ' + productTagAssociateReq.responseText);
+                    //lert('HTTP POST success: ' + productTagAssociateReq.responseText);
 
 
                 }
