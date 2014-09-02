@@ -22,6 +22,8 @@
 
         }
         function openOther(productString) {
+             var strings = productString.split("##");
+               datafromparent = strings[1]
 //otherWindow = window.open("child.html", "otherWindowt","200","200","_blank");
 //get source url.
             var jsonResponse = JSON.parse(datafromparent);

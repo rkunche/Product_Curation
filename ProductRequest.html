@@ -1,163 +1,208 @@
 <html>
-    <body>
-        <style>
-            .content {
-                width: 400px;
-                height: 600px;
-                background-color: blue;
 
-                position:absolute;
-                left:0; right:0;
-                top:0; bottom:0;
-                margin:auto;
+    <body onLoad = "readParams( );">
 
-                max-width:100%;
-                max-height:100%;
-                overflow:auto;
-            }
-        </style>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
         <script>
-            var request;
-            var products = [];
-            var otherWindow;
-            var boolean = false;
-            var myVar;
-            //prototype for clear the array values.
-            Array.prototype.clear = function() {
-                this.length = 0;
-            };
-            function sendMessage(productString) {
-                otherWindow.postMessage(productString, "*");
-                clearInterval(myVar)
+        var request;
+        var products = [];
+        var otherWindow;
+        var boolean = false;
+        var myVar;
+        //get tags from server.
+        var tagString;
+        var tagsrequest;
+
+        //for user authentication
+        var users = [];
+        var curatorID;
+
+        //prototype for clear the array values.
+        Array.prototype.clear = function() {
+            this.length = 0;
+        };
+        function sendMessage(productString) {
+            productString = tagString + "##" + productString;
+            otherWindow.postMessage(productString, "*");
+            clearInterval(myVar)
+        }
+
+        function readParams( ) {
+            //static users
+            users.push(5505177142427648);
+            users.push(6419807607980032);
+            var srchString = unescape(location.search.substring(1, location.search.length));
+            var name = srchString.split("=");
+            curatorID = name[1];
+            getTags();
+
+        }
+
+
+        function openOther(productString) {
+            otherWindow = window.open("source.html", "_blank");
+
+            myVar = setInterval(function() {
+                sendMessage(productString)
+            }, 1000);
+
+            //if(boolean == false){
+            //boolean = true;
+            //        otherWindow = window.open("child.html", "otherWindow","400","500");
+
+            //} else {
+            //otherWindow.postMessage(productString, "*");
+
+            //boolean = false;
+            //}
+            //otherWindow.postMessage("this is raju posting data to other window", "*");
+        }
+
+        function getCrawledProducts() {
+            var boolval = false;
+            for (var i = 0; i < users.length; i++) {
+                if (curatorID == users[i])
+                    boolval = true;
             }
-            function openOther(productString) {
-                otherWindow = window.open("source.html", "_blank");
-
-                myVar = setInterval(function() {
-                    sendMessage(productString)
-                }, 1000);
-
-                //if(boolean == false){
-                //boolean = true;
-                //        otherWindow = window.open("child.html", "otherWindow","400","500");
-
-                //} else {
-                //otherWindow.postMessage(productString, "*");
-
-                //boolean = false;
-                //}
-                //otherWindow.postMessage("this is raju posting data to other window", "*");
-            }
-
-            function getCrawledProducts() {
-
-                var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=CRAWLED&limit=50";
-                if (XMLHttpRequest)
+            if (!boolval) {
+                  alert("user does not exist");
+                  return;
+            }  
+            var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=CRAWLED&limit=50";
+            if (XMLHttpRequest)
+            {
+                request = new XMLHttpRequest();
+                if ("withCredentials" in request)
                 {
-                    request = new XMLHttpRequest();
-                    if ("withCredentials" in request)
-                    {
-                        // Firefox 3.5 and Safari 4
-                        request.open('GET', url, true);
-                        request.onreadystatechange = getHandler;
-                        request.send();
-                    }
+                    // Firefox 3.5 and Safari 4
+                    request.open('GET', url, true);
+                    request.onreadystatechange = getHandler;
+                    request.send();
                 }
             }
-            //get result handler
-            function getHandler() {
-                if (request.readyState != 4)
-                    return;
-                if (request.status == 200)
+        }
+        //get result handler
+        function getHandler() {
+            if (request.readyState != 4)
+                return;
+            if (request.status == 200)
+            {
+
+                var jsonResponse = JSON.parse(request.responseText);
+                //alert('HTTP GET success: ' +jsonResponse.length  );
+                //clear the old data in array and populate with new product data.
+                products.clear();
+                for (var i = 0; i < jsonResponse.length; i++) {
+                    var jsonTempObject = jsonResponse[i];
+                    var productObject = {id: jsonTempObject.id, ownerAisleId: jsonTempObject.ownerAisleId, ownerProductListId: jsonTempObject.ownerProductListId,
+                        creatorId: jsonTempObject.creatorId, curatorId: jsonTempObject.curatorId, title: jsonTempObject.title, description: jsonTempObject.description,
+                        currentProductState: jsonTempObject.currentProductState, relatedProductIds: jsonTempObject.relatedProductIds, productImages: jsonTempObject.productImages,
+                        productProviders: jsonTempObject.productProviders, comments: jsonTempObject.comments, productTags: jsonTempObject.productTags, ratings: jsonTempObject.ratings};
+                    products.push(productObject);
+                }
+                prepareTable();
+            }
+            if (request.status != 200 && request.status != 304) {
+                alert('HTTP GET error ' + request.status);
+                return;
+            }
+        }
+
+        //prepare table with received products
+        function prepareTable() {
+            var table = document.getElementById("productId");
+            for (var i = 0; i < products.length; i++) {
+                if (i % 5 == 0) {
+                    var tr = document.createElement("tr");
+                    table.appendChild(tr);
+                }
+                var td = document.createElement("td");
+                tr.appendChild(td);
+                var imag = document.createElement("img");
+
+                imag.src = products[i].productImages[0].externalURL;
+                var divImage = document.createElement("div");
+                divImage.appendChild(imag);
+
+                //var div = document.createElement("div");
+                //div.className = "content";
+                //div.appendChild(imag);
+                //td.appendChild(div);
+                var title = document.createTextNode("Title : " + products[i].title);
+                var state = document.createTextNode("State : " + products[i].currentProductState);
+
+
+                var divTitle = document.createElement("div");
+                divTitle.appendChild(title);
+                var divState = document.createElement("div");
+                divState.appendChild(state);
+                td.appendChild(divTitle);
+                td.appendChild(divState);
+                td.appendChild(divImage);
+                td.style.border = "thin dotted red";
+                createButton(td, curatethis_product, products[i]);
+
+            }
+        }
+        //create button function
+        http://stackoverflow.com/questions/9810035/how-to-get-element-and-html-from-window-open-js-function-with-jquery
+                function createButton(td, curatethis_product, product) {
+                    var button = document.createElement("input");
+                    button.type = "button";
+                    button.value = "Curate Now";
+                    //button.onclick = curatethis_product;
+                    //var elem = document.getElementById("btn"),
+                    obj = {
+                        handleEvent: function() {
+                            var productString = JSON.stringify(product)
+                            // var  MyWindow=window.open('file:///home/advisors/Desktop/test.html','MyWindow',width=100,height=100,"_blank");
+                            openOther(productString);
+                        },
+                        dude: product.title
+                    };
+
+                    button.addEventListener("click", obj, false);
+
+                    td.appendChild(button);
+                }
+        //on curate button click function
+        function curatethis_product() {
+
+            alert("curate product called " + this.name);
+            //MyWindow=window.open('file:///home/advisors/Desktop/test.html','MyWindow',width=100,height=100,"_blank");
+
+        }
+        function getTags() {
+
+            var url = "https://vue-server-dev.appspot.com/api/producttags/all";
+            if (XMLHttpRequest)
+            {
+                tagsrequest = new XMLHttpRequest();
+                if ("withCredentials" in tagsrequest)
                 {
-
-                    var jsonResponse = JSON.parse(request.responseText);
-                    //alert('HTTP GET success: ' +jsonResponse.length  );
-                    //clear the old data in array and populate with new product data.
-                    products.clear();
-                    for (var i = 0; i < jsonResponse.length; i++) {
-                        var jsonTempObject = jsonResponse[i];
-                        var productObject = {id: jsonTempObject.id, ownerAisleId: jsonTempObject.ownerAisleId, ownerProductListId: jsonTempObject.ownerProductListId,
-                            creatorId: jsonTempObject.creatorId, curatorId: jsonTempObject.curatorId, title: jsonTempObject.title, description: jsonTempObject.description,
-                            currentProductState: jsonTempObject.currentProductState, relatedProductIds: jsonTempObject.relatedProductIds, productImages: jsonTempObject.productImages,
-                            productProviders: jsonTempObject.productProviders, comments: jsonTempObject.comments, productTags: jsonTempObject.productTags, ratings: jsonTempObject.ratings};
-                        products.push(productObject);
-                    }
-                    prepareTable();
-                }
-                if (request.status != 200 && request.status != 304) {
-                    alert('HTTP GET error ' + request.status);
-                    return;
+                    // Firefox 3.5 and Safari 4
+                    tagsrequest.open('GET', url, true);
+                    tagsrequest.onreadystatechange = tagRespnseHandler;
+                    tagsrequest.send();
                 }
             }
+        }
+        function tagRespnseHandler() {
+            if (tagsrequest.readyState != 4)
+                return;
+            if (tagsrequest.status == 200)
+            {
+                tagString = tagsrequest.responseText;
+                // var jsonResponse = JSON.parse(tagsrequest.responseText);
 
-            //prepare table with received products
-            function prepareTable() {
-                var table = document.getElementById("productId");
-                for (var i = 0; i < products.length; i++) {
-                    if (i % 5 == 0) {
-                        var tr = document.createElement("tr");
-                        table.appendChild(tr);
-                    }
-                    var td = document.createElement("td");
-                    tr.appendChild(td);
-                    var imag = document.createElement("img");
-
-                    imag.src = products[i].productImages[0].externalURL;
-                    var divImage = document.createElement("div");
-                    divImage.appendChild(imag);
-
-                    //var div = document.createElement("div");
-                    //div.className = "content";
-                    //div.appendChild(imag);
-                    //td.appendChild(div);
-                    var title = document.createTextNode("Title : " + products[i].title);
-                    var state = document.createTextNode("State : " + products[i].currentProductState);
-
-
-                    var divTitle = document.createElement("div");
-                    divTitle.appendChild(title);
-                    var divState = document.createElement("div");
-                    divState.appendChild(state);
-                    td.appendChild(divTitle);
-                    td.appendChild(divState);
-                    td.appendChild(divImage);
-                    td.style.border = "thin dotted red";
-                    createButton(td, curatethis_product, products[i]);
-
-                }
-            }
-            //create button function
-            http://stackoverflow.com/questions/9810035/how-to-get-element-and-html-from-window-open-js-function-with-jquery
-                    function createButton(td, curatethis_product, product) {
-                        var button = document.createElement("input");
-                        button.type = "button";
-                        button.value = "Curate Now";
-                        //button.onclick = curatethis_product;
-                        //var elem = document.getElementById("btn"),
-                        obj = {
-                            handleEvent: function() {
-                                var productString = JSON.stringify(product)
-                                // var  MyWindow=window.open('file:///home/advisors/Desktop/test.html','MyWindow',width=100,height=100,"_blank");
-                                openOther(productString);
-                            },
-                            dude: product.title
-                        };
-
-                        button.addEventListener("click", obj, false);
-
-                        td.appendChild(button);
-                    }
-            //on curate button click function
-            function curatethis_product() {
-
-                alert("curate product called " + this.name);
-                //MyWindow=window.open('file:///home/advisors/Desktop/test.html','MyWindow',width=100,height=100,"_blank");
 
             }
-
+            if (tagsrequest.status != 200 && tagsrequest.status != 304) {
+                alert('HTTP GET error ' + tagsrequest.status);
+                return;
+            }
+        }
         </script>
         <Button onclick="getCrawledProducts();">Get CrawledPoducts</Button>
         <table id="productId"></table>
