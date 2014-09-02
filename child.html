@@ -204,7 +204,7 @@
 
                 document.getElementById('id_relatedProductIds').value = jsonResponse.relatedProductIds;
                 //  document.getElementById('id_currentProductState').value = jsonResponse.currentProductState;
-
+                document.getElementById('single_select_1').value = jsonResponse.currentProductState;
 
 
                 document.getElementById('id_comments').value = jsonResponse.comments;
@@ -264,29 +264,31 @@
                     caption.textContent = 'For The Provider: ' + (i + 1);
                     table.appendChild(caption);
 
-                    table.appendChild(getElemnt('id', providers_array[i].id));
+                    table.appendChild(getElemnt('id', providers_array[i].id, 'id_' + i));
 
-                    table.appendChild(getElemnt('ownerProductId', providers_array[i].ownerProductId));
+                    table.appendChild(getElemnt('ownerProductId', providers_array[i].ownerProductId, 'ownerProductId_' + i));
 
-                    table.appendChild(getElemnt('externalURL', providers_array[i].externalURL));
-                    table.appendChild(getElemnt('quantity', providers_array[i].quantity));
-                    table.appendChild(getElemnt('currencyCode', providers_array[i].currencyCode));
-                    table.appendChild(getElemnt('store', providers_array[i].store));
+                    table.appendChild(getElemnt('externalURL', providers_array[i].externalURL, 'externalURL_' + i));
+                    table.appendChild(getElemnt('quantity', providers_array[i].quantity, 'quantity_' + i));
+                    table.appendChild(getElemnt('currencyCode', providers_array[i].currencyCode, 'currencyCode_' + i));
+                    table.appendChild(getElemnt('store', providers_array[i].store, 'store_' + i));
 
-                    var availability_1 = getAvailability('availability', providers_array[i].availability);
+                    var availability_1 = getAvailability('availability', providers_array[i].availability, 'availability_' + i);
                     table.appendChild(availability_1);
 
-                    table.appendChild(getElemnt('onSale', providers_array[i].onSale));
-                    table.appendChild(getElemnt('salePrice', providers_array[i].salePrice));
-                    table.appendChild(getElemnt('saleExpiryDate', providers_array[i].saleExpiryDate));
+                    table.appendChild(getElemnt('price', providers_array[i].price, 'price_' + i));
 
-                    var available_clrs = getAvailableColors('availableColors', providers_array[i].availableColors);
+                    table.appendChild(getElemnt('onSale', providers_array[i].onSale, 'onSale_' + i));
+                    table.appendChild(getElemnt('salePrice', providers_array[i].salePrice, 'salePrice_' + i));
+                    table.appendChild(getElemnt('saleExpiryDate', providers_array[i].saleExpiryDate, 'saleExpiryDate_' + i));
+
+                    var available_clrs = getAvailableColors('availableColors', providers_array[i].availableColors, 'availableColors_' + i, i);
                     table.appendChild(available_clrs);
 
-                    var available_sizes_1 = getAvailableSizes('availableSizes', providers_array[i].availableSizes);
+                    var available_sizes_1 = getAvailableSizes('availableSizes', providers_array[i].availableSizes, 'availableSizes_' + i, i);
                     table.appendChild(available_sizes_1);
 
-                    table.appendChild(getElemnt('availableAtZipCodes', providers_array[i].availableAtZipCodes));
+                    table.appendChild(getElemnt('availableAtZipCodes', providers_array[i].availableAtZipCodes, 'availableAtZipCodes_' + i));
 
                     product_provider_div.appendChild(table);
                 }
@@ -296,7 +298,7 @@
 
 
 
-            function getElemnt(key, value) {
+            function getElemnt(key, value, id) {
                 var tr = document.createElement('tr');
                 var th_key = document.createElement('th');
                 th_key.textContent = key;
@@ -305,7 +307,8 @@
                 var th_val = document.createElement('th');
                 var input = document.createElement('input');
                 input.value = value;
-                input.type = 'text'
+                input.type = 'text';
+                input.id = id;
                 th_val.appendChild(input);
                 tr.appendChild(th_val);
 
@@ -314,7 +317,7 @@
 
 
 
-            function getAvailability(key, value) {
+            function getAvailability(key, value, id) {
                 var tr = document.createElement('tr');
                 var th_key = document.createElement('th');
                 th_key.textContent = key;
@@ -323,6 +326,12 @@
                 var th = document.createElement('th');
 
                 var sel = document.createElement('select');
+                sel.id = id;
+
+                sel.value = value;
+
+                //    alert(value);
+
 
                 var optionINS = document.createElement('option');
                 optionINS.textContent = 'IN_STOCK';
@@ -355,7 +364,7 @@
             }
 
 
-            function getAvailableColors(key, value) {
+            function getAvailableColors(key, value, id, i) {
 
 
                 var tr = document.createElement('tr');
@@ -367,23 +376,23 @@
                 var input = document.createElement('input');
                 input.value = value;
                 input.type = 'text';
-                input.id = "colors_text_id";
+                input.id = id;
                 th_val.appendChild(input);
                 tr.appendChild(th_val);
 
                 var th = document.createElement('th');
 
                 var sel = document.createElement('select');
-                sel.id = "color_selector";
+                sel.id = "color_selector_" + i;
                 sel.onchange = function() {
-                    var vl = $("#color_selector").val();
-                    var current_val = document.getElementById('colors_text_id').value;
+                    var vl = $("#color_selector_" + i).val();
+                    var current_val = document.getElementById(id).value;
 
 
                     if (current_val === '')
-                        document.getElementById('colors_text_id').value = vl;
+                        document.getElementById(id).value = vl;
                     else
-                        document.getElementById('colors_text_id').value = current_val + "," + vl;
+                        document.getElementById(id).value = current_val + "," + vl;
                     //alert(vl);
                 };
 
@@ -399,7 +408,7 @@
                 return tr;
             }
 
-            function getAvailableSizes(key, value) {
+            function getAvailableSizes(key, value, id, i) {
 
 
                 var tr = document.createElement('tr');
@@ -411,23 +420,23 @@
                 var input = document.createElement('input');
                 input.value = value;
                 input.type = 'text';
-                input.id = "sizes_text_id";
+                input.id = id;
                 th_val.appendChild(input);
                 tr.appendChild(th_val);
 
                 var th = document.createElement('th');
 
                 var sel = document.createElement('select');
-                sel.id = "sizes_selector";
+                sel.id = "sizes_selector_" + i;
                 sel.onchange = function() {
-                    var vl = $("#sizes_selector").val();
-                    var current_val = document.getElementById('sizes_text_id').value;
+                    var vl = $("#sizes_selector_" + i).val();
+                    var current_val = document.getElementById(id).value;
 
 
                     if (current_val === '')
-                        document.getElementById('sizes_text_id').value = vl;
+                        document.getElementById(id).value = vl;
                     else
-                        document.getElementById('sizes_text_id').value = current_val + "," + vl;
+                        document.getElementById(id).value = current_val + "," + vl;
                     //alert(vl);
                 };
 
@@ -505,11 +514,37 @@
 
             function updateProvider() {
                 alert("provider");
-                var colors = document.getElementById('colors_text_id').value;
-                var sizes = document.getElementById('sizes_text_id').value;
+                // var colors = document.getElementById('colors_text_id').value;
+                //  var sizes = document.getElementById('sizes_text_id').value;
 
-                var colorArray = colors.split(",");
-                var sizesArray = sizes.split(",");
+
+
+
+                var updated_id = document.getElementById('id_' + '0').value;
+                var updated_ownerProductId = document.getElementById('ownerProductId_' + '0').value;
+                var updated_externalURL = document.getElementById('externalURL_' + '0').value;
+                var updated_quantity = document.getElementById('quantity_' + '0').value;
+                var updated_currencyCode = document.getElementById('currencyCode_' + '0').value;
+                var updated_store = document.getElementById('store_' + '0').value;
+
+                var updated_price = document.getElementById('price_' + '0').value;
+                //   var updated_availability = document.getElementById('availability_'+'0');
+                var updated_onSale = document.getElementById('onSale_' + '0').value;
+
+                var updated_salePrice = document.getElementById('salePrice_' + '0').value;
+                var updated_saleExpiryDate = document.getElementById('saleExpiryDate_' + '0').value;
+
+                var updated_availableColors = document.getElementById('availableColors_' + '0').value;
+                var updated_availableSizes = document.getElementById('availableSizes_' + '0').value;
+                var updated_availableAtZipCodes = document.getElementById('availableAtZipCodes_' + '0').value;
+
+                var updated_availability = valC = $("#availability_" + '0').val();
+
+
+                var colorArray = updated_availableColors.split(",");
+                var sizesArray = updated_availableSizes.split(",");
+                var zipcodeArray = updated_availableAtZipCodes.split(",");
+                alert(updated_availability + "," + colorArray + "," + sizesArray + "," + updated_price);
                 var url = "https://vue-server-dev.appspot.com/api/productprovider/" + jsonObject.productProviders[0].id;
                 if (XMLHttpRequest) {
                     providerUpdaterequest = new XMLHttpRequest();
@@ -533,10 +568,15 @@
                             }
                         };
 
-                        providerUpdaterequest.send(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: 0, currencyCode: "USD", store: "shop.nordstrom.com", availability: "IN_STOCK",
-                            price: 29.0, onSale: false, salePrice: 0.0, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: null}));
-                        console.log(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: 0, currencyCode: "USD", store: "shop.nordstrom.com", availability: "IN_STOCK",
-                            price: 29.0, onSale: false, salePrice: 0.0, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: null}));
+//                        providerUpdaterequest.send(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
+//                            price: updated_price, onSale: false, salePrice: updated_salePrice, saleExpirtyDate: updated_saleExpiryDate, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: zipcodeArray}));
+//                          console.log(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
+//                            price: updated_price, onSale: false, salePrice: updated_salePrice, saleExpirtyDate: updated_saleExpiryDate, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: zipcodeArray}));
+//                         
+                        providerUpdaterequest.send(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
+                            price: updated_price, onSale: false, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: zipcodeArray}));
+                        console.log(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
+                            price: updated_price, onSale: false, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: zipcodeArray}));
                     }
                 }
             }
@@ -624,13 +664,26 @@
                 jsonObject.currentProductState = sel;
 
             }
+
+
+
         </script>
 
 
 
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.css">
-        <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-        <script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
+        <!--        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.css">
+                <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+                <script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>-->
+        <link rel="stylesheet" type="text/css" href="src/jquery.multiselect.css" />
+        <link rel="stylesheet" type="text/css" href="src/jquery.multiselect.filter.css" />
+        <link rel="stylesheet" type="text/css" href="assets/style.css" />
+        <link rel="stylesheet" type="text/css" href="assets/prettify.css" />
+        <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/ui-lightness/jquery-ui.css" />
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="src/jquery.multiselect.js"></script>
+        <script type="text/javascript" src="src/jquery.multiselect.filter.js"></script>
+        <script type="text/javascript" src="assets/prettify.js"></script>
 
 
         <script type="text/javascript">
@@ -646,7 +699,7 @@
                 //                });
                 //                $("select_tagString").multiselect();
 
-
+                $("select").multiselect().multiselectfilter();
 
             });
 
@@ -766,7 +819,8 @@
             </table>
 
 
-            <table class="altrowstable" id="alternatecolor" width="600">
+
+            <table class="altrowstable" id="alternatecolor"  width="600">
                 <caption>we can create tags from here</caption>
 
                 <tr>
@@ -797,7 +851,7 @@
                 </th>
                 <th><strong>tagSubCategory:</strong>
                 <div style="padding:20px">
-                    <select id="select_tagSubCategory" name="selection" multiple="multiple"  style="width: 200px,height: 20px" data-native-menu="false">
+                    <select id="select_tagSubCategory" name="selection" multiple="multiple"  style="width: 200px" data-native-menu="false">
                         <option value="Shirts">Shirts</option>
                         <option value="Jeans">Jeans</option>
                         <option value="Sarees">Sarees</option>
@@ -891,7 +945,7 @@
 
 
             <label> <span>&nbsp;</span> <input type="button"
-                                               class="button" value="Send" onClick="getCuratedInfo()" />
+                                               class="button" value="Send" onClick="curateProduct()" />
             </label>
         </form>
     </body>
