@@ -167,10 +167,15 @@
             var appendtagToProduct;
             var tagObject = {tagCategory: "", tagString: "", tagSubCategory: ""};
             var tagArray = [];
+            var tags;
             window.addEventListener("message", function(event) {
-
-
-                datafromparent = event.data;
+               var strings = event.data.split("##");
+                
+                    tags = JSON.parse(strings[0]);
+                  for(var i=0;i<tags.length;i++){
+                      console.log(tags[i].tagString);
+                   }
+                    datafromparent = strings[1]
                 jsonObject = JSON.parse(datafromparent);
 
                 tagCreationReqeustCount = 0;
