@@ -1,5 +1,5 @@
 <html>
-    <body>
+    <body onLoad = "getTags();">
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
@@ -9,11 +9,15 @@
             var otherWindow;
             var boolean = false;
             var myVar;
+            //get tags from server.
+            var tagString;
+            var tagsrequest;
             //prototype for clear the array values.
             Array.prototype.clear = function() {
                 this.length = 0;
             };
             function sendMessage(productString) {
+                productString =tagString+"##"+productString;
                 otherWindow.postMessage(productString, "*");
                 clearInterval(myVar)
             }
@@ -142,7 +146,36 @@
                 //MyWindow=window.open('file:///home/advisors/Desktop/test.html','MyWindow',width=100,height=100,"_blank");
 
             }
+                function getTags(){
 
+                var url = "https://vue-server-dev.appspot.com/api/producttags/all";
+                if (XMLHttpRequest)
+                {
+                    tagsrequest = new XMLHttpRequest();
+                    if ("withCredentials" in tagsrequest)
+                    {
+                        // Firefox 3.5 and Safari 4
+                        tagsrequest.open('GET', url, true);
+                        tagsrequest.onreadystatechange = tagRespnseHandler;
+                        tagsrequest.send();
+                    }
+                }
+     }
+   function tagRespnseHandler(){
+                 if (tagsrequest.readyState != 4)
+                    return;
+                if (tagsrequest.status == 200)
+                {
+                       tagString = tagsrequest.responseText;
+                   // var jsonResponse = JSON.parse(tagsrequest.responseText);
+                    
+                
+                }
+                if (tagsrequest.status != 200 && tagsrequest.status != 304) {
+                    alert('HTTP GET error ' + tagsrequest.status);
+                    return;
+                }
+ }
         </script>
         <Button onclick="getCrawledProducts();">Get CrawledPoducts</Button>
         <table id="productId">
