@@ -151,15 +151,12 @@
         <script>
             var available_colors = ["Red", "Green", "Blue", "Cyn", "Orange", "Purple", "Black"];
             var available_sizes = ["S", "M", "L", "XL", "XXL", "XXXL"];
-
             //prototype for clear the array values.
             Array.prototype.clear = function() {
                 this.length = 0;
             };
-
             var datafromparent;
             var jsonObject;
-
             var providerUpdaterequest;
             var tagCreateRequest;
             var tagCreationReqeustCount = 0;
@@ -168,12 +165,11 @@
             var tagObject = {tagCategory: "", tagString: "", tagSubCategory: ""};
             var tagArray = [];
             var tags;
-
-
+            var tagRequest;
+            var tagsArray =[];
             window.addEventListener("message", function(event) {
 
                 var strings = event.data.split("##");
-
                 tags = JSON.parse(strings[0]);
                 for (var i = 0; i < tags.length; i++) {
                     console.log(tags[i].tagString);
@@ -181,12 +177,9 @@
                 datafromparent = strings[1]
 
                 jsonObject = JSON.parse(datafromparent);
-
                 tagCreationReqeustCount = 0;
                 tagArray.clear();
-
                 afterLoadingThePopup();
-
             }, false);
             function dataloader() {
 
@@ -202,35 +195,67 @@
                 document.getElementById('id_id').value = jsonResponse.id;
                 document.getElementById('id_ownerAisleId').value = jsonResponse.ownerAisleId;
                 document.getElementById('id_ownerProductListId').value = jsonResponse.ownerProductListId;
-
                 document.getElementById('id_title').value = jsonResponse.title;
-
-
-
                 document.getElementById('id_description').value = jsonResponse.description;
                 document.getElementById('id_creatorID').value = jsonResponse.creatorID;
                 document.getElementById('id_curatorID').value = '5505177142427648';
-
                 document.getElementById('id_relatedProductIds').value = jsonResponse.relatedProductIds;
+                //method to call to set current product state...
                 set_current_ProductState(jsonResponse.currentProductState);
-
-                document.getElementById('single_select_1').value = jsonResponse.currentProductState;
+                // document.getElementById('single_select_1').value = jsonResponse.currentProductState;
 
 
                 document.getElementById('id_comments').value = jsonResponse.comments;
                 document.getElementById('id_ratings').value = jsonResponse.ratings;
+                // product tags..
+                var product_tags = jsonResponse.productTags;
+                //  alert('product tags: ' + jsonResponse.productTags);
+                for (var m = 0; m < product_tags.length; m++) {
+                    var tag_obj = product_tags[m];
+                    var tag_cat = tag_obj.tagCategory;
+                    var tag_string = tag_obj.tagString;
+                    var tag_sub_cat = tag_obj.tagSubCategory;
+                    var row = document.createElement('tr');
+                    var thC = document.createElement('th');
+                    thC.textContent = tag_cat;
+                    var thS = document.createElement('th');
+                    thS.textContent = tag_string;
+                    var thSC = document.createElement('th');
+                    thSC.textContent = tag_sub_cat;
+                    var del = document.createElement('th')
+                    var btn = document.createElement('Button');
+                    btn.textContent = 'Untag';
+                    btn.onclick = function() {
+                        document.getElementById('created_tags_table').removeChild(row);
+//                        var unTagString;
+//                        for (var i = 0; i < valS.length; i++) {
+//                            if (unTagString === undefined) {
+//                                unTagString = valS[i];
+//                            } else {
+//                                unTagString = unTagString + "," + valS[i];
+//                            }
+//                        }
+                        //delete TAG
+                        
+                        tagAssociateWithProduct(tag_string, "untag");
+                    };
+                    del.appendChild(btn);
+                    row.appendChild(thC);
+                    row.appendChild(thS);
+                    row.appendChild(thSC);
+                    row.appendChild(del);
+                    document.getElementById('created_tags_table').appendChild(row);
+                }
+
+
                 var images_array = jsonResponse.productImages;
-
                 var tabl_div = document.getElementById('image_table_id');
-
                 for (var i = 0; i < images_array.length; i++) {
 
                     var br0 = document.createElement('br');
                     var br1 = document.createElement('br');
-
                     tabl_div.appendChild(br0);
                     tabl_div.appendChild(br1);
-
                     var table = document.createElement('table');
                     table.className = "altrowstable";
                     table.setAttribute('width', '600')
@@ -239,9 +264,7 @@
                     var caption = document.createElement('caption');
                     caption.textContent = 'For The Image: ' + (i + 1);
                     table.appendChild(caption);
-
                     table.appendChild(getElemnt('id', images_array[i].id));
-
                     table.appendChild(getElemnt('ownerProductId', images_array[i].ownerProductId));
                     table.appendChild(getElemnt('externalURL', images_array[i].externalURL));
                     table.appendChild(getElemnt('internalURL', images_array[i].internalURL));
@@ -250,21 +273,15 @@
                     table.appendChild(getElemnt('modifiedHeight', images_array[i].modifiedHeight));
                     table.appendChild(getElemnt('modifiedWidth', images_array[i].modifiedWidth));
                     table.appendChild(getElemnt('modifiedWidth', images_array[i].modifiedWidth));
-
                     tabl_div.appendChild(table);
-
                 }
                 var product_provider_div = document.getElementById('product_providers_div_id');
-
                 var providers_array = jsonResponse.productProviders;
-
                 for (var i = 0; i < providers_array.length; i++) {
                     var br0 = document.createElement('br');
                     var br1 = document.createElement('br');
-
                     product_provider_div.appendChild(br0);
                     product_provider_div.appendChild(br1);
-
                     var table = document.createElement('table');
                     table.className = "altrowstable";
                     table.setAttribute('width', '600')
@@ -273,62 +290,44 @@
                     var caption = document.createElement('caption');
                     caption.textContent = 'For The Provider: ' + (i + 1);
                     table.appendChild(caption);
-
                     table.appendChild(getElemnt('id', providers_array[i].id, 'id_' + i));
-
                     table.appendChild(getElemnt('ownerProductId', providers_array[i].ownerProductId, 'ownerProductId_' + i));
-
                     table.appendChild(getElemnt('externalURL', providers_array[i].externalURL, 'externalURL_' + i));
                     table.appendChild(getElemnt('quantity', providers_array[i].quantity, 'quantity_' + i));
                     table.appendChild(getElemnt('currencyCode', providers_array[i].currencyCode, 'currencyCode_' + i));
                     table.appendChild(getElemnt('store', providers_array[i].store, 'store_' + i));
-
                     var availability_1 = getAvailability('availability', providers_array[i].availability, 'availability_' + i);
                     table.appendChild(availability_1);
-
                     table.appendChild(getElemnt('price', providers_array[i].price, 'price_' + i));
-
                     table.appendChild(getElemnt('onSale', providers_array[i].onSale, 'onSale_' + i));
                     table.appendChild(getElemnt('salePrice', providers_array[i].salePrice, 'salePrice_' + i));
                     table.appendChild(getElemnt('saleExpiryDate', providers_array[i].saleExpiryDate, 'saleExpiryDate_' + i));
-
-
                     var available_clrs = getAvailableColors('availableColors', providers_array[i].availableColors, 'availableColors_' + i, i);
                     table.appendChild(available_clrs);
-
                     var available_sizes_1 = getAvailableSizes('availableSizes', providers_array[i].availableSizes, 'availableSizes_' + i, i);
                     table.appendChild(available_sizes_1);
-
                     table.appendChild(getElemnt('availableAtZipCodes', providers_array[i].availableAtZipCodes, 'availableAtZipCodes_' + i));
-
                     product_provider_div.appendChild(table);
                 }
 
 
                 //Added Product Tags
-                add_Product_Tags();
-
+                //  add_Product_Tags();
+                add_Product_TagsNew();
             }
 
             function add_Product_Tags() {
                 //add provider tags
                 var tag_category_array = new Array();
                 var tag_string_array = new Array();
-
                 var tag_substring_array = new Array();
-
                 var tag_category_array_uniqueNames = [];
                 var tag_string_array_uniqueNames = [];
                 var tag_substring_array_uniqueNames = [];
-
                 for (var k = 0; k < tags.length; k++) {
                     var vcat = tags[k].tagCategory;
                     var vstr = tags[k].tagString;
                     var vsubstr = tags[k].tagSubCategory;
-
-
-
-
                     if (vcat !== null && vcat !== undefined && vcat !== '') {
                         tag_category_array = tag_category_array.concat(vcat.split(','));
                     }
@@ -345,17 +344,14 @@
                     if ($.inArray(el, tag_category_array_uniqueNames) === -1)
                         tag_category_array_uniqueNames.push(el);
                 });
-
                 $.each(tag_string_array, function(i, el) {
                     if ($.inArray(el, tag_string_array_uniqueNames) === -1)
                         tag_string_array_uniqueNames.push(el);
                 });
-
                 $.each(tag_substring_array, function(i, el) {
                     if ($.inArray(el, tag_substring_array_uniqueNames) === -1)
                         tag_substring_array_uniqueNames.push(el);
                 });
-
                 //set default values from backend
 
                 var tagcatelement = document.getElementById('select_tagCategory');
@@ -373,17 +369,86 @@
                     tagSubCatelement.options[tagSubCatelement.options.length] = new Option(tag_substring_array_uniqueNames[i], tag_substring_array_uniqueNames[i], false, false);
                 }
                 $("select").multiselect().multiselectfilter();
-
-          
             }
 
+
+            function add_Product_TagsNew() {
+
+                var static_categoryNames = ["Product Type", "Occasion", "Product description"]
+                //add provider tags
+                var tag_category_array = new Array();
+                var tag_string_array = new Array();
+                var tag_category_array_uniqueNames = [];
+                var tag_string_array_uniqueNames = [];
+                var tag_substring_array_uniqueNames = [];
+                for (var k = 0; k < tags.length; k++) {
+                    var vcat = tags[k].tagCategory;
+                    var vstr = tags[k].tagString;
+                    if (vcat !== null && vcat !== undefined && vcat !== '') {
+                        tag_category_array = tag_category_array.concat(vcat.split(','));
+                        var list_tagstring_array = tag_string_array[vcat];
+                        if (vstr !== null && vstr !== undefined && vstr !== '') {
+
+                            if (list_tagstring_array !== undefined) {
+                                list_tagstring_array.push(vstr);
+                            } else {
+                                list_tagstring_array = new Array();
+                                list_tagstring_array.push(vstr);
+                            }
+
+                        }
+                        // alert('ffffffirst:' + list_tagstring_array + "VVV:" + vcat);
+                        tag_string_array[vcat] = list_tagstring_array;
+                    }
+
+
+
+                }
+
+
+                $.each(tag_category_array, function(i, el) {
+                    if ($.inArray(el, tag_category_array_uniqueNames) === -1)
+                        tag_category_array_uniqueNames.push(el);
+                });
+
+                for (k = 0; k < static_categoryNames.length; k++) {
+
+                    //  alert('*****: ' + tag_category_array_uniqueNames[k] + " oooo: " );
+                    if (k === 0) {
+                        var tagcatelement = document.getElementById('select_tagCategory');
+                        var temp0 = tag_string_array[static_categoryNames[k]];
+                        // tagcatelement.options[tagcatelement.options.length] = new Option('', '', false, false);
+                        for (var i = 0; i < temp0.length; i++) {
+                            tagcatelement.options[tagcatelement.options.length] = new Option(temp0[i], temp0[i], false, false);
+                        }
+                    }
+                    if (k === 1) {
+                        var tagStringlement = document.getElementById('select_tagString');
+                        var temp1 = tag_string_array[static_categoryNames[k]];
+                        //tagStringlement.options[tagStringlement.options.length] = new Option('', '', false, false);
+                        for (var i = 0; i < temp1.length; i++) {
+                            tagStringlement.options[tagStringlement.options.length] = new Option(temp1[i], temp1[i], false, false);
+                        }
+                    }
+                    if (k === 2) {
+                        var tagSubCatelement = document.getElementById('select_tagSubCategory');
+                        var temp2 = tag_string_array[static_categoryNames[k]];
+                        //  tagSubCatelement.options[tagSubCatelement.options.length] = new Option('', '', false, false);
+                        for (var i = 0; i < temp2.length; i++) {
+                            tagSubCatelement.options[tagSubCatelement.options.length] = new Option(temp2[i], temp2[i], false, false);
+                        }
+                    }
+                }
+
+                //set default values from backend
+                $("select").multiselect().multiselectfilter();
+            }
 
             function getElemnt(key, value, id) {
                 var tr = document.createElement('tr');
                 var th_key = document.createElement('th');
                 th_key.textContent = key;
                 tr.appendChild(th_key);
-
                 var th_val = document.createElement('th');
                 var input = document.createElement('input');
                 input.value = value;
@@ -391,7 +456,6 @@
                 input.id = id;
                 th_val.appendChild(input);
                 tr.appendChild(th_val);
-
                 return tr;
             }
 
@@ -403,12 +467,9 @@
                 var th_key = document.createElement('th');
                 th_key.textContent = key;
                 tr.appendChild(th_key);
-
                 var th = document.createElement('th');
-
                 var sel = document.createElement('select');
                 sel.id = id;
-
                 // sel.value = value;
 
                 //    alert(value);
@@ -418,7 +479,6 @@
                     if (enums[i] === value) {
                         var o1 = new Option(enums[i], enums[i], false, true);
                         sel.options[sel.options.length] = o1;
-
                     } else {
                         var o1 = new Option(enums[i], enums[i], false, false);
                         sel.options[sel.options.length] = o1;
@@ -466,7 +526,6 @@
                 var th_key = document.createElement('th');
                 th_key.textContent = key;
                 tr.appendChild(th_key);
-
                 var th_val = document.createElement('th');
                 var input = document.createElement('input');
                 input.value = value;
@@ -474,16 +533,12 @@
                 input.id = id;
                 th_val.appendChild(input);
                 tr.appendChild(th_val);
-
                 var th = document.createElement('th');
-
                 var sel = document.createElement('select');
                 sel.id = "color_selector_" + i;
                 sel.onchange = function() {
                     var vl = $("#color_selector_" + i).val();
                     var current_val = document.getElementById(id).value;
-
-
                     if (current_val === '')
                         document.getElementById(id).value = vl;
                     else if (current_val.indexOf(vl) < 0) {
@@ -491,13 +546,10 @@
                     }
                     //alert(vl);
                 };
-
                 available_colors.forEach(function(entry) {
                     var o1 = new Option(entry, entry, false, false);
                     sel.options[sel.options.length] = o1;
                 });
-
-
                 th.appendChild(sel);
                 tr.appendChild(th);
                 return tr;
@@ -510,7 +562,6 @@
                 var th_key = document.createElement('th');
                 th_key.textContent = key;
                 tr.appendChild(th_key);
-
                 var th_val = document.createElement('th');
                 var input = document.createElement('input');
                 input.value = value;
@@ -518,16 +569,12 @@
                 input.id = id;
                 th_val.appendChild(input);
                 tr.appendChild(th_val);
-
                 var th = document.createElement('th');
-
                 var sel = document.createElement('select');
                 sel.id = "sizes_selector_" + i;
                 sel.onchange = function() {
                     var vl = $("#sizes_selector_" + i).val();
                     var current_val = document.getElementById(id).value;
-
-
                     if (current_val === '')
                         document.getElementById(id).value = vl;
                     else if (current_val.indexOf(vl) < 0) {
@@ -535,13 +582,10 @@
                     }
                     //alert(vl);
                 };
-
                 available_sizes.forEach(function(entry) {
                     var o1 = new Option(entry, entry, false, false);
                     sel.options[sel.options.length] = o1;
                 });
-
-
                 th.appendChild(sel);
                 tr.appendChild(th);
                 return tr;
@@ -550,15 +594,12 @@
             function  set_current_ProductState(value) {
 
                 var product_state_sel = document.getElementById('single_select_1');
-
                 var enums = ['CRAWLED', 'CURATED', 'CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
-
                 for (var i = 0; i < enums.length; i++) {
 
                     if (enums[i] === value) {
                         var o1 = new Option(enums[i], enums[i], false, true);
                         product_state_sel.options[product_state_sel.options.length] = o1;
-
                     } else {
                         var o1 = new Option(enums[i], enums[i], false, false);
                         product_state_sel.options[product_state_sel.options.length] = o1;
@@ -581,9 +622,7 @@
                     return;
                 }
                 jsonObject.description = description;
-
                 var curatorId = document.getElementById("id_curatorID").value;
-
                 if (curatorId === undefined || curatorId.length < 1) {
                     showAlert("Please fill the CuratorId");
                     return;
@@ -607,9 +646,8 @@
                         request.setRequestHeader('Content-Type', 'application/json');
                         request.onreadystatechange = update_handler;
                         //product update request:
-                        alert(JSON.stringify({id: jsonObject.id, ownerAisleId: jsonObject.ownerAisleId, ownerProductListId: jsonObject.ownerProductListId, creatorId: jsonObject.creatorId, curatorId: jsonObject.curatorId, title: title, description: description, currentProductState: jsonObject.currentProductState, relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
+                        //alert(JSON.stringify({id: jsonObject.id, ownerAisleId: jsonObject.ownerAisleId, ownerProductListId: jsonObject.ownerProductListId, creatorId: jsonObject.creatorId, curatorId: jsonObject.curatorId, title: title, description: description, currentProductState: jsonObject.currentProductState, relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
                         request.send(JSON.stringify({id: jsonObject.id, ownerAisleId: jsonObject.ownerAisleId, ownerProductListId: jsonObject.ownerProductListId, creatorId: jsonObject.creatorId, curatorId: jsonObject.curatorId, title: title, description: description, currentProductState: jsonObject.currentProductState, relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
-
                     }
                 }
 
@@ -620,12 +658,11 @@
                     return;
                 if (request.status == 200)
                 {
-                    alert("Curated Successfully " + request.responseText);
+                   // alert("Curated Successfully " + request.responseText);
                     updateProvider();
                 }
                 if (request.status != 200 && request.status != 304) {
-                    alert('HTTP POST error ' + request.status + 'Response ' + request.responseText);
-
+                    //alert('HTTP POST error ' + request.status + 'Response ' + request.responseText);
                     return;
                 }
             }
@@ -644,21 +681,15 @@
                 var updated_quantity = document.getElementById('quantity_' + '0').value;
                 var updated_currencyCode = document.getElementById('currencyCode_' + '0').value;
                 var updated_store = document.getElementById('store_' + '0').value;
-
                 var updated_price = document.getElementById('price_' + '0').value;
                 //   var updated_availability = document.getElementById('availability_'+'0');
                 var updated_onSale = document.getElementById('onSale_' + '0').value;
-
                 var updated_salePrice = document.getElementById('salePrice_' + '0').value;
                 var updated_saleExpiryDate = document.getElementById('saleExpiryDate_' + '0').value;
-
                 var updated_availableColors = document.getElementById('availableColors_' + '0').value;
                 var updated_availableSizes = document.getElementById('availableSizes_' + '0').value;
                 var updated_availableAtZipCodes = document.getElementById('availableAtZipCodes_' + '0').value;
-
                 var updated_availability = valC = $("#availability_" + '0').val();
-
-
                 var colorArray = updated_availableColors.split(",");
                 var sizesArray = updated_availableSizes.split(",");
                 var zipcodeArray = updated_availableAtZipCodes.split(",");
@@ -677,15 +708,12 @@
                             if (providerUpdaterequest.status == 200)
                             {
                                 alert('HTTP POST success: ' + providerUpdaterequest.responseText);
-
                             }
                             if (providerUpdaterequest.status != 200 && providerUpdaterequest.status != 304) {
                                 alert('HTTP POST error ' + providerUpdaterequest.status + 'Response ' + providerUpdaterequest.responseText);
-
                                 return;
                             }
                         };
-
                         providerUpdaterequest.send(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
                             price: updated_price, onSale: false, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: zipcodeArray}));
                         console.log(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
@@ -696,7 +724,7 @@
 
 
             function createTagRequest(category, string, subcat) {
-
+        
                 // alert(JSON.stringify( {tagCategory:category ,tagString:string,tagSubCategory:subcat}) );
                 var url = "https://vue-server-dev.appspot.com/api/producttag";
                 if (XMLHttpRequest) {
@@ -705,10 +733,9 @@
                         tagCreateRequest.open('POST', url, true);
                         tagCreateRequest.setRequestHeader('Custom-Header', 'javascript-client');
                         tagCreateRequest.setRequestHeader('Content-Type', 'application/json');
-                        tagCreateRequest.onreadystatechange = tagHandler
-
+                        tagCreateRequest.onreadystatechange = tagHandler;
+ 
                         tagCreateRequest.send(JSON.stringify({tagCategory: category, tagString: string, tagSubCategory: subcat}));
-
                     }
                 }
             }
@@ -716,8 +743,7 @@
                 if (tagCreateRequest.readyState != 4)
                     return;
                 if (tagCreateRequest.status != 200 && tagCreateRequest.status != 304) {
-                    alert('HTTP POST error ' + tagCreateRequest.status + 'Response ' + tagCreateRequest.responseText);
-
+                    //alert('HTTP POST error ' + tagCreateRequest.status + 'Response ' + tagCreateRequest.responseText);
                     //ToDO: if tag is created already just append to product.  appendtagToProduct  
                     if (appendtagToProduct != undefined) {
                         tagAssociateWithProduct(appendtagToProduct, "tag");
@@ -726,11 +752,9 @@
                 }
                 if (tagCreateRequest.status == 200)
                 {
-                    alert('HTTP POST success: ' + tagCreateRequest.responseText);
+                    //alert('HTTP POST success: ' + tagCreateRequest.responseText);
                     var jsonTagObject = JSON.parse(tagCreateRequest.responseText);
                     tagAssociateWithProduct(jsonTagObject.tagString, "tag");
-
-
                 }
 
             }
@@ -746,9 +770,7 @@
                         productTagAssociateReq.setRequestHeader('Custom-Header', 'javascript-client');
                         productTagAssociateReq.setRequestHeader('Content-Type', 'application/json');
                         productTagAssociateReq.onreadystatechange = tagAssociatHandler;
-
                         productTagAssociateReq.send();
-
                     }
                 }
 
@@ -759,14 +781,11 @@
                     return;
                 if (productTagAssociateReq.status != 200 && productTagAssociateReq.status != 304) {
                     alert('HTTP POST error ' + productTagAssociateReq.status + 'Response ' + productTagAssociateReq.responseText);
-
                     return;
                 }
                 if (productTagAssociateReq.status == 200)
                 {
                     alert('HTTP POST success: ' + productTagAssociateReq.responseText);
-
-
                 }
 
             }
@@ -775,10 +794,48 @@
             function myNewFunction(sel) {
 
                 jsonObject.currentProductState = sel;
+            }
+            
+            function tagToProduct() {
+                var tagString = tagsArray.splice(0, 1);
+                alert("TAG: "+tagString);
+                if (tagString === undefined || tagString.length < 1) {
+                    return;
+                }
+
+                var url = "https://vue-server-dev.appspot.com/api/product/tag/" + jsonObject.id + "/" + tagString;
+                if (XMLHttpRequest) {
+                    tagRequest = new XMLHttpRequest();
+                    if ("withCredentials" in tagRequest) {
+                        // Firefox 3.5 and Safari 4
+                        tagRequest.open('PUT', url, true);
+                        tagRequest.setRequestHeader('Custom-Header', 'javascript-client');
+                        tagRequest.setRequestHeader('Content-Type', 'application/json');
+                        tagRequest.onreadystatechange = tagHandler;
+
+                        tagRequest.send();
+
+                    }
+                }
 
             }
+           
+            function tagHandler() {
+                if (tagRequest.readyState !== 4)
+                    return;
+                if (tagRequest.status !== 200 && tagRequest.status !== 304) {
+                    alert('HTTP POST error ' + tagRequest.status + 'Response ' + tagRequest.responseText);
+                     tagToProduct();
+                    return;
+                }
+                if (tagRequest.status === 200)
+                {
+                    alert('HTTP POST success: ' + tagRequest.responseText);
 
+                    tagToProduct();
+                }
 
+            }
 
         </script>
 
@@ -831,13 +888,163 @@
         
         
                 </script>-->
-        <script>
-            var valC, valS, valSC;
+        <!--        <script>
+                    var valC, valS, valSC;
+                    function addTagsToTable() {
+                        valC = $("#select_tagCategory").val();
+                        valS = $("#select_tagString").val();
+                        valSC = $("#select_tagSubCategory").val();
+                        var row = document.createElement('tr');
+                        var thC = document.createElement('th');
+                        thC.textContent = valC;
+                        var thS = document.createElement('th');
+                        thS.textContent = valS;
+                        var thSC = document.createElement('th');
+                        thSC.textContent = valSC;
+                        var del = document.createElement('th')
+                        var btn = document.createElement('Button');
+                        btn.textContent = 'delete';
+                        btn.onclick = function() {
+                            document.getElementById('created_tags_table').removeChild(row);
+                        };
+                        del.appendChild(btn);
+                        row.appendChild(thC);
+                        row.appendChild(thS);
+                        row.appendChild(thSC);
+                        row.appendChild(del);
+                        document.getElementById('created_tags_table').appendChild(row);
+                    }
+                </script>-->
 
-            function addTagsToTable() {
-                valC = $("#select_tagCategory").val();
-                valS = $("#select_tagString").val();
-                valSC = $("#select_tagSubCategory").val();
+        <script type="text/javascript">
+
+            function addTagsToTableVaz() {
+                
+                var valC = $("#select_tagCategory").val();
+                var valS = $("#select_tagString").val();
+                var valSC = $("#select_tagSubCategory").val();
+                //for Product Type
+                if (valC !== null && valC !== undefined && valC !== '') {
+                    var productType = valC;
+                    for (var p = 0; p < productType.length; p++) {
+
+                        
+                        for (var q = 0; q < tags.length; q++) {
+                            var cat = tags[q].tagCategory;
+                            var tagstr = tags[q].tagString;
+                            var tagSubStr = tags[q].tagSubCategory;
+
+                            if (cat !== null && cat !== undefined && cat.indexOf('Product Type') === 0 && tagstr.indexOf(productType[p]) === 0) {
+
+                                addElementToTable('Product Type', tagstr, tagSubStr);
+                                 tagsArray.push(tagstr);
+                            }
+                        }
+
+                    }
+                }
+
+
+                //for Occasion
+                if (valS !== null && valS !== undefined && valS !== '') {
+                    var productType = valS;
+                    for (var p = 0; p < productType.length; p++) {
+                        
+
+                        for (var q = 0; q < tags.length; q++) {
+
+                            var cat = tags[q].tagCategory;
+                            var tagstr = tags[q].tagString;
+                            var tagSubStr = tags[q].tagSubCategory;
+                            if (cat !== null && cat !== undefined && cat.indexOf('Occasion') === 0 && tagstr.indexOf(productType[p]) === 0) {
+
+                                addElementToTable('Occasion', tagstr, tagSubStr);
+                                 tagsArray.push(tagstr);
+                            }
+                        }
+
+                    }
+                }
+
+                //for Product description
+                if (valSC !== null && valSC !== undefined && valSC !== '') {
+                    var productType = valSC;
+                    for (var p = 0; p < productType.length; p++) {
+                       
+                        for (var q = 0; q < tags.length; q++) {
+                            var cat = tags[q].tagCategory;
+                            var tagstr = tags[q].tagString;
+                            var tagSubStr = tags[q].tagSubCategory;
+                            if (cat !== null && cat !== undefined && cat.indexOf('Product description') === 0 && tagstr.indexOf(productType[p]) === 0) {
+
+                                addElementToTable('Product description', tagstr, tagSubStr);
+                                 tagsArray.push(tagstr);
+                            }
+                        }
+
+                    }
+                }
+
+
+                //create TAG.
+                //   createTagRequest(valC, tagString, subCatString);
+                tagToProduct();
+            }
+
+            function addElementToTable(cat, str, substr) {
+                var row = document.createElement('tr');
+                var thC = document.createElement('th');
+                thC.textContent = cat;
+                var thS = document.createElement('th');
+                thS.textContent = str;
+                var thSC = document.createElement('th');
+                thSC.textContent = substr;
+                var del = document.createElement('th')
+                var btn = document.createElement('Button');
+                btn.textContent = 'Untag';
+                btn.onclick = function() {
+                    document.getElementById('created_tags_table').removeChild(row);
+//                        var unTagString;
+//                        for (var i = 0; i < valS.length; i++) {
+//                            if (unTagString === undefined) {
+//                                unTagString = valS[i];
+//                            } else {
+//                                unTagString = unTagString + "," + valS[i];
+//                            }
+//                        }
+                    //delete TAG
+                    tagAssociateWithProduct(str, "untag");
+                };
+                del.appendChild(btn);
+                row.appendChild(thC);
+                row.appendChild(thS);
+                row.appendChild(thSC);
+                row.appendChild(del);
+                document.getElementById('created_tags_table').appendChild(row);
+//                    var tagString;
+//                    for (var i = 0; i < valS.length; i++) {
+//                        if (tagString === undefined) {
+//                            tagString = valS[i];
+//                        } else {
+//                            tagString = tagString + "," + valS[i];
+//                        }
+//                    }
+                appendtagToProduct = str;
+//                    var subCatString;
+//                    for (var i = 0; i < valSC.length; i++) {
+//                        if (subCatString === undefined) {
+//                            subCatString = valSC[i];
+//                        } else {
+//                            subCatString = subCatString + "," + valSC[i];
+//                        }
+//                    }
+            }
+
+            function createCustomTag() {
+                var valC, valS, valSC;
+                valC = document.getElementById("id_tag_cat").value;
+                valS = document.getElementById("id_tag_str").value;
+                valSC = document.getElementById("id_sub_str").value;
                 var row = document.createElement('tr');
                 var thC = document.createElement('th');
                 thC.textContent = valC;
@@ -845,24 +1052,53 @@
                 thS.textContent = valS;
                 var thSC = document.createElement('th');
                 thSC.textContent = valSC;
-
                 var del = document.createElement('th')
                 var btn = document.createElement('Button');
-                btn.textContent = 'delete';
+                btn.textContent = 'Untag';
                 btn.onclick = function() {
                     document.getElementById('created_tags_table').removeChild(row);
+//                    var unTagString;
+//                    for (var i = 0; i < valS.length; i++) {
+//                        if (unTagString === undefined) {
+//                            unTagString = valS[i];
+//                        } else {
+//                            unTagString = unTagString + "," + valS[i];
+//                        }
+//                    }
+                    //delete TAG
+                    tagAssociateWithProduct(valS, "untag");
                 };
                 del.appendChild(btn);
-
                 row.appendChild(thC);
                 row.appendChild(thS);
                 row.appendChild(thSC);
                 row.appendChild(del);
                 document.getElementById('created_tags_table').appendChild(row);
-
+//                var tagString;
+//                for (var i = 0; i < valS.length; i++) {
+//                    if (tagString === undefined) {
+//                        tagString = valS[i];
+//                    } else {
+//                        tagString = tagString + "," + valS[i];
+//                    }
+//                }
+                appendtagToProduct = valS;
+//                var subCatString;
+//                for (var i = 0; i < valSC.length; i++) {
+//                    if (subCatString === undefined) {
+//                        subCatString = valSC[i];
+//                    } else {
+//                        subCatString = subCatString + "," + valSC[i];
+//                    }
+//                }
+               
+                   if(valSC===undefined)
+                       valSC===null;
+                   alert(valC+"***"+valS+"***"+valSC);
+                //create TAG.
+                createTagRequest(valC, valS, valSC);
             }
         </script>
-
     </head>
     <body onblur="window.focus()" onload="prettyPrint();" >
         <button>Product details</button>
@@ -937,111 +1173,54 @@
                 <caption>we can create tags from here</caption>
 
                 <tr>
-                    <th><strong>tagCategory:</strong>
+                    <th><strong>Product Type:</strong>
 
-                        <select id="select_tagCategory" name="selection"   style="width: 200px">
+                        <select id="select_tagCategory" name="selection" multiple="multiple"  style="width: 200px">
 
                         </select>
                     </th>
-                    <th><strong>tagString:</strong>
+                    <th><strong>Occasion:</strong>
                 <div style="padding:20px">
-                    <select id="select_tagString" name="selection" multiple="multiple"  style="width: 200px" data-native-menu="false">
-                        <!--                        <option value="Wedding Reception">Wedding Reception</option>
-                                                <option value="Community Block">Community Block</option>
-                                                <option value="Baby Shower">Baby Shower</option>
-                                                <option value="Costume Party">Costume Party</option>
-                        
-                                                <option value="Costume Party">Costume Party</option>
-                                                <option value="Retirement Party">Retirement Party</option>
-                                                <option value="Graduation Party">Graduation Party</option>
-                                                <option value="Invitation only party">Invitation only party</option>-->
+                    <select id="select_tagString" name="selection"  multiple="multiple"  style="width: 200px" data-native-menu="false">
+
                     </select>
                 </div>
 
                 </th>
-                <th><strong>tagSubCategory:</strong>
+                <th><strong>Product Description:</strong>
                 <div style="padding:20px">
-                    <select id="select_tagSubCategory" name="selection" multiple="multiple"  style="width: 200px" data-native-menu="false">
+                    <select id="select_tagSubCategory" name="selection" multiple="multiple"   style="width: 200px" data-native-menu="false">
 
-                        <!--                        <option value="Shirts">Shirts</option>
-                                                <option value="Jeans">Jeans</option>
-                                                <option value="Sarees">Sarees</option>
-                                                <option value="Leggings">Leggings</option>
-                        
-                                                <option value="Skirts">Skirts</option>
-                                                <option value="Scarfs">Scarfs</option>
-                                                <option value="Caps">Caps</option>-->
+
                     </select>
-                    </
+                </div>
 
-                    </th>
+                </th>
 
-                    </tr>
+                </tr>
 
             </table>
-            <script>
-                var valC, valS, valSC;
-
-                function addTagsToTable() {
-                    valC = $("#select_tagCategory").val();
-                    valS = $("#select_tagString").val();
-                    valSC = $("#select_tagSubCategory").val();
-                    var row = document.createElement('tr');
-                    var thC = document.createElement('th');
-                    thC.textContent = valC;
-                    var thS = document.createElement('th');
-                    thS.textContent = valS;
-                    var thSC = document.createElement('th');
-                    thSC.textContent = valSC;
-
-                    var del = document.createElement('th')
-                    var btn = document.createElement('Button');
-                    btn.textContent = 'delete';
-                    btn.onclick = function() {
-                        document.getElementById('created_tags_table').removeChild(row);
-                        var unTagString;
-                        for (var i = 0; i < valS.length; i++) {
-                            if (unTagString === undefined) {
-                                unTagString = valS[i];
-                            } else {
-                                unTagString = unTagString + "," + valS[i];
-                            }
-                        }
-                        //delete TAG
-                        tagAssociateWithProduct(unTagString, "untag");
-                    };
-                    del.appendChild(btn);
-
-                    row.appendChild(thC);
-                    row.appendChild(thS);
-                    row.appendChild(thSC);
-                    row.appendChild(del);
-                    document.getElementById('created_tags_table').appendChild(row);
-                    var tagString;
-                    for (var i = 0; i < valS.length; i++) {
-                        if (tagString === undefined) {
-                            tagString = valS[i];
-                        } else {
-                            tagString = tagString + "," + valS[i];
-                        }
-                    }
-                    appendtagToProduct = tagString;
-                    var subCatString;
-                    for (var i = 0; i < valSC.length; i++) {
-                        if (subCatString === undefined) {
-                            subCatString = valSC[i];
-                        } else {
-                            subCatString = subCatString + "," + valSC[i];
-                        }
-                    }
-
-                    //create TAG.
-                    createTagRequest(valC, tagString, subCatString);
 
 
-                }
-            </script>
-            <input type="button" class="button" value="Create Tag" onclick="addTagsToTable()" />
+
+
+
+
+            <input type="button" class="button" value="Create Tag" onclick="addTagsToTableVaz()" />
+
+            <br><br><br>
+
+            <label> <span>Tag Category </span> <input id="id_tag_cat"
+                                                      type="text" name="name"  /></label>
+            <label> <span>Tag String </span> <input id="id_tag_str"
+                                                    type="text" name="name"  />
+            </label>
+            <label> <span>Tag Sub Category </span> <input id="id_sub_str"
+                                                          type="text" name="name"  />
+            </label>
+
+            <label> <span>&nbsp;</span> <input type="button"
+                                               class="button" value="Create Custom Tag" onclick="createCustomTag()"  /></label>
 
 
             <br> <br> <label> <span><strong>productProviders:
