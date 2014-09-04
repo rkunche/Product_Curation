@@ -166,9 +166,11 @@
             var tagArray = [];
             var tags;
             var tagRequest;
-            var tagsArray =[];
+            var tagsArray = [];
             var curatorId;
-        
+            //for tags validation.
+            var localTags = [];
+
             window.addEventListener("message", function(event) {
 
                 var strings = event.data.split("##");
@@ -177,7 +179,7 @@
                     console.log(tags[i].tagString);
                 }
                 datafromparent = strings[1]
-                 curatorId = strings[2];
+                curatorId = strings[2];
                 jsonObject = JSON.parse(datafromparent);
                 tagCreationReqeustCount = 0;
                 tagArray.clear();
@@ -486,33 +488,6 @@
                     }
 
                 }
-//                var o1 = new Option('OUT_OF_STOCK', 'OUT_OF_STOCK', false, true);
-//                sel.options[sel.options.length] = o1;
-//
-//                var optionINS = document.createElement('option');
-//                optionINS.textContent = 'IN_STOCK';
-//
-//                var optionXI = document.createElement('option');
-//                optionXI.textContent = 'EXCESS_INVENTORY';
-//
-//                var optionRL = document.createElement('option');
-//                optionRL.textContent = 'RUNNING_LOW';
-//
-//                var optionTU = document.createElement('option');
-//                optionTU.textContent = 'TEMPORARY_UNAVAILABLE';
-//
-//                //  var optionOS = document.createElement('option');
-//                //  optionOS.textContent = 'OUT_OF_STOCK';
-//
-//                var optionPU = document.createElement('option');
-//                optionPU.textContent = 'PERMANENTLY_UNAVAILABLE';
-//
-//                sel.appendChild(optionINS);
-//                sel.appendChild(optionXI);
-//                sel.appendChild(optionRL);
-//                sel.appendChild(optionTU);
-//                // sel.appendChild(optionOS);
-//                sel.appendChild(optionPU);
 
                 th.appendChild(sel);
                 tr.appendChild(th);
@@ -594,47 +569,86 @@
 
                 var product_state_sel = document.getElementById('single_select_1');
                 var enums = ['CRAWLED', 'CURATED', 'CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
+                var td = document.createElement('td');
+                var name = "current_product_status";
+
                 for (var i = 0; i < enums.length; i++) {
 
                     if (enums[i] === value) {
-                        var o1 = new Option(enums[i], enums[i], false, true);
-                        product_state_sel.options[product_state_sel.options.length] = o1;
+                        // alert('curated22: '+value);
+                        var v = getRadioButton(name, enums[i], true);
+                        td.appendChild(v);
+
                     } else {
-                        var o1 = new Option(enums[i], enums[i], false, false);
-                        product_state_sel.options[product_state_sel.options.length] = o1;
+                        var v = getRadioButton(name, enums[i], false);
+                        td.appendChild(v)
                     }
 
                 }
-
+                product_state_sel.appendChild(td);
 
             }
+
+            function getRadioButton(name, text, status) {
+
+                var label = document.createElement('label');
+                label.textContent = text;
+
+                var input = document.createElement('input');
+                input.type = 'radio';
+                input.name = name;
+                input.value = text;
+                input.textContent = text;
+                input.checked = status;
+                label.appendChild(input);
+
+
+                label.appendChild(input);
+
+                return label;
+            }
+
             function getCuratedInfo() {
                 var title = document.getElementById("id_title").value;
+                var description = document.getElementById("id_description").value;
+                jsonObject.currentProductState = document.querySelector('input[name="current_product_status"]:checked').value;
+                
+                
                 if (title === undefined || title.length < 1) {
                     showAlert("Please fill the title");
-                    return;
+                    return false;
                 }
                 jsonObject.title = title;
-                var description = document.getElementById("id_description").value;
+                
                 if (description === undefined || description.length < 1) {
                     showAlert("Please fill the description");
-                    return;
+                    return false;
                 }
                 jsonObject.description = description;
-                var curatorId = document.getElementById("id_curatorID").value;
-                if (curatorId === undefined || curatorId.length < 1) {
-                    showAlert("Please fill the CuratorId");
-                    return;
+                
+                if(localTags.length < 3){
+                     showAlert("Please create Tags.");
+                    return false; 
                 }
-                jsonObject.curatorId = curatorId;
-                curateProduct();
+                
+                if(jsonObject.currentProductState == "CRAWLED"){
+                    
+                    showAlert("Please check the Product State.");
+                    return false;  
+                }
+                return true;
             }
             function showAlert(message) {
                 alert(message);
             }
             function curateProduct() {
+                 if(!getCuratedInfo()){
+                   return;  
+                 }
                 var title = document.getElementById("id_title").value;
                 var description = document.getElementById("id_description").value;
+                jsonObject.currentProductState = document.querySelector('input[name="current_product_status"]:checked').value;
+
                 var url = "https://vue-server-dev.appspot.com/api/product/" + jsonObject.id;
                 if (XMLHttpRequest) {
                     request = new XMLHttpRequest();
@@ -747,9 +761,15 @@
                 }
 
             }
-           var taging;
+            var taging;
             function tagAssociateWithProduct(tagString, tag) {
-               taging = tag;
+                taging = tag;
+                if(tag == "untag"){
+                var position = localTags.indexOf(tagString);
+                if (position != -1) {
+                    localTags.splice(position, 1);
+                }
+            }
                 var url = "https://vue-server-dev.appspot.com/api/product/" + tag + "/" + jsonObject.id + "/" + tagString;
                 if (XMLHttpRequest) {
                     productTagAssociateReq = new XMLHttpRequest();
@@ -774,16 +794,18 @@
                 }
                 if (productTagAssociateReq.status == 200)
                 {
-                    alert("Tag was "+taging +" to product ");
+                    if (tagging == "tag") {
+                        alert("Tag was " + taging + " to product ");
+
+                    } else {
+                        alert("Tag was " + taging + " from product ");
+                    }
+
                 }
 
             }
 
 
-            function myNewFunction(sel) {
-
-                jsonObject.currentProductState = sel;
-            }
 
             function tagToProduct() {
                 var tagString = tagsArray.splice(0, 1);
@@ -912,52 +934,9 @@
             }
 
             function addElementToTable(cat, str, substr) {
-                var row = document.createElement('tr');
-                var thC = document.createElement('th');
-                thC.textContent = cat;
-                var thS = document.createElement('th');
-                thS.textContent = str;
-                var thSC = document.createElement('th');
-                thSC.textContent = substr;
-                var del = document.createElement('th')
-                var btn = document.createElement('Button');
-                btn.textContent = 'Untag';
-                btn.onclick = function() {
-                    document.getElementById('created_tags_table').removeChild(row);
-//                        var unTagString;
-//                        for (var i = 0; i < valS.length; i++) {
-//                            if (unTagString === undefined) {
-//                                unTagString = valS[i];
-//                            } else {
-//                                unTagString = unTagString + "," + valS[i];
-//                            }
-//                        }
-                    //delete TAG
-                    tagAssociateWithProduct(str, "untag");
-                };
-                del.appendChild(btn);
-                row.appendChild(thC);
-                row.appendChild(thS);
-                row.appendChild(thSC);
-                row.appendChild(del);
-                document.getElementById('created_tags_table').appendChild(row);
-//                    var tagString;
-//                    for (var i = 0; i < valS.length; i++) {
-//                        if (tagString === undefined) {
-//                            tagString = valS[i];
-//                        } else {
-//                            tagString = tagString + "," + valS[i];
-//                        }
-//                    }
-                appendtagToProduct = str;
-//                    var subCatString;
-//                    for (var i = 0; i < valSC.length; i++) {
-//                        if (subCatString === undefined) {
-//                            subCatString = valSC[i];
-//                        } else {
-//                            subCatString = subCatString + "," + valSC[i];
-//                        }
-//                    }
+
+                createTagReqAndAddTable(cat, str, substr, 0);
+
             }
 
             function createCustomTag() {
@@ -996,6 +975,12 @@
                 if (valSC === undefined)
                     valSC === null;
 
+                //to attach local data
+                
+                    localTags.push(valS);
+
+
+
                 if (addtableonly === 1)
                     createTagRequest(valC, valS, valSC)
             }
@@ -1011,7 +996,7 @@
         </script>
     </head>
     <body onblur="window.focus()" onload="prettyPrint();" >
-       
+
         <form action="" method="post" class="smart-green">
             <h1>
                 Product Information <span>Please fill all the texts in the
@@ -1032,8 +1017,12 @@
                                                              name="name" placeholder="Id of the product curator" />
             </label> <label> <span>currentProductState: </span> 
 
-                <select id="single_select_1" name="selection" onchange="myNewFunction(this.value)"   style="width: 300px">
-                   
+                <!--                <select id="single_select_1" name="selection" onchange="myNewFunction(this.value)"   style="width: 300px">
+                
+                                </select>-->
+                <br><br>
+                <di id="single_select_1" ></di>
+
                 </select>
 
             </label> <label> <span>relatedProductIds: </span> <input id="id_relatedProductIds"
@@ -1133,16 +1122,16 @@
                         <div style="padding:20px">
                             <td >
                                 <label>
-                                    <input type="radio" id="r1" name=que_1 value="Male" />
+                                    <input type="radio" id="r1" name='que_1' value="Male" />
                                     Male<br>
                                 </label>
                                 <label>
-                                    <input type="radio" id="r2" name=que_1 value="Female" />
+                                    <input type="radio" id="r2" name='que_1' value="Female" />
                                     Female<br>
                                 </label>
 
                                 <label>
-                                    <input type="radio" id="r3" name=que_1 value="Unisex" />
+                                    <input type="radio" id="r3" name='que_1' value="Unisex" />
                                     Unisex<br>
                                 </label>
                             </td>
