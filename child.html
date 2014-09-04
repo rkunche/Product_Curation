@@ -613,27 +613,24 @@
                 var title = document.getElementById("id_title").value;
                 if (title === undefined || title.length < 1) {
                     showAlert("Please fill the title");
-                    return;
+                    return false;
                 }
                 jsonObject.title = title;
                 var description = document.getElementById("id_description").value;
                 if (description === undefined || description.length < 1) {
                     showAlert("Please fill the description");
-                    return;
+                    return false;
                 }
                 jsonObject.description = description;
-                var curatorId = document.getElementById("id_curatorID").value;
-                if (curatorId === undefined || curatorId.length < 1) {
-                    showAlert("Please fill the CuratorId");
-                    return;
-                }
-                jsonObject.curatorId = curatorId;
-                curateProduct();
+                 return true;
             }
             function showAlert(message) {
                 alert(message);
             }
             function curateProduct() {
+                         if(!getCuratedInfo()){
+                           return;
+                       }
                 var title = document.getElementById("id_title").value;
                 var description = document.getElementById("id_description").value;
                 var url = "https://vue-server-dev.appspot.com/api/product/" + jsonObject.id;
