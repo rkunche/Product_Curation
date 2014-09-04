@@ -170,6 +170,7 @@
             var curatorId;
             //for tags validation.
             var localTags = [];
+            var curatorReview;
 
             window.addEventListener("message", function(event) {
 
@@ -179,7 +180,9 @@
                     console.log(tags[i].tagString);
                 }
                 datafromparent = strings[1]
-                curatorId = strings[2];
+
+                curatorReview = strings[2];
+
                 jsonObject = JSON.parse(datafromparent);
                 tagCreationReqeustCount = 0;
                 tagArray.clear();
@@ -625,7 +628,7 @@
                     return false;
                 }
                 jsonObject.description = description;
-                
+               
                 if(localTags.length < 3){
                      showAlert("Please create Tags.");
                     return false; 
@@ -637,6 +640,7 @@
                     return false;  
                 }
                 return true;
+
             }
             function showAlert(message) {
                 alert(message);
@@ -712,7 +716,11 @@
                                 return;
                             if (providerUpdaterequest.status == 200)
                             {
-                                alert('Curated Successfully');
+                                if(curatorReview == "Curate Now"){
+                                        alert('Curated Successfully');
+                                 } else {
+                                     alert('Reviewed Successfully');
+                                     }
                                 window.opener.close();
                                 close();
                             }
