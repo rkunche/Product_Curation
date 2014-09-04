@@ -152,6 +152,7 @@ getCurateProduct();
                     var button = document.createElement("input");
                     button.type = "button";
                     button.value = "Curate Now";
+button.style.backgroundColor = "RED";
                     obj = {
                         handleEvent: function() {
                          clcickedProductId = product.id;
@@ -164,7 +165,7 @@ getCurateProduct();
                        }
  button.value = "Review Now";
  
-button.style.backgroundColor = "#f47121";
+
                             var productString = JSON.stringify(product)
                             openOther(productString);
  
@@ -256,10 +257,17 @@ for(var k=0;k<products.length;k++){
 if(clcickedProductId == products[k].id){
 titleVal =products[k].title; 
 stateVal = products[k].currentProductState;
+ var button = cell.getElementsByTagName("input");
+if(stateVal == "CRAWLED"){
+button[0].style.backgroundColor = "Yellow";
+} else{
+button[0].style.backgroundColor = "Green";
+}
 }
 }
 values[0].innerHTML =  "Title : "+titleVal;
 values[1].innerHTML = "State :  "+stateVal;
+
  break;
  }
     

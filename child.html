@@ -748,9 +748,9 @@
                 }
 
             }
-
+           var taging;
             function tagAssociateWithProduct(tagString, tag) {
-
+               taging = tag;
                 var url = "https://vue-server-dev.appspot.com/api/product/" + tag + "/" + jsonObject.id + "/" + tagString;
                 if (XMLHttpRequest) {
                     productTagAssociateReq = new XMLHttpRequest();
@@ -775,7 +775,7 @@
                 }
                 if (productTagAssociateReq.status == 200)
                 {
-                    alert("Tag was attached to product ");
+                    alert("Tag was "taging +" to product ");
                 }
 
             }
