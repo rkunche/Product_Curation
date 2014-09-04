@@ -10,14 +10,17 @@
         var otherWindow;
         var boolean = false;
         var myVar;
+        var clcickedProductId;
         //get tags from server.
         var tagString;
         var tagsrequest;
+        var curateProductRequest;
 
         //for user authentication
         var users = [];
         var curatorID;
 
+        var otherWindowObserver;
         //prototype for clear the array values.
         Array.prototype.clear = function() {
             this.length = 0;
@@ -26,6 +29,16 @@
             productString = tagString + "##" + productString;
             otherWindow.postMessage(productString, "*");
             clearInterval(myVar)
+            otherWindowObserver = setInterval(function() {
+                if (otherWindow.closed) {
+
+                    getCurateProduct();
+                    clearInterval(otherWindowObserver);
+                } else {
+
+                }
+
+            }, 2000)
         }
 
         function readParams( ) {
@@ -46,17 +59,6 @@
             myVar = setInterval(function() {
                 sendMessage(productString)
             }, 1000);
-
-            //if(boolean == false){
-            //boolean = true;
-            //        otherWindow = window.open("child.html", "otherWindow","400","500");
-
-            //} else {
-            //otherWindow.postMessage(productString, "*");
-
-            //boolean = false;
-            //}
-            //otherWindow.postMessage("this is raju posting data to other window", "*");
         }
 
         function getCrawledProducts() {
@@ -66,9 +68,9 @@
                     boolval = true;
             }
             if (!boolval) {
-                  alert("user does not exist");
-                  return;
-            }  
+                alert("user does not exist");
+                return;
+            }
             var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=CRAWLED&limit=50";
             if (XMLHttpRequest)
             {
@@ -90,7 +92,6 @@
             {
 
                 var jsonResponse = JSON.parse(request.responseText);
-                //alert('HTTP GET success: ' +jsonResponse.length  );
                 //clear the old data in array and populate with new product data.
                 products.clear();
                 for (var i = 0; i < jsonResponse.length; i++) {
@@ -151,12 +152,18 @@
                     var button = document.createElement("input");
                     button.type = "button";
                     button.value = "Curate Now";
-                    //button.onclick = curatethis_product;
-                    //var elem = document.getElementById("btn"),
                     obj = {
                         handleEvent: function() {
+                            clcickedProductId = product.id;
+                            for (var i = 0; i < products.length; i++) {
+                                if (clcickedProductId === products[i].id) {
+                                    product = products[i];
+                                    break;
+                                }
+
+                            }
+                            button.value = "Review Now";
                             var productString = JSON.stringify(product)
-                            // var  MyWindow=window.open('file:///home/advisors/Desktop/test.html','MyWindow',width=100,height=100,"_blank");
                             openOther(productString);
                         },
                         dude: product.title
@@ -168,10 +175,7 @@
                 }
         //on curate button click function
         function curatethis_product() {
-
             alert("curate product called " + this.name);
-            //MyWindow=window.open('file:///home/advisors/Desktop/test.html','MyWindow',width=100,height=100,"_blank");
-
         }
         function getTags() {
 
@@ -194,12 +198,42 @@
             if (tagsrequest.status == 200)
             {
                 tagString = tagsrequest.responseText;
-                // var jsonResponse = JSON.parse(tagsrequest.responseText);
-
-
             }
             if (tagsrequest.status != 200 && tagsrequest.status != 304) {
                 alert('HTTP GET error ' + tagsrequest.status);
+                return;
+            }
+        }
+        function getCurateProduct() {
+            var url = "https://vue-server-dev.appspot.com/api/product/" + clcickedProductId;
+            if (XMLHttpRequest)
+            {
+                curateProductRequest = new XMLHttpRequest();
+                if ("withCredentials" in curateProductRequest)
+                {
+                    // Firefox 3.5 and Safari 4
+                    curateProductRequest.open('GET', url, true);
+                    curateProductRequest.onreadystatechange = curateProductHandler;
+                    curateProductRequest.send();
+                }
+            }
+
+        }
+        function curateProductHandler() {
+            if (curateProductRequest.readyState != 4)
+                return;
+            if (curateProductRequest.status == 200)
+            {
+                var curatedProduct = JSON.parse(curateProductRequest.responseText);
+                for (var i = 0; i < products.length; i++) {
+                    if (clcickedProductId === products[i].id) {
+
+                        products[i] = curatedProduct;
+                        break;
+                    }
+                }
+            }
+            if (curateProductRequest.status != 200 && curateProductRequest.status != 304) {
                 return;
             }
         }

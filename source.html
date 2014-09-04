@@ -7,34 +7,27 @@
         var myVar;
         var datafromparent;
 
+
         window.addEventListener("message", function(event) {
-            // alert("The other window's function executed."+event.data);
             datafromparent = event.data;
             openOther(datafromparent);
 
         }, false);
 
-////
         function sendMessage(productString) {
-            //frame.onload = function(){};
             otherWindow.postMessage(productString, "*");
             clearInterval(myVar)
-
         }
         function openOther(productString) {
-             var strings = productString.split("##");
-               datafromparent = strings[1]
-//otherWindow = window.open("child.html", "otherWindowt","200","200","_blank");
-//get source url.
+            var strings = productString.split("##");
+            datafromparent = strings[1]
+            //get source url.
             var jsonResponse = JSON.parse(datafromparent);
             var providerArry = jsonResponse.productProviders;
             var providerObject;
             for (var i = 0; i < providerArry.length; i++) {
                 providerObject = providerArry[0].externalURL;
             }
-
-
-
             var div = document.getElementById("to_add_frame");
             var frame = document.createElement("iframe");
             frame.src = providerObject;
@@ -46,10 +39,6 @@
             }, 2000);
 
         }
-
-
-/////
-
         function dataloader() {
             var val = document.getElementById('divid');
             val.innerHTML = datafromparent;
