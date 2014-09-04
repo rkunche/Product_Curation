@@ -8,7 +8,6 @@
         var request;
         var products = [];
         var otherWindow;
-        var boolean = false;
         var myVar;
         var clcickedProductId;
         //get tags from server.
@@ -26,7 +25,7 @@
             this.length = 0;
         };
         function sendMessage(productString) {
-            productString = tagString + "##" + productString;
+            productString = tagString + "##" + productString + "##" + curatorID;
             otherWindow.postMessage(productString, "*");
             clearInterval(myVar)
             otherWindowObserver = setInterval(function() {
@@ -68,8 +67,9 @@
                     boolval = true;
             }
             if (!boolval) {
-                alert("user does not exist");
-                return;
+
+                //alert("user does not exist");
+                // return;
             }
             var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=CRAWLED&limit=50";
             if (XMLHttpRequest)
@@ -112,13 +112,14 @@
 
         //prepare table with received products
         function prepareTable() {
-            var table = document.getElementById("productId");
+            var table = document.getElementById("productTableId");
             for (var i = 0; i < products.length; i++) {
                 if (i % 5 == 0) {
                     var tr = document.createElement("tr");
                     table.appendChild(tr);
                 }
                 var td = document.createElement("td");
+                td.id = products[i].id;
                 tr.appendChild(td);
                 var imag = document.createElement("img");
 
@@ -152,8 +153,10 @@
                     var button = document.createElement("input");
                     button.type = "button";
                     button.value = "Curate Now";
+                    button.style.backgroundColor = "RED";
                     obj = {
                         handleEvent: function() {
+
                             clcickedProductId = product.id;
                             for (var i = 0; i < products.length; i++) {
                                 if (clcickedProductId === products[i].id) {
@@ -163,8 +166,11 @@
 
                             }
                             button.value = "Review Now";
+
+
                             var productString = JSON.stringify(product)
                             openOther(productString);
+
                         },
                         dude: product.title
                     };
@@ -224,22 +230,58 @@
                 return;
             if (curateProductRequest.status == 200)
             {
+
                 var curatedProduct = JSON.parse(curateProductRequest.responseText);
                 for (var i = 0; i < products.length; i++) {
                     if (clcickedProductId === products[i].id) {
 
                         products[i] = curatedProduct;
+                        getAllCellValues();
                         break;
                     }
                 }
+
             }
             if (curateProductRequest.status != 200 && curateProductRequest.status != 304) {
                 return;
             }
+
         }
+//to refresh the selected product after curation.
+        function getAllCellValues() {
+            var table = document.getElementById("productTableId");
+            var cells = Array.prototype.slice.call(document.getElementById("productTableId").getElementsByTagName("td"));
+            var cell;
+            for (var i in cells) {
+                if (clcickedProductId == cells[i].id) {
+                    cell = cells[i];
+                    var values = cell.getElementsByTagName("div");
+                    var titleVal;
+                    var stateVal;
+                    for (var k = 0; k < products.length; k++) {
+                        if (clcickedProductId == products[k].id) {
+                            titleVal = products[k].title;
+                            stateVal = products[k].currentProductState;
+                            var button = cell.getElementsByTagName("input");
+                            if (stateVal == "CRAWLED") {
+                                button[0].style.backgroundColor = "Yellow";
+                            } else {
+                                button[0].style.backgroundColor = "Green";
+                            }
+                        }
+                    }
+                    values[0].innerHTML = "Title : " + titleVal;
+                    values[1].innerHTML = "State :  " + stateVal;
+
+                    break;
+                }
+
+            }
+        }
+
         </script>
         <Button onclick="getCrawledProducts();">Get CrawledPoducts</Button>
-        <table id="productId"></table>
+        <table id="productTableId"></table>
 
     </body>
 </html>

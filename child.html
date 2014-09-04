@@ -166,7 +166,9 @@
             var tagArray = [];
             var tags;
             var tagRequest;
-            var tagsArray = [];
+            var tagsArray =[];
+            var curatorId;
+        
             window.addEventListener("message", function(event) {
 
                 var strings = event.data.split("##");
@@ -175,7 +177,7 @@
                     console.log(tags[i].tagString);
                 }
                 datafromparent = strings[1]
-
+                 curatorId = strings[2];
                 jsonObject = JSON.parse(datafromparent);
                 tagCreationReqeustCount = 0;
                 tagArray.clear();
@@ -196,7 +198,7 @@
                 document.getElementById('id_title').value = jsonResponse.title;
                 document.getElementById('id_description').value = jsonResponse.description;
                 document.getElementById('id_creatorID').value = jsonResponse.creatorID;
-                document.getElementById('id_curatorID').value = '5505177142427648';
+                document.getElementById('id_curatorID').value = jsonResponse.id_curatorID;
                 document.getElementById('id_relatedProductIds').value = jsonResponse.relatedProductIds;
                 //method to call to set current product state...
                 set_current_ProductState(jsonResponse.currentProductState);
@@ -745,9 +747,9 @@
                 }
 
             }
-
+           var taging;
             function tagAssociateWithProduct(tagString, tag) {
-
+               taging = tag;
                 var url = "https://vue-server-dev.appspot.com/api/product/" + tag + "/" + jsonObject.id + "/" + tagString;
                 if (XMLHttpRequest) {
                     productTagAssociateReq = new XMLHttpRequest();
@@ -772,7 +774,7 @@
                 }
                 if (productTagAssociateReq.status == 200)
                 {
-                    alert("Tag was attached to product ");
+                    alert("Tag was "+taging +" to product ");
                 }
 
             }
