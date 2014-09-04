@@ -8,7 +8,6 @@
         var request;
         var products = [];
         var otherWindow;
-        var boolean = false;
         var myVar;
         var clcickedProductId;
         //get tags from server.
@@ -26,7 +25,7 @@
             this.length = 0;
         };
         function sendMessage(productString) {
-            productString = tagString + "##" + productString;
+            productString = tagString + "##" + productString+"##"+curatorID;
             otherWindow.postMessage(productString, "*");
             clearInterval(myVar)
   otherWindowObserver = setInterval(function() {

@@ -167,6 +167,7 @@
             var tags;
             var tagRequest;
             var tagsArray =[];
+            var curatorId;
         
             window.addEventListener("message", function(event) {
                   
@@ -176,7 +177,7 @@
                     console.log(tags[i].tagString);
                 }
                 datafromparent = strings[1]
-
+                 curatorId = strings[2];
                 jsonObject = JSON.parse(datafromparent);
                 tagCreationReqeustCount = 0;
                 tagArray.clear();
