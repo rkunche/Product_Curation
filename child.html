@@ -615,7 +615,7 @@
                 var title = document.getElementById("id_title").value;
                 var description = document.getElementById("id_description").value;
                 jsonObject.currentProductState = document.querySelector('input[name="current_product_status"]:checked').value;
-                
+ 
                 
                 if (title === undefined || title.length < 1) {
                     showAlert("Please fill the title");
@@ -703,6 +703,36 @@
                 var colorArray = updated_availableColors.split(",");
                 var sizesArray = updated_availableSizes.split(",");
                 var zipcodeArray = updated_availableAtZipCodes.split(",");
+ 
+                if(updated_store == undefined ||updated_store == null ||updated_store.length < 1){
+                       alert("Please Fill Store");
+                       return;
+                    }
+ 
+                if(updated_salePrice == undefined ||updated_salePrice == null ||updated_salePrice.length < 1){
+                       alert("Please Fill Price");
+                       return;
+                    }
+ 
+                if(updated_availableColors == undefined ||updated_availableColors == null ||updated_availableColors.length < 1){
+                       alert("Please Fill Available Colors");
+                        return;
+                      }
+ 
+                 if(updated_availableSizes == undefined ||updated_availableSizes == null ||updated_availableSizes.length < 1){
+                      alert("Please Fill Available Sizes");
+                        return;
+                       }
+ 
+                 if(updated_availability == undefined ||updated_availability == null ||updated_availability.length < 1){
+                       alert("Please Fill Availability");
+                        return;
+                       }
+  
+                 if(updated_currencyCode == undefined ||updated_currencyCode == null ||updated_currencyCode.length < 1){
+                       alert("Please Fill Currency Code");
+                        return;
+                       }
                 var url = "https://vue-server-dev.appspot.com/api/productprovider/" + jsonObject.productProviders[0].id;
                 if (XMLHttpRequest) {
                     providerUpdaterequest = new XMLHttpRequest();
