@@ -166,7 +166,7 @@
             var tagArray = [];
             var tags;
             var tagRequest;
-            var tagsArray =[];
+            var tagsArray = [];
             window.addEventListener("message", function(event) {
 
                 var strings = event.data.split("##");
@@ -212,14 +212,11 @@
                 //  alert('product tags: ' + jsonResponse.productTags);
                 for (var m = 0; m < product_tags.length; m++) {
                     var tag_obj = product_tags[m];
-                    
-                    if(tag_obj === null)
-                    continue;
-                
+                    if (tag_obj === null)
+                        continue;
                     var tag_cat = tag_obj.tagCategory;
                     var tag_string = tag_obj.tagString;
                     var tag_sub_cat = tag_obj.tagSubCategory;
-                    
                     var row = document.createElement('tr');
                     var thC = document.createElement('th');
                     thC.textContent = tag_cat;
@@ -241,7 +238,7 @@
 //                            }
 //                        }
                         //delete TAG
-                        
+
                         tagAssociateWithProduct(tag_string, "untag");
                     };
                     del.appendChild(btn);
@@ -304,7 +301,7 @@
                     var availability_1 = getAvailability('availability', providers_array[i].availability, 'availability_' + i);
                     table.appendChild(availability_1);
                     table.appendChild(getElemnt('price', providers_array[i].price, 'price_' + i));
-                    table.appendChild(getElemnt('onSale', providers_array[i].onSale, 'onSale_' + i));
+                    table.appendChild(add_Onsale_Boolean('onSale', providers_array[i].onSale, 'onSale_' + i));
                     table.appendChild(getElemnt('salePrice', providers_array[i].salePrice, 'salePrice_' + i));
                     table.appendChild(getElemnt('saleExpiryDate', providers_array[i].saleExpiryDate, 'saleExpiryDate_' + i));
                     var available_clrs = getAvailableColors('availableColors', providers_array[i].availableColors, 'availableColors_' + i, i);
@@ -319,6 +316,38 @@
                 //Added Product Tags
                 //  add_Product_Tags();
                 add_Product_TagsNew();
+            }
+
+            function add_Onsale_Boolean(key, value, id) {
+
+                var tr = document.createElement('tr');
+                var th_key = document.createElement('th');
+                th_key.textContent = key;
+                tr.appendChild(th_key);
+                var th = document.createElement('th');
+                var sel = document.createElement('select');
+                sel.id = id;
+                // sel.value = value;
+
+                //    alert(value);
+                // alert(value);
+                var enums = ['true', 'false'];
+                for (var i = 0; i < enums.length; i++) {
+                   
+                    if (enums[i].indexOf(value)===0) {
+                        var o1 = new Option(enums[i], enums[i], false, true);
+                        sel.options[sel.options.length] = o1;
+                    } else {
+                        var o1 = new Option(enums[i], enums[i], false, false);
+                        sel.options[sel.options.length] = o1;
+                    }
+
+                }
+                th.appendChild(sel);
+                tr.appendChild(th);
+                return tr;
+
+                return tr;
             }
 
             function add_Product_Tags() {
@@ -415,7 +444,6 @@
                     if ($.inArray(el, tag_category_array_uniqueNames) === -1)
                         tag_category_array_uniqueNames.push(el);
                 });
-
                 for (k = 0; k < static_categoryNames.length; k++) {
 
                     //  alert('*****: ' + tag_category_array_uniqueNames[k] + " oooo: " );
@@ -663,7 +691,7 @@
                     return;
                 if (request.status == 200)
                 {
-                   // alert("Curated Successfully " + request.responseText);
+                    // alert("Curated Successfully " + request.responseText);
                     updateProvider();
                 }
                 if (request.status != 200 && request.status != 304) {
@@ -673,7 +701,7 @@
             }
 
             function updateProvider() {
-               
+
                 var updated_id = document.getElementById('id_' + '0').value;
                 var updated_ownerProductId = document.getElementById('ownerProductId_' + '0').value;
                 var updated_externalURL = document.getElementById('externalURL_' + '0').value;
@@ -682,13 +710,15 @@
                 var updated_store = document.getElementById('store_' + '0').value;
                 var updated_price = document.getElementById('price_' + '0').value;
                 //   var updated_availability = document.getElementById('availability_'+'0');
-                var updated_onSale = document.getElementById('onSale_' + '0').value;
+               // var updated_onSale = document.getElementById('onSale_' + '0').value;
+                 var updated_onSale = $('#onSale_' + '0').val();
+                 
                 var updated_salePrice = document.getElementById('salePrice_' + '0').value;
                 var updated_saleExpiryDate = document.getElementById('saleExpiryDate_' + '0').value;
                 var updated_availableColors = document.getElementById('availableColors_' + '0').value;
                 var updated_availableSizes = document.getElementById('availableSizes_' + '0').value;
                 var updated_availableAtZipCodes = document.getElementById('availableAtZipCodes_' + '0').value;
-                var updated_availability = valC = $("#availability_" + '0').val();
+                var updated_availability  = $("#availability_" + '0').val();
                 var colorArray = updated_availableColors.split(",");
                 var sizesArray = updated_availableSizes.split(",");
                 var zipcodeArray = updated_availableAtZipCodes.split(",");
@@ -707,7 +737,7 @@
                             if (providerUpdaterequest.status == 200)
                             {
                                 alert('HTTP POST success: ' + providerUpdaterequest.responseText);
-                                 this.close();
+                              
                             }
                             if (providerUpdaterequest.status != 200 && providerUpdaterequest.status != 304) {
                                 alert('HTTP POST error ' + providerUpdaterequest.status + 'Response ' + providerUpdaterequest.responseText);
@@ -715,17 +745,17 @@
                             }
                         };
                         providerUpdaterequest.send(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
-                            price: updated_price, onSale: false, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: zipcodeArray}));
-                //print logs in console        
-                console.log("Provider: "+JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
-                            price: updated_price, onSale: false, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: zipcodeArray}));
+                            price: updated_price, onSale: updated_onSale, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: zipcodeArray}));
+                        //print logs in console        
+                        console.log("Provider: " + JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
+                            price: updated_price, onSale: updated_onSale, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: zipcodeArray}));
                     }
                 }
             }
 
 
             function createTagRequest(category, string, subcat) {
-        
+
                 // alert(JSON.stringify( {tagCategory:category ,tagString:string,tagSubCategory:subcat}) );
                 var url = "https://vue-server-dev.appspot.com/api/producttag";
                 if (XMLHttpRequest) {
@@ -735,7 +765,6 @@
                         tagCreateRequest.setRequestHeader('Custom-Header', 'javascript-client');
                         tagCreateRequest.setRequestHeader('Content-Type', 'application/json');
                         tagCreateRequest.onreadystatechange = tagHandler;
- 
                         tagCreateRequest.send(JSON.stringify({tagCategory: category, tagString: string, tagSubCategory: subcat}));
                     }
                 }
@@ -796,7 +825,7 @@
 
                 jsonObject.currentProductState = sel;
             }
-            
+
             function tagToProduct() {
                 var tagString = tagsArray.splice(0, 1);
                 if (tagString === undefined || tagString.length < 1) {
@@ -812,26 +841,23 @@
                         tagRequest.setRequestHeader('Custom-Header', 'javascript-client');
                         tagRequest.setRequestHeader('Content-Type', 'application/json');
                         tagRequest.onreadystatechange = tagToProductHandler;
-
                         tagRequest.send();
-
                     }
                 }
 
             }
-           
+
             function tagToProductHandler() {
                 if (tagRequest.readyState !== 4)
                     return;
                 if (tagRequest.status !== 200 && tagRequest.status !== 304) {
                     alert('HTTP POST error ' + tagRequest.status + 'Response ' + tagRequest.responseText);
-                     tagToProduct();
+                    tagToProduct();
                     return;
                 }
                 if (tagRequest.status === 200)
                 {
                     alert('HTTP POST success: ' + tagRequest.responseText);
-
                     tagToProduct();
                 }
 
@@ -919,7 +945,7 @@
         <script type="text/javascript">
 
             function addTagsToTableVaz() {
-                
+
                 var valC = $("#select_tagCategory").val();
                 var valS = $("#select_tagString").val();
                 var valSC = $("#select_tagSubCategory").val();
@@ -928,16 +954,15 @@
                     var productType = valC;
                     for (var p = 0; p < productType.length; p++) {
 
-                        
+
                         for (var q = 0; q < tags.length; q++) {
                             var cat = tags[q].tagCategory;
                             var tagstr = tags[q].tagString;
                             var tagSubStr = tags[q].tagSubCategory;
-
                             if (cat !== null && cat !== undefined && cat.indexOf('Product Type') === 0 && tagstr.indexOf(productType[p]) === 0) {
 
                                 addElementToTable('Product Type', tagstr, tagSubStr);
-                                 tagsArray.push(tagstr);
+                                tagsArray.push(tagstr);
                             }
                         }
 
@@ -949,7 +974,7 @@
                 if (valS !== null && valS !== undefined && valS !== '') {
                     var productType = valS;
                     for (var p = 0; p < productType.length; p++) {
-                        
+
 
                         for (var q = 0; q < tags.length; q++) {
 
@@ -959,7 +984,7 @@
                             if (cat !== null && cat !== undefined && cat.indexOf('Occasion') === 0 && tagstr.indexOf(productType[p]) === 0) {
 
                                 addElementToTable('Occasion', tagstr, tagSubStr);
-                                 tagsArray.push(tagstr);
+                                tagsArray.push(tagstr);
                             }
                         }
 
@@ -970,7 +995,7 @@
                 if (valSC !== null && valSC !== undefined && valSC !== '') {
                     var productType = valSC;
                     for (var p = 0; p < productType.length; p++) {
-                       
+
                         for (var q = 0; q < tags.length; q++) {
                             var cat = tags[q].tagCategory;
                             var tagstr = tags[q].tagString;
@@ -978,7 +1003,7 @@
                             if (cat !== null && cat !== undefined && cat.indexOf('Product description') === 0 && tagstr.indexOf(productType[p]) === 0) {
 
                                 addElementToTable('Product description', tagstr, tagSubStr);
-                                 tagsArray.push(tagstr);
+                                tagsArray.push(tagstr);
                             }
                         }
 
@@ -1091,10 +1116,9 @@
 //                        subCatString = subCatString + "," + valSC[i];
 //                    }
 //                }
-               
-                   if(valSC===undefined)
-                       valSC===null;
-                   
+
+                if (valSC === undefined)
+                    valSC === null;
                 //create TAG.
                 createTagRequest(valC, valS, valSC);
             }
