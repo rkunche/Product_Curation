@@ -159,6 +159,11 @@ button.style.backgroundColor = "RED";
                           for(var i=0;i<products.length;i++){
                              if(clcickedProductId === products[i].id){
                                product = products[i];
+                               if(curatorID == null || curatorID == undefined || curatorID.length < 1){
+                                product.curatorId = "6419807607980032";
+                                    } else {
+                               product.curatorId = curatorID;
+                                   }
                                break;
                              }
 
@@ -259,9 +264,10 @@ titleVal =products[k].title;
 stateVal = products[k].currentProductState;
  var button = cell.getElementsByTagName("input");
 if(stateVal == "CRAWLED"){
-button[0].style.backgroundColor = "Yellow";
+button[0].style.backgroundColor = "Red";
 } else{
 button[0].style.backgroundColor = "Green";
+button[0].value = "Review Now";
 }
 }
 }
