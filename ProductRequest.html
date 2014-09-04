@@ -1,6 +1,6 @@
 <html>
 
-    <body onLoad = "readParams( );">
+    <body onLoad = "readParams()">
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
@@ -40,7 +40,7 @@
             }, 2000)
         }
 
-        function readParams( ) {
+        function readParams() {
             //static users
             users.push(5505177142427648);
             users.push(6419807607980032);
@@ -161,20 +161,25 @@
                             for (var i = 0; i < products.length; i++) {
                                 if (clcickedProductId === products[i].id) {
                                     product = products[i];
+                                    if (curatorID == null || curatorID == undefined || curatorID.length < 1) {
+                                        product.curatorId = "6419807607980032";
+                                    } else {
+                                        product.curatorId = curatorID;
+                                    }
                                     break;
                                 }
 
                             }
-                            button.value = "Review Now";
 
+                            button.value = "Review Now";
 
                             var productString = JSON.stringify(product)
                             openOther(productString);
 
                         },
                         dude: product.title
-                    };
 
+                    };
                     button.addEventListener("click", obj, false);
 
                     td.appendChild(button);
@@ -248,6 +253,7 @@
 
         }
 //to refresh the selected product after curation.
+
         function getAllCellValues() {
             var table = document.getElementById("productTableId");
             var cells = Array.prototype.slice.call(document.getElementById("productTableId").getElementsByTagName("td"));
@@ -264,9 +270,10 @@
                             stateVal = products[k].currentProductState;
                             var button = cell.getElementsByTagName("input");
                             if (stateVal == "CRAWLED") {
-                                button[0].style.backgroundColor = "Yellow";
+                                button[0].style.backgroundColor = "Red";
                             } else {
                                 button[0].style.backgroundColor = "Green";
+                                button[0].value = "Review Now";
                             }
                         }
                     }
@@ -277,8 +284,8 @@
                 }
 
             }
-        }
 
+        }
         </script>
         <Button onclick="getCrawledProducts();">Get CrawledPoducts</Button>
         <table id="productTableId"></table>
