@@ -265,7 +265,7 @@
                     product_provider_div.appendChild(br1);
                     var table = document.createElement('table');
                     table.className = "altrowstable";
-                    table.setAttribute('width', '600')
+                   // table.style.width = '400px';
 
 
                     var caption = document.createElement('caption');
@@ -298,14 +298,15 @@
             }
 
             function add_Onsale_Boolean(key, value, id) {
+                var key_name = 'on_sale_values';
 
                 var tr = document.createElement('tr');
                 var th_key = document.createElement('th');
                 th_key.textContent = key;
                 tr.appendChild(th_key);
                 var th = document.createElement('th');
-                var sel = document.createElement('select');
-                sel.id = id;
+                var td = document.createElement('td');
+                td.style.width = 300;
                 // sel.value = value;
 
                 //    alert(value);
@@ -314,15 +315,15 @@
                 for (var i = 0; i < enums.length; i++) {
 
                     if (enums[i].indexOf(value) === 0) {
-                        var o1 = new Option(enums[i], enums[i], false, true);
-                        sel.options[sel.options.length] = o1;
+                        var o1 = getRadioButton(key_name, enums[i], true);
+                        td.appendChild(o1);
                     } else {
-                        var o1 = new Option(enums[i], enums[i], false, false);
-                        sel.options[sel.options.length] = o1;
+                        var o1 = getRadioButton(key_name, enums[i], false);
+                        td.appendChild(o1);
                     }
 
                 }
-                th.appendChild(sel);
+                th.appendChild(td);
                 tr.appendChild(th);
                 return tr;
                 return tr;
@@ -459,6 +460,7 @@
                 th_key.textContent = key;
                 tr.appendChild(th_key);
                 var th_val = document.createElement('th');
+
                 var input = document.createElement('input');
                 input.value = value;
                 input.type = 'text';
@@ -472,27 +474,32 @@
 
             function getAvailability(key, value, id) {
                 var enums = ['IN_STOCK', 'OUT_OF_STOCK', 'EXCESS_INVENTORY', 'RUNNING_LOW', 'TEMPORARY_UNAVAILABLE', 'PERMANENTLY_UNAVAILABLE'];
+                var valAvail = 'provider_Availability';
                 var tr = document.createElement('tr');
                 var th_key = document.createElement('th');
                 th_key.textContent = key;
                 tr.appendChild(th_key);
                 var th = document.createElement('th');
-                var sel = document.createElement('select');
-                sel.id = id;
+                var td = document.createElement('td');
+
                 // sel.value = value;
                 for (var i = 0; i < enums.length; i++) {
 
                     if (enums[i] === value) {
-                        var o1 = new Option(enums[i], enums[i], false, true);
-                        sel.options[sel.options.length] = o1;
+                        //  var o1 = new Option(enums[i], enums[i], false, true);
+                        //  sel.options[sel.options.length] = o1;
+                        var rdbtn = getRadioButton(valAvail, enums[i], true);
+                        td.appendChild(rdbtn);
                     } else {
-                        var o1 = new Option(enums[i], enums[i], false, false);
-                        sel.options[sel.options.length] = o1;
+                        //    var o1 = new Option(enums[i], enums[i], false, false);
+                        //  sel.options[sel.options.length] = o1;
+                        var rdbtn = getRadioButton(valAvail, enums[i], false);
+                        td.appendChild(rdbtn);
                     }
 
                 }
 
-                th.appendChild(sel);
+                th.appendChild(td);
                 tr.appendChild(th);
                 return tr;
             }
@@ -522,6 +529,8 @@
                         document.getElementById(id).value = vl;
                     else if (current_val.indexOf(vl) < 0) {
                         document.getElementById(id).value = current_val + "," + vl;
+                    } else if (current_val.indexOf(vl) >= 0) {
+                        alert('uncheck is called: ' + vl);
                     }
                 };
                 available_colors.forEach(function(entry) {
@@ -615,29 +624,29 @@
                 var title = document.getElementById("id_title").value;
                 var description = document.getElementById("id_description").value;
                 jsonObject.currentProductState = document.querySelector('input[name="current_product_status"]:checked').value;
-                
-                
+
+
                 if (title === undefined || title.length < 1) {
                     showAlert("Please fill the title");
                     return false;
                 }
                 jsonObject.title = title;
-                
+
                 if (description === undefined || description.length < 1) {
                     showAlert("Please fill the description");
                     return false;
                 }
                 jsonObject.description = description;
-               
-                if(localTags.length < 3){
-                     showAlert("Please create Tags.");
-                    return false; 
+
+                if (localTags.length < 3) {
+                    showAlert("Please create Tags.");
+                    return false;
                 }
-                
-                if(jsonObject.currentProductState == "CRAWLED"){
-                    
+
+                if (jsonObject.currentProductState == "CRAWLED") {
+
                     showAlert("Please check the Product State.");
-                    return false;  
+                    return false;
                 }
                 return true;
 
@@ -646,9 +655,9 @@
                 alert(message);
             }
             function curateProduct() {
-                 if(!getCuratedInfo()){
-                   return;  
-                 }
+                if (!getCuratedInfo()) {
+                    return;
+                }
                 var title = document.getElementById("id_title").value;
                 var description = document.getElementById("id_description").value;
                 jsonObject.currentProductState = document.querySelector('input[name="current_product_status"]:checked').value;
@@ -693,13 +702,19 @@
                 var updated_price = document.getElementById('price_' + '0').value;
                 //   var updated_availability = document.getElementById('availability_'+'0');
                 // var updated_onSale = document.getElementById('onSale_' + '0').value;
-                var updated_onSale = $('#onSale_' + '0').val();
+                //  var updated_onSale = $('#onSale_' + '0').val();
                 var updated_salePrice = document.getElementById('salePrice_' + '0').value;
+                var updated_onSale = document.querySelector('input[name="on_sale_values"]:checked').value
+
+
                 var updated_saleExpiryDate = document.getElementById('saleExpiryDate_' + '0').value;
                 var updated_availableColors = document.getElementById('availableColors_' + '0').value;
                 var updated_availableSizes = document.getElementById('availableSizes_' + '0').value;
                 var updated_availableAtZipCodes = document.getElementById('availableAtZipCodes_' + '0').value;
-                var updated_availability = $("#availability_" + '0').val();
+                // var updated_availability = $("#availability_" + '0').val();
+                var updated_availability = document.querySelector('input[name="provider_Availability"]:checked').value
+
+
                 var colorArray = updated_availableColors.split(",");
                 var sizesArray = updated_availableSizes.split(",");
                 var zipcodeArray = updated_availableAtZipCodes.split(",");
@@ -716,11 +731,11 @@
                                 return;
                             if (providerUpdaterequest.status == 200)
                             {
-                                if(curatorReview == "Curate Now"){
-                                        alert('Curated Successfully');
-                                 } else {
-                                     alert('Reviewed Successfully');
-                                     }
+                                if (curatorReview == "Curate Now") {
+                                    alert('Curated Successfully');
+                                } else {
+                                    alert('Reviewed Successfully');
+                                }
                                 window.opener.close();
                                 close();
                             }
@@ -772,12 +787,12 @@
             var taging;
             function tagAssociateWithProduct(tagString, tag) {
                 taging = tag;
-                if(tag == "untag"){
-                var position = localTags.indexOf(tagString);
-                if (position != -1) {
-                    localTags.splice(position, 1);
+                if (tag == "untag") {
+                    var position = localTags.indexOf(tagString);
+                    if (position != -1) {
+                        localTags.splice(position, 1);
+                    }
                 }
-            }
                 var url = "https://vue-server-dev.appspot.com/api/product/" + tag + "/" + jsonObject.id + "/" + tagString;
                 if (XMLHttpRequest) {
                     productTagAssociateReq = new XMLHttpRequest();
@@ -984,8 +999,8 @@
                     valSC === null;
 
                 //to attach local data
-                
-                    localTags.push(valS);
+
+                localTags.push(valS);
 
 
 
