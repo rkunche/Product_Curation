@@ -68,8 +68,8 @@ getCurateProduct();
                     boolval = true;
             }
             if (!boolval) {
-                  alert("user does not exist");
-                  return;
+                  //alert("user does not exist");
+                 // return;
             }  
             var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=CRAWLED&limit=50";
             if (XMLHttpRequest)
@@ -112,13 +112,14 @@ getCurateProduct();
 
         //prepare table with received products
         function prepareTable() {
-            var table = document.getElementById("productId");
+            var table = document.getElementById("productTableId");
             for (var i = 0; i < products.length; i++) {
                 if (i % 5 == 0) {
                     var tr = document.createElement("tr");
                     table.appendChild(tr);
                 }
                 var td = document.createElement("td");
+                    td.id = products[i].id;
                 tr.appendChild(td);
                 var imag = document.createElement("img");
 
@@ -163,8 +164,11 @@ getCurateProduct();
 
                        }
  button.value = "Review Now";
+ 
+button.style.backgroundColor = "#f47121";
                             var productString = JSON.stringify(product)
                             openOther(productString);
+ 
                         },
                         dude: product.title
                     };
@@ -229,6 +233,7 @@ function curateProductHandler(){
                 if(clcickedProductId === products[i].id){
                     
                products[i] = curatedProduct;
+getAllCellValues();
                      break;
                  }
               }
@@ -237,9 +242,34 @@ function curateProductHandler(){
                 return;
             }
 }
+//to refresh the selected product after curation.
+ function getAllCellValues(){
+var table = document.getElementById("productTableId");
+ var cells = Array.prototype.slice.call(document.getElementById("productTableId").getElementsByTagName("td"));
+ var cell;
+for(var i in cells){
+  if(clcickedProductId == cells[i].id){
+cell = cells[i];
+ var values = cell.getElementsByTagName("div");
+ var titleVal;
+var stateVal;  
+for(var k=0;k<products.length;k++){
+if(clcickedProductId == products[k].id){
+titleVal =products[k].title; 
+stateVal = products[k].currentProductState;
+}
+}
+values[0].innerHTML =  "Title : "+titleVal;
+values[1].innerHTML = "State :  "+stateVal;
+ break;
+ }
+    
+}
+ 
+}
         </script>
         <Button onclick="getCrawledProducts();">Get CrawledPoducts</Button>
-        <table id="productId"></table>
+        <table id="productTableId"></table>
 
     </body>
 </html>
