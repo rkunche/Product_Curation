@@ -212,9 +212,14 @@
                 //  alert('product tags: ' + jsonResponse.productTags);
                 for (var m = 0; m < product_tags.length; m++) {
                     var tag_obj = product_tags[m];
+                    
+                    if(tag_obj === null)
+                    continue;
+                
                     var tag_cat = tag_obj.tagCategory;
                     var tag_string = tag_obj.tagString;
                     var tag_sub_cat = tag_obj.tagSubCategory;
+                    
                     var row = document.createElement('tr');
                     var thC = document.createElement('th');
                     thC.textContent = tag_cat;
@@ -668,13 +673,7 @@
             }
 
             function updateProvider() {
-                //   alert("provider");
-                // var colors = document.getElementById('colors_text_id').value;
-                //  var sizes = document.getElementById('sizes_text_id').value;
-
-
-
-
+               
                 var updated_id = document.getElementById('id_' + '0').value;
                 var updated_ownerProductId = document.getElementById('ownerProductId_' + '0').value;
                 var updated_externalURL = document.getElementById('externalURL_' + '0').value;
@@ -708,6 +707,7 @@
                             if (providerUpdaterequest.status == 200)
                             {
                                 alert('HTTP POST success: ' + providerUpdaterequest.responseText);
+                                 this.close();
                             }
                             if (providerUpdaterequest.status != 200 && providerUpdaterequest.status != 304) {
                                 alert('HTTP POST error ' + providerUpdaterequest.status + 'Response ' + providerUpdaterequest.responseText);
@@ -716,7 +716,8 @@
                         };
                         providerUpdaterequest.send(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
                             price: updated_price, onSale: false, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: zipcodeArray}));
-                        console.log(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
+                //print logs in console        
+                console.log("Provider: "+JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
                             price: updated_price, onSale: false, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: zipcodeArray}));
                     }
                 }
@@ -798,7 +799,6 @@
             
             function tagToProduct() {
                 var tagString = tagsArray.splice(0, 1);
-                alert("TAG: "+tagString);
                 if (tagString === undefined || tagString.length < 1) {
                     return;
                 }
@@ -811,7 +811,7 @@
                         tagRequest.open('PUT', url, true);
                         tagRequest.setRequestHeader('Custom-Header', 'javascript-client');
                         tagRequest.setRequestHeader('Content-Type', 'application/json');
-                        tagRequest.onreadystatechange = tagHandler;
+                        tagRequest.onreadystatechange = tagToProductHandler;
 
                         tagRequest.send();
 
@@ -820,7 +820,7 @@
 
             }
            
-            function tagHandler() {
+            function tagToProductHandler() {
                 if (tagRequest.readyState !== 4)
                     return;
                 if (tagRequest.status !== 200 && tagRequest.status !== 304) {
@@ -1094,7 +1094,7 @@
                
                    if(valSC===undefined)
                        valSC===null;
-                   alert(valC+"***"+valS+"***"+valSC);
+                   
                 //create TAG.
                 createTagRequest(valC, valS, valSC);
             }
@@ -1220,7 +1220,7 @@
             </label>
 
             <label> <span>&nbsp;</span> <input type="button"
-                                               class="button" value="Create Custom Tag" onclick="createCustomTag()"  /></label>
+                                               class="button" value="Create&Attach Custom Tag" onclick="createCustomTag()"  /></label>
 
 
             <br> <br> <label> <span><strong>productProviders:
@@ -1228,7 +1228,7 @@
             <div id ="product_providers_div_id"></div>
 
             <label> <span>&nbsp;</span> <input type="button"
-                                               class="button" value="Send" onClick="curateProduct()" />
+                                               class="button" value="Curate and Finish" onClick="curateProduct()" />
             </label>
         </form>
     </body>
