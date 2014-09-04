@@ -20,12 +20,13 @@
         var curatorID;
 
         var otherWindowObserver;
+        var buttonText;
         //prototype for clear the array values.
         Array.prototype.clear = function() {
             this.length = 0;
         };
         function sendMessage(productString) {
-            productString = tagString + "##" + productString + "##" + curatorID;
+            productString = tagString + "##" + productString + "##" + buttonText;
             otherWindow.postMessage(productString, "*");
             clearInterval(myVar)
             otherWindowObserver = setInterval(function() {
@@ -171,7 +172,7 @@
 
                             }
 
-                            button.value = "Review Now";
+                            buttonText = button.value;
 
                             var productString = JSON.stringify(product)
                             openOther(productString);

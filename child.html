@@ -168,6 +168,7 @@
             var tagRequest;
             var tagsArray =[];
             var curatorId;
+            var curatorReview;
         
             window.addEventListener("message", function(event) {
 
@@ -177,7 +178,7 @@
                     console.log(tags[i].tagString);
                 }
                 datafromparent = strings[1]
-                 curatorId = strings[2];
+                curatorReview = strings[2];
                 jsonObject = JSON.parse(datafromparent);
                 tagCreationReqeustCount = 0;
                 tagArray.clear();
@@ -698,7 +699,11 @@
                                 return;
                             if (providerUpdaterequest.status == 200)
                             {
-                                alert('Curated Successfully');
+                                if(curatorReview == "Curate Now"){
+                                        alert('Curated Successfully');
+                                 } else {
+                                     alert('Reviewed Successfully');
+                                     }
                                 window.opener.close();
                                 close();
                             }
