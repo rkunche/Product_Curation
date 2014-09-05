@@ -288,22 +288,23 @@
                 curatorReview = strings[2];
                 cacheLocalTags.clear();
                 jsonObject = JSON.parse(datafromparent);
+
                 if (jsonObject.currentProductState == "CRAWLED") {
                     buttonValue = "Curate And Finish";
                 } else {
                     buttonValue = "Review And Finish";
                 }
-                initialValues.Title = jsonObject.title;
-                initialValues.Description = jsonObject.description;
-                initialValues.PrductProviders = jsonObject.productProviders
-                initialValues.ProductTags = jsonObject.productTags;
+                // initialValues.Title = jsonObject.title;
+                // initialValues.Description = jsonObject.description;
+                // initialValues.PrductProviders = jsonObject.productProviders
+                // initialValues.ProductTags = jsonObject.productTags;
 
-                for (var i = 0; i < jsonObject.productTags.length; i++) {
-                    localTagsObject.tagCategory = jsonObject.productTags[i].tagCategory;
-                    localTagsObject.tagString = jsonObject.productTags[i].tagString;
-                    localTagsObject.tagSubCategory = jsonObject.productTags[i].tagSubCategory;
-                    cacheLocalTags.push(localTagsObject);
-                }
+                // for (var i = 0; i < jsonObject.productTags.length; i++) {
+                //   localTagsObject.tagCategory = jsonObject.productTags[i].tagCategory;
+                //   localTagsObject.tagString = jsonObject.productTags[i].tagString;
+                //  localTagsObject.tagSubCategory = jsonObject.productTags[i].tagSubCategory;
+                //  cacheLocalTags.push(localTagsObject);
+                //  }
 
                 tagCreationReqeustCount = 0;
                 tagArray.clear();
@@ -805,15 +806,21 @@
             function getCuratedInfo() {
                 var title = document.getElementById("id_title").value;
                 var description = document.getElementById("id_description").value;
-                jsonObject.currentProductState = document.querySelector('input[name="current_product_status"]:checked').value;
+                var checkedVal = document.querySelector('input[name="current_product_status"]:checked');
+                description = description.trim();
+                title = title.trim();
+                if (checkedVal == null) {
+                    alert("Please Check ProductState");
+                    return false;
+                }
 
-                if (title == undefined || title.length < 1) {
+                if (title == undefined || title == " " || title.length < 2) {
                     showAlert("Please fill the title");
                     return false;
                 }
                 jsonObject.title = title;
 
-                if (description === undefined || description.length < 1) {
+                if (description === undefined || description == " " || description.length < 2) {
                     showAlert("Please fill the description");
                     return false;
                 }
@@ -825,11 +832,7 @@
                     return false;
                 }
 
-                if (jsonObject.currentProductState == "CRAWLED") {
 
-                    showAlert("Please check the Product State.");
-                    return false;
-                }
                 return true;
 
             }
@@ -843,7 +846,6 @@
                 var title = document.getElementById("id_title").value;
                 var description = document.getElementById("id_description").value;
                 jsonObject.currentProductState = document.querySelector('input[name="current_product_status"]:checked').value;
-
                 var url = "https://vue-server-dev.appspot.com/api/product/" + jsonObject.id;
                 if (XMLHttpRequest) {
                     request = new XMLHttpRequest();
@@ -865,7 +867,15 @@
                     return;
                 if (request.status == 200)
                 {
-                    updateProvider();
+                    //updateProvider();
+                    if (curatorReview == "Curate Now") {
+                        alert('Curated Successfully : ' + request.responseText);
+                    } else {
+                        alert('Reviewed Successfully :' + request.responseText);
+                    }
+
+                    window.opener.close();
+                    close();
                 }
                 if (request.status != 200 && request.status != 304) {
                     //alert('HTTP POST error ' + request.status + 'Response ' + request.responseText);
@@ -901,13 +911,24 @@
                 var sizesArray = updated_availableSizes.split(",");
                 var zipcodeArray = updated_availableAtZipCodes.split(",");
 
+                updated_price = updated_price.trim();
+                updated_salePrice = updated_salePrice.trim();
+                updated_store = updated_store.trim();
+
+              //  alert('price: ' + updated_price + " salep: " + updated_salePrice);
+
+                if (updated_price == undefined || updated_price == null || updated_price.length < 1||updated_price==0) {
+                    alert("Please Fill Price");
+                    return;
+                }
+
                 if (updated_store == undefined || updated_store == null || updated_store.length < 1) {
                     alert("Please Fill Store");
                     return;
                 }
 
-                if (updated_salePrice == undefined || updated_salePrice == null || updated_salePrice.length < 1) {
-                    alert("Please Fill Price");
+                if (updated_onSale && (updated_salePrice == undefined || updated_salePrice == null || updated_salePrice.length < 1||updated_salePrice==0)) {
+                    alert("Please Fill Sale Price");
                     return;
                 }
 
@@ -941,22 +962,19 @@
                         providerUpdaterequest.onreadystatechange = function providerHandler() {
                             if (providerUpdaterequest.readyState != 4)
                                 return;
-                            if (providerUpdaterequest.status == 200)
-                            {
-//TODO:
-                                if (curatorReview == "Curate Now") {
-                                    alert('Curated Successfully : ' + providerUpdaterequest.responseText);
-                                } else {
-                                    alert('Reviewed Successfully :' + providerUpdaterequest.responseText);
-                                }
 
-                                window.opener.close();
-                                close();
-                            }
                             if (providerUpdaterequest.status != 200 && providerUpdaterequest.status != 304) {
+
                                 alert('HTTP POST error ' + providerUpdaterequest.status + 'Response ' + providerUpdaterequest.responseText);
                                 return;
                             }
+                            if (providerUpdaterequest.status == 200)
+                            {
+
+                                curateProduct();
+
+                            }
+
                         };
                         providerUpdaterequest.send(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
                             price: updated_price, onSale: updated_onSale, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: zipcodeArray}));
@@ -969,10 +987,7 @@
 
 
             function createTagRequest(category, string, subcat) {
-                localTagsObject.tagCategory = category;
-                localTagsObject.tagString = tagString;
-                localTagsObject.tagSubCategory = tagSubCategory;
-                cacheLocalTags.push(localTagsObject);
+                console.log("createTagRequest fun:   CAT:" + category + " Tag String: " + string);
                 var url = "https://vue-server-dev.appspot.com/api/producttag";
                 if (XMLHttpRequest) {
                     tagCreateRequest = new XMLHttpRequest();
@@ -997,6 +1012,7 @@
                 }
                 if (tagCreateRequest.status == 200)
                 {
+                    console.log("createTagRequest fun success:    ");
                     var jsonTagObject = JSON.parse(tagCreateRequest.responseText);
                     tagAssociateWithProduct(jsonTagObject.tagString, "tag");
                 }
@@ -1004,6 +1020,7 @@
             }
             var taging;
             function tagAssociateWithProduct(tagString, tag) {
+                console.log("tagAssociateWithProduct fun success:    TAGString: " + tagString);
                 taging = tag;
                 if (tag == "untag") {
                     var position = localTags.indexOf(tagString);
@@ -1035,12 +1052,7 @@
                 }
                 if (productTagAssociateReq.status == 200)
                 {
-                    if (tagging == "tag") {
-                        alert("Tag was " + taging + " to product ");
-
-                    } else {
-                        alert("Tag was " + taging + " from product ");
-                    }
+                    console.log("tagAssociateWithProduct fun success:      ");
 
                 }
 
@@ -1200,6 +1212,7 @@
                     return;
                 }
                 document.getElementById("id_tag_str").value = "";
+                console.log("CAT:" + valC + " Tag String: " + valS);
                 createTagReqAndAddTable(valC, valS, valSC, 1);
             }
 
@@ -1234,9 +1247,6 @@
                 //to attach local data
 
                 localTags.push(valS);
-
-
-
                 if (addtableonly === 1)
                     createTagRequest(valC, valS, valSC)
             }
@@ -1434,7 +1444,7 @@
                         <div id ="product_providers_div_id"></div>
 
                         <label> <span>&nbsp;</span> <input type="button"
-                                                           class="button" value="Curate and Finish" onClick="curateProduct()" id ="send_but_id"/>
+                                                           class="button" value="Curate and Finish" onClick="updateProvider()" id ="send_but_id"/>
                         </label>
                         </form>
                         </body>
