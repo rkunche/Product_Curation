@@ -147,6 +147,33 @@
             }
 
 
+            table.hovertable {
+                font-family: verdana,arial,sans-serif;
+                font-size:11px;
+                color:#333333;
+                border-width: 1px;
+                border-color: #999999;
+                border-collapse: collapse;
+            }
+            table.hovertable th {
+                background-color:#c3dde0;
+                border-width: 1px;
+                padding: 8px;
+                border-style: solid;
+                border-color: #a9c6c9;
+            }
+            table.hovertable tr {
+                background-color:#d4e3e5;
+            }
+            table.hovertable td {
+                border-width: 1px;
+                padding: 8px;
+                border-style: solid;
+                border-color: #a9c6c9;
+            }
+
+
+
         </style>
         <script>
             var available_colors = ["Red", "Green", "Blue", "Cyn", "Orange", "Purple", "Black"];
@@ -451,7 +478,8 @@
                 }
 
                 //set default values from backend
-                $("select").multiselect().multiselectfilter();
+                $("select").multiselect({
+                    selectedList: 4}).multiselectfilter();
             }
 
             function getElemnt(key, value, id) {
@@ -482,6 +510,10 @@
                 var th = document.createElement('th');
                 var td = document.createElement('td');
 
+                var div = document.createElement('div');
+                div.style.width = '400px';
+
+
                 // sel.value = value;
                 for (var i = 0; i < enums.length; i++) {
 
@@ -498,8 +530,8 @@
                     }
 
                 }
-
-                th.appendChild(td);
+                div.appendChild(td);
+                th.appendChild(div);
                 tr.appendChild(th);
                 return tr;
             }
@@ -518,27 +550,40 @@
                 input.type = 'text';
                 input.id = id;
                 th_val.appendChild(input);
-                tr.appendChild(th_val);
-                var th = document.createElement('th');
+                // tr.appendChild(th_val);
+                //  var th = document.createElement('th');
+                // th.style.width = '100px';
                 var sel = document.createElement('select');
                 sel.id = "color_selector_" + i;
+                sel.style.width = "75px";
+                sel.multiple = 'multiple';
                 sel.onchange = function() {
                     var vl = $("#color_selector_" + i).val();
+
                     var current_val = document.getElementById(id).value;
-                    if (current_val === '')
-                        document.getElementById(id).value = vl;
-                    else if (current_val.indexOf(vl) < 0) {
-                        document.getElementById(id).value = current_val + "," + vl;
-                    } else if (current_val.indexOf(vl) >= 0) {
-                        alert('uncheck is called: ' + vl);
+                    // alert("111: "+vl.length);
+                    if (vl != null && vl != undefined) {
+
+                        if (current_val === '') {
+                            document.getElementById(id).value = vl.toString();
+                        }
+                        else {
+
+                            for (var k = 0; k < vl.length; k++) {
+                                //  alert("222: "+vl[k]+" *****: "+current_val.indexOf(vl[k]) );           
+                                if (current_val.indexOf(vl[k]) < 0) {
+                                    document.getElementById(id).value = current_val + "," + vl[k];
+                                }
+                            }
+                        }
                     }
                 };
                 available_colors.forEach(function(entry) {
                     var o1 = new Option(entry, entry, false, false);
                     sel.options[sel.options.length] = o1;
                 });
-                th.appendChild(sel);
-                tr.appendChild(th);
+                th_val.appendChild(sel);
+                tr.appendChild(th_val);
                 return tr;
             }
 
@@ -554,26 +599,42 @@
                 input.value = value;
                 input.type = 'text';
                 input.id = id;
+
                 th_val.appendChild(input);
-                tr.appendChild(th_val);
-                var th = document.createElement('th');
+                //  tr.appendChild(th_val);
+                //var th = document.createElement('th');
                 var sel = document.createElement('select');
                 sel.id = "sizes_selector_" + i;
+                sel.style.width = "75px";
+                sel.multiple = 'multiple';
                 sel.onchange = function() {
                     var vl = $("#sizes_selector_" + i).val();
+
                     var current_val = document.getElementById(id).value;
-                    if (current_val === '')
-                        document.getElementById(id).value = vl;
-                    else if (current_val.indexOf(vl) < 0) {
-                        document.getElementById(id).value = current_val + "," + vl;
+                    // alert("111: "+vl.length);
+                    if (vl != null && vl != undefined) {
+
+                        if (current_val === '') {
+                            document.getElementById(id).value = vl.toString();
+                        }
+                        else {
+
+                            for (var k = 0; k < vl.length; k++) {
+                                //  alert("222: "+vl[k]+" *****: "+current_val.indexOf(vl[k]) );           
+                                if (current_val.indexOf(vl[k]) < 0) {
+                                    document.getElementById(id).value = current_val + "," + vl[k];
+                                }
+                            }
+                        }
                     }
+
                 };
                 available_sizes.forEach(function(entry) {
                     var o1 = new Option(entry, entry, false, false);
                     sel.options[sel.options.length] = o1;
                 });
-                th.appendChild(sel);
-                tr.appendChild(th);
+                th_val.appendChild(sel);
+                tr.appendChild(th_val);
                 return tr;
             }
 
@@ -722,7 +783,7 @@
                     alert("Please Fill Store");
                     return;
                 }
-            
+
                 if (updated_salePrice == undefined || updated_salePrice == null || updated_salePrice.length < 1) {
                     alert("Please Fill Price");
                     return;
@@ -1149,8 +1210,30 @@
 
             <br><br><br>
 
-            <label> <span>Tag Category </span> <input id="id_tag_cat"
-                                                      type="text" name="name"  /></label>
+            <label for="id_tag_cat"> <span>Tag Category </span> <input id="id_tag_cat"
+                                                                       type="text" name="name"  />
+
+                <script type="text/javascript">
+
+                    $(function() {
+                        var availableTags = [
+                            "Product Type",
+                            "Occasion",
+                            "Product description",
+                        ];
+                        $("#id_tag_cat").autocomplete({
+                            source: availableTags,
+                             minLength: 0,
+                        }).focus(function() {
+                            //Use the below line instead of triggering keydown
+                            $(this).autocomplete('search');
+                        });
+                    });
+
+
+                </script>
+
+            </label>
             <label> <span>Tag String </span> <input id="id_tag_str"
                                                     type="text" name="name"  />
             </label>
