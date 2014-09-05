@@ -154,7 +154,7 @@
                     var button = document.createElement("input");
                     button.type = "button";
                    
-                   if(product.productSate == "CRAWLED"){
+                   if(product.currentProductState == "CRAWLED"){
                     button.value = "Curate Now";
                     button.style.backgroundColor = "RED";
                   }else if(product.currentProductState == "NEEDS_RECURATION"){
