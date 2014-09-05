@@ -161,7 +161,10 @@
                          button.value = "Recurate Now";
                     button.style.backgroundColor = "RED";
                     product.currentProductState = "CRAWLED";
-                         }else{
+                         }else if(product.currentProductState == "CURATED_AND_VERIFIED"){
+                                button[0].style.backgroundColor = "Green";
+                                button[0].value = "Verified";
+                                }else{
                     button.value = "Review Now";
                     button.style.backgroundColor = "Green";
                      }
@@ -184,9 +187,12 @@
 
                             buttonText = button.value;
 
-
+                            if(product.currentProductState == "CURATED_AND_VERIFIED"){
+                              alert("already verifed");
+                            } else {
                             var productString = JSON.stringify(product)
                             openOther(productString);
+                           }
 
                         },
                         dude: product.title
@@ -287,7 +293,10 @@
                         button[0].value = "Recurate Now";
                     button[0].style.backgroundColor = "RED";
                      products[k].currentProductState = "CRAWLED";
-                         } else {
+                         } else if(stateVal == "CURATED_AND_VERIFIED"){
+                                button[0].style.backgroundColor = "Green";
+                                button[0].value = "Verified";
+                                }else{
                                 button[0].style.backgroundColor = "Green";
                                 button[0].value = "Review Now";
                             }

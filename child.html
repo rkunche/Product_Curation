@@ -753,7 +753,6 @@
                 var title = document.getElementById("id_title").value;
                 var description = document.getElementById("id_description").value;
               jsonObject.currentProductState = document.querySelector('input[name="current_product_status"]:checked').value;
-
                 var url = "https://vue-server-dev.appspot.com/api/product/" + jsonObject.id;
                 if (XMLHttpRequest) {
                     request = new XMLHttpRequest();
