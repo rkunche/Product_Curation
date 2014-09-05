@@ -343,9 +343,6 @@
                     createTagReqAndAddTable(tag_cat, tag_string, tag_sub_cat, 0)
 
                 }
-                alert("PType: "+productTypeTagCount);
- alert("Occasion: "+occasionTagCount);
- alert("Description: "+productDescriptionTagCount);
 
                 var images_array = jsonResponse.productImages;
                 var tabl_div = document.getElementById('image_table_id');
@@ -1166,7 +1163,6 @@
                             var tagSubStr = tags[q].tagSubCategory;
                             if (cat !== null && cat !== undefined && cat.indexOf('Product Type') === 0 && tagstr.indexOf(productType[p]) === 0) {
                                    productTypeTagCount = productTypeTagCount +1;
-                                   alert("PType: "+productTypeTagCount);
                                 addElementToTable('Product Type', tagstr, tagSubStr);
                                 tagsArray.push(tagstr);
                                 
@@ -1192,7 +1188,6 @@
                             var tagSubStr = tags[q].tagSubCategory;
                             if (cat !== null && cat !== undefined && cat.indexOf('Occasion') === 0 && tagstr.indexOf(productType[p]) === 0) {
                                occasionTagCount = occasionTagCount +1;
-                               alert("OType: "+occasionTagCount);
                                 addElementToTable('Occasion', tagstr, tagSubStr);
                                 tagsArray.push(tagstr);
                                  
@@ -1214,7 +1209,6 @@
                             var tagSubStr = tags[q].tagSubCategory;
                             if (cat !== null && cat !== undefined && cat.indexOf('Product description') === 0 && tagstr.indexOf(productType[p]) === 0) {
                                 productDescriptionTagCount = productDescriptionTagCount +1;
-                               alert("DType: "+productDescriptionTagCount);
                                 addElementToTable('Product description', tagstr, tagSubStr);
                                 tagsArray.push(tagstr);
                                 
