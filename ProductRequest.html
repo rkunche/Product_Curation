@@ -72,7 +72,7 @@
                 alert("user does not exist");
                  return;
             }
-            var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=CURATED&limit=50";
+            var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=CRAWLED&limit=50";
             if (XMLHttpRequest)
             {
                 request = new XMLHttpRequest();
@@ -154,7 +154,7 @@
                     var button = document.createElement("input");
                     button.type = "button";
                    
-                   if(product.productSate == "CRAWLED"){
+                   if(product.currentProductState == "CRAWLED"){
                     button.value = "Curate Now";
                     button.style.backgroundColor = "RED";
                   }else if(product.currentProductState == "NEEDS_RECURATION"){
