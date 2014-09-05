@@ -216,6 +216,7 @@
                 curatorReview = strings[2];
                 cacheLocalTags.clear();
                 jsonObject = JSON.parse(datafromparent);
+               alert
                 if (jsonObject.currentProductState == "CRAWLED") {
                     buttonValue = "Curate And Finish";
                 } else {
@@ -713,13 +714,12 @@
             function getCuratedInfo() {
                 var title = document.getElementById("id_title").value;
                 var description = document.getElementById("id_description").value;
- var checkedVal = document.querySelector('input[name="current_product_status"]:checked');
+                  var checkedVal = document.querySelector('input[name="current_product_status"]:checked');
+ 
                if(checkedVal == null){
                      alert("Please Check ProductState");
                      return false;
                } 
-              
-              
 
                 if (title == undefined || title.length < 1) {
                     showAlert("Please fill the title");
@@ -739,11 +739,7 @@
                     return false;
                 }
 
-                if (jsonObject.currentProductState == "CRAWLED") {
-
-                    showAlert("Please check the Product State.");
-                    return false;
-                }
+                
                 return true;
 
             }
