@@ -605,14 +605,19 @@ initialValues.ProductTags = jsonObject.productTags;
 
             function  set_current_ProductState(value) {
 
-                var product_state_sel = document.getElementById('single_select_1');
-                var enums = ['CRAWLED', 'CURATED', 'CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
+                var product_state_sel = document.getElementById('single_select_1');  
+                if(jsonObject.currentProductState == 'CRAWLED'){
+                   var enums = ['CURATED'];
+                  } else {
+                  var enums = ['CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
+                  }
+               // var enums = ['CRAWLED', 'CURATED', 'CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
                 var td = document.createElement('td');
                 var name = "current_product_status";
 
                 for (var i = 0; i < enums.length; i++) {
 
-                    if (enums[i] === value) {
+                    if ('CRAWLED' === value) {
                         // alert('curated22: '+value);
                         var v = getRadioButton(name, enums[i], true);
                         td.appendChild(v);
@@ -623,6 +628,7 @@ initialValues.ProductTags = jsonObject.productTags;
                     }
 
                 }
+ 
                 product_state_sel.appendChild(td);
 
             }
