@@ -63,17 +63,18 @@
                 font: normal 14px/14px Arial, Helvetica, sans-serif;
             }
 
+            .smart-green input[readonly="readonly"]
+            {
+                background-color:#d4cbe8;
+            }
+
             .smart-green textarea {
                 height: 100px;
                 padding-top: 10px;
             }
 
             .smart-green select {
-                background: url('down-arrow.png') no-repeat right,
-                    -moz-linear-gradient(top, #FBFBFB 0%, #E9E9E9 100%);
-                background: url('down-arrow.png') no-repeat right,
-                    -webkit-gradient(linear, left top, left bottom, color-stop(0%, #FBFBFB),
-                    color-stop(100%, #E9E9E9));
+
                 appearance: none;
                 -webkit-appearance: none;
                 -moz-appearance: none;
@@ -97,6 +98,104 @@
             .smart-green .button:hover {
                 background-color: #80A24A;
             }
+
+
+            .smart-green input[type="radio"] {
+                background-color: #ddd;
+                background-image: -webkit-linear-gradient(0deg, transparent 20%, hsla(0,0%,100%,.7), transparent 80%),
+                    -webkit-linear-gradient(90deg, transparent 20%, hsla(0,0%,100%,.7), transparent 80%);
+                border-radius: 10px;
+                box-shadow: inset 0 1px 1px hsla(0,0%,100%,.8),
+                    0 0 0 1px hsla(0,0%,0%,.6),
+                    0 2px 3px hsla(0,0%,0%,.6),
+                    0 4px 3px hsla(0,0%,0%,.4),
+                    0 6px 6px hsla(0,0%,0%,.2),
+                    0 10px 6px hsla(0,0%,0%,.2);
+                cursor: pointer;
+                display: inline-block;
+                height: 15px;
+                margin-right: 15px;
+                position: relative;
+                width: 15px;
+                -webkit-appearance: none;
+            }
+            .smart-green input[type="radio"]:after {
+                background-color: #444;
+                border-radius: 25px;
+                box-shadow: inset 0 0 0 1px hsla(0,0%,0%,.4),
+                    0 1px 1px hsla(0,0%,100%,.8);
+                content: '';
+                display: block;
+                height: 7px;
+                left: 4px;
+                position: relative;
+                top: 4px;
+                width: 7px;
+            }
+            .smart-green input[type="radio"]:checked:after {
+                background-color: #f66;
+                box-shadow: inset 0 0 0 1px hsla(0,0%,0%,.4),
+                    inset 0 2px 2px hsla(0,0%,100%,.4),
+                    0 1px 1px hsla(0,0%,100%,.8),
+                    0 0 2px 2px hsla(0,70%,70%,.4);
+            }
+
+
+
+
+
+
+            label {
+                color: #16116a;
+                text-decoration: none;
+            }
+
+            label:hover {
+                color: #9b98d9;
+                position: relative;
+            }
+
+            label[title]:hover:after {
+                content: attr(title);
+                padding: 4px 8px;
+                color: 9b98d9;
+                position: absolute;
+                left: 0;
+                top: 100%;
+                white-space: nowrap;
+                z-index: 20px;
+                -moz-border-radius: 5px;
+                -webkit-border-radius: 5px;
+                border-radius: 5px;
+                -moz-box-shadow: 0px 0px 4px #222;
+                -webkit-box-shadow: 0px 0px 4px #222;
+                box-shadow: 0px 0px 4px #222;
+                background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
+                background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #eeeeee),color-stop(1, #cccccc));
+                background-image: -webkit-linear-gradient(top, #eeeeee, #cccccc);
+                background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
+                background-image: -ms-linear-gradient(top, #eeeeee, #cccccc);
+                background-image: -o-linear-gradient(top, #eeeeee, #cccccc);
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             table.altrowstable {
                 font-family: verdana, arial, sans-serif;
@@ -145,33 +244,6 @@
                 color:#ffffff;
                 background-color:#000099;
             }
-
-
-            table.hovertable {
-                font-family: verdana,arial,sans-serif;
-                font-size:11px;
-                color:#333333;
-                border-width: 1px;
-                border-color: #999999;
-                border-collapse: collapse;
-            }
-            table.hovertable th {
-                background-color:#c3dde0;
-                border-width: 1px;
-                padding: 8px;
-                border-style: solid;
-                border-color: #a9c6c9;
-            }
-            table.hovertable tr {
-                background-color:#d4e3e5;
-            }
-            table.hovertable td {
-                border-width: 1px;
-                padding: 8px;
-                border-style: solid;
-                border-color: #a9c6c9;
-            }
-
 
 
         </style>
@@ -303,7 +375,7 @@
                     table.appendChild(getElemnt('originalWidth', images_array[i].originalWidth));
                     table.appendChild(getElemnt('modifiedHeight', images_array[i].modifiedHeight));
                     table.appendChild(getElemnt('modifiedWidth', images_array[i].modifiedWidth));
-                    table.appendChild(getElemnt('modifiedWidth', images_array[i].modifiedWidth));
+                    table.appendChild(getElemnt('modifiedHeight', images_array[i].modifiedHeight));
                     tabl_div.appendChild(table);
                 }
                 var product_provider_div = document.getElementById('product_providers_div_id');
@@ -506,6 +578,17 @@
             }
 
             function getElemnt(key, value, id) {
+
+                var readonly = ['id', 'ownerProductId', 'originalHeight', 'originalWidth', 'modifiedHeight', 'modifiedWidth', 'modifiedWidth', 'modifiedHeight'];
+                var readstatus = false;
+                for (var s = 0; s < readonly.length; s++) {
+                    if (key === readonly[s]) {
+                        readstatus = true;
+
+                    }
+                }
+
+
                 var tr = document.createElement('tr');
                 var th_key = document.createElement('th');
                 th_key.textContent = key;
@@ -516,6 +599,15 @@
                 input.value = value;
                 input.type = 'text';
                 input.id = id;
+
+                if (readstatus) {
+                    input.readOnly = true;
+                    input.style.backgroundColor = '#d4cbe8';
+
+                }
+
+
+
                 th_val.appendChild(input);
                 tr.appendChild(th_val);
                 return tr;
@@ -853,9 +945,9 @@
                             {
 //TODO:
                                 if (curatorReview == "Curate Now") {
-                                    alert('Curated Successfully : '+providerUpdaterequest.responseText);
+                                    alert('Curated Successfully : ' + providerUpdaterequest.responseText);
                                 } else {
-                                    alert('Reviewed Successfully :'+providerUpdaterequest.responseText);
+                                    alert('Reviewed Successfully :' + providerUpdaterequest.responseText);
                                 }
 
                                 window.opener.close();
@@ -1008,6 +1100,13 @@
         <script type="text/javascript" src="src/jquery.multiselect.filter.js"></script>
         <script type="text/javascript" src="assets/prettify.js"></script>
 
+
+        <link rel="stylesheet" href="radio/style.css"/>
+        <style type="text/css">
+            label {margin-right:20px;}
+        </style>
+        <script type="text/javascript" src="radio/jspatch.js"></script>
+
         <script type="text/javascript">
 
             function addTagsToTableVaz() {
@@ -1075,7 +1174,6 @@
 
                     }
                 }
-
 
                 //create TAG.
                 //   createTagRequest(valC, tagString, subCatString);
