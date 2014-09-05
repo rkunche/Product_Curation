@@ -176,6 +176,10 @@
 
         </style>
         <script>
+    
+            var cacheLocalTags = [];
+            var localTagsObject = {tagCategory:"",tagString:"",tagSubCategory:""};
+            var initialValues = {Title:"",Description:"",ProductTags:null,CurrentProductState:"",PrductProviders:null};
             var available_colors = ["Red", "Green", "Blue", "Cyn", "Orange", "Purple", "Black"];
             var available_sizes = ["S", "M", "L", "XL", "XXL", "XXXL"];
             //prototype for clear the array values.
@@ -198,6 +202,7 @@
             //for tags validation.
             var localTags = [];
             var curatorReview;
+            var buttonValue;
 
             window.addEventListener("message", function(event) {
 
@@ -209,8 +214,29 @@
                 datafromparent = strings[1]
 
                 curatorReview = strings[2];
-
+                 cacheLocalTags.clear();
                 jsonObject = JSON.parse(datafromparent);
+                if(jsonObject.currentProductState == "CRAWLED"){
+                    buttonValue = "Curate And Finish";
+                  } else {
+                      buttonValue = "Review And Finish";
+                  }
+initialValues.Title = jsonObject.title;
+initialValues.Description = jsonObject.description;
+initialValues.PrductProviders= jsonObject.productProviders
+initialValues.ProductTags = jsonObject.productTags;
+
+ for(var i=0;i<jsonObject.productTags.length;i++){
+ localTagsObject.tagCategory = jsonObject.productTags[i].tagCategory;
+ localTagsObject.tagString = jsonObject.productTags[i].tagString;
+ localTagsObject.tagSubCategory = jsonObject.productTags[i].tagSubCategory;
+ cacheLocalTags.push(localTagsObject);
+}
+
+ 
+
+ 
+
                 tagCreationReqeustCount = 0;
                 tagArray.clear();
                 afterLoadingThePopup();
@@ -229,9 +255,10 @@
                 document.getElementById('id_ownerProductListId').value = jsonResponse.ownerProductListId;
                 document.getElementById('id_title').value = jsonResponse.title;
                 document.getElementById('id_description').value = jsonResponse.description;
-                document.getElementById('id_creatorID').value = jsonResponse.creatorID;
-                document.getElementById('id_curatorID').value = jsonResponse.id_curatorID;
+                document.getElementById('id_creatorID').value = jsonResponse.creatorId;
+                document.getElementById('id_curatorID').value = jsonResponse.curatorId;
                 document.getElementById('id_relatedProductIds').value = jsonResponse.relatedProductIds;
+                document.getElementById('send_but_id').value = buttonValue;
                 //method to call to set current product state...
                 set_current_ProductState(jsonResponse.currentProductState);
                 // document.getElementById('single_select_1').value = jsonResponse.currentProductState;
@@ -640,14 +667,19 @@
 
             function  set_current_ProductState(value) {
 
-                var product_state_sel = document.getElementById('single_select_1');
-                var enums = ['CRAWLED', 'CURATED', 'CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
+                var product_state_sel = document.getElementById('single_select_1');  
+                if(jsonObject.currentProductState == 'CRAWLED'){
+                   var enums = ['CURATED'];
+                  } else {
+                  var enums = ['CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
+                  }
+               // var enums = ['CRAWLED', 'CURATED', 'CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
                 var td = document.createElement('td');
                 var name = "current_product_status";
 
                 for (var i = 0; i < enums.length; i++) {
 
-                    if (enums[i] === value) {
+                    if ('CRAWLED' === value) {
                         // alert('curated22: '+value);
                         var v = getRadioButton(name, enums[i], true);
                         td.appendChild(v);
@@ -658,6 +690,7 @@
                     }
 
                 }
+ 
                 product_state_sel.appendChild(td);
 
             }
@@ -697,10 +730,11 @@
                     return false;
                 }
                 jsonObject.description = description;
-
-                if (localTags.length < 3) {
-                    showAlert("Please create Tags.");
-                    return false;
+ 
+               
+                if(localTags.length < 3){
+                     showAlert("Please create minimum 3 Tags.");
+                    return false; 
                 }
 
                 if (jsonObject.currentProductState == "CRAWLED") {
@@ -754,7 +788,7 @@
             function updateProvider() {
 
                 var updated_id = document.getElementById('id_' + '0').value;
-                var updated_ownerProductId = document.getElementById('ownerProductId_' + '0').value;
+                var updated_ownerProductId = document.getElementById('ownerProductId_' +'0').value;
                 var updated_externalURL = document.getElementById('externalURL_' + '0').value;
                 var updated_quantity = document.getElementById('quantity_' + '0').value;
                 var updated_currencyCode = document.getElementById('currencyCode_' + '0').value;
@@ -821,11 +855,13 @@
                                 return;
                             if (providerUpdaterequest.status == 200)
                             {
-                                if (curatorReview == "Curate Now") {
-                                    alert('Curated Successfully');
-                                } else {
-                                    alert('Reviewed Successfully');
-                                }
+//TODO:
+                                if(curatorReview == "Curate Now"){
+                                        alert('Curated Successfully');
+                                 } else {
+                                     alert('Reviewed Successfully');
+                                     }
+ 
                                 window.opener.close();
                                 close();
                             }
@@ -845,6 +881,10 @@
 
 
             function createTagRequest(category, string, subcat) {
+         localTagsObject.tagCategory = category;
+         localTagsObject.tagString = tagString;
+         localTagsObject.tagSubCategory = tagSubCategory;
+           cacheLocalTags.push(localTagsObject);
                 var url = "https://vue-server-dev.appspot.com/api/producttag";
                 if (XMLHttpRequest) {
                     tagCreateRequest = new XMLHttpRequest();
@@ -1057,6 +1097,15 @@
                 valC = document.getElementById("id_tag_cat").value;
                 valS = document.getElementById("id_tag_str").value;
                 valSC = document.getElementById("id_sub_str").value;
+                if(valS == null || valS.length < 1 || valS == undefined){
+                   alert("Tag String must not empty");
+                    return;
+                  }
+                if(valC == null || valC.length < 1 || valC == undefined){
+                   alert("Tag Category must not empty");
+                    return;
+                  }
+              document.getElementById("id_tag_str").value = "";
                 createTagReqAndAddTable(valC, valS, valSC, 1);
             }
 
@@ -1116,18 +1165,18 @@
                     fields.</span>
             </h1>
             <label> <span>id: </span> <input id="id_id" type="text"
-                                             name="name" placeholder="Id of the product" />
+                                             name="name" placeholder="Id of the product" readonly="readonly" />
             </label> <label> <span>ownerAisleId: </span> <input id="id_ownerAisleId"
-                                                                type="text" name="name" placeholder="Id of the owner aisle" />
+                                                                type="text" name="name" placeholder="Id of the owner aisle" readonly="readonly"/>
             </label> <label> <span>ownerProductListId: </span> <input id="id_ownerProductListId"
-                                                                      type="text" name="name" placeholder="Id of the owner product" />
+                                                                      type="text" name="name" placeholder="Id of the owner product" readonly="readonly"/>
             </label> <label> <span>title: </span> <input id="id_title" type="text" name="name" placeholder="Title of the product" />
             </label> <label> <span>description: </span> <textarea id="id_description"
                                                                   name="name" placeholder="Description of the product"></textarea>
             </label> <label> <span>creatorID: </span> <input id="id_creatorID" type="text"
-                                                             name="name" placeholder="Id of the product creator" />
+                                                             name="name" placeholder="Id of the product creator" readonly="readonly"/>
             </label> <label> <span>curatorID: </span> <input id="id_curatorID" type="text"
-                                                             name="name" placeholder="Id of the product curator" />
+                                                             name="name" placeholder="Id of the product curator" readonly="readonly"/>
             </label> <label> <span>currentProductState: </span> 
 
                 <!--                <select id="single_select_1" name="selection" onchange="myNewFunction(this.value)"   style="width: 300px">
@@ -1139,7 +1188,7 @@
                 </select>
 
             </label> <label> <span>relatedProductIds: </span> <input id="id_relatedProductIds"
-                                                                     type="text" name="name" placeholder="List of related products" />
+                                                                     type="text" name="name" placeholder="List of related products" readonly="readonly"/>
             </label> <label> <span>comments: </span> <input id="id_comments" type="text"
                                                             name="name" placeholder="Comments of the product" />
             </label> <label> <span>ratings: </span> <input id="id_ratings" type="text"
@@ -1291,7 +1340,7 @@
                         <div id ="product_providers_div_id"></div>
 
                         <label> <span>&nbsp;</span> <input type="button"
-                                                           class="button" value="Curate and Finish" onClick="curateProduct()" />
+                                                           class="button" value="Curate and Finish" onClick="curateProduct()" id ="send_but_id"/>
                         </label>
                         </form>
                         </body>
