@@ -149,6 +149,7 @@
 
         </style>
         <script>
+    
             var cacheLocalTags = [];
             var localTagsObject = {tagCategory:"",tagString:"",tagSubCategory:""};
             var initialValues = {Title:"",Description:"",ProductTags:null,CurrentProductState:"",PrductProviders:null};
@@ -186,7 +187,7 @@
                 datafromparent = strings[1]
 
                 curatorReview = strings[2];
-
+                 cacheLocalTags.clear();
                 jsonObject = JSON.parse(datafromparent);
                 if(jsonObject.currentProductState == "CRAWLED"){
                     buttonValue = "Curate And Finish";
@@ -819,6 +820,10 @@ initialValues.ProductTags = jsonObject.productTags;
 
 
             function createTagRequest(category, string, subcat) {
+         localTagsObject.tagCategory = category;
+         localTagsObject.tagString = tagString;
+         localTagsObject.tagSubCategory = tagSubCategory;
+           cacheLocalTags.push(localTagsObject);
                 var url = "https://vue-server-dev.appspot.com/api/producttag";
                 if (XMLHttpRequest) {
                     tagCreateRequest = new XMLHttpRequest();
