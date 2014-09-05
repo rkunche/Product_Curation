@@ -176,10 +176,10 @@
 
         </style>
         <script>
-    
+
             var cacheLocalTags = [];
-            var localTagsObject = {tagCategory:"",tagString:"",tagSubCategory:""};
-            var initialValues = {Title:"",Description:"",ProductTags:null,CurrentProductState:"",PrductProviders:null};
+            var localTagsObject = {tagCategory: "", tagString: "", tagSubCategory: ""};
+            var initialValues = {Title: "", Description: "", ProductTags: null, CurrentProductState: "", PrductProviders: null};
             var available_colors = ["Red", "Green", "Blue", "Cyn", "Orange", "Purple", "Black"];
             var available_sizes = ["S", "M", "L", "XL", "XXL", "XXXL"];
             //prototype for clear the array values.
@@ -214,28 +214,24 @@
                 datafromparent = strings[1]
 
                 curatorReview = strings[2];
-                 cacheLocalTags.clear();
+                cacheLocalTags.clear();
                 jsonObject = JSON.parse(datafromparent);
-                if(jsonObject.currentProductState == "CRAWLED"){
+                if (jsonObject.currentProductState == "CRAWLED") {
                     buttonValue = "Curate And Finish";
-                  } else {
-                      buttonValue = "Review And Finish";
-                  }
-initialValues.Title = jsonObject.title;
-initialValues.Description = jsonObject.description;
-initialValues.PrductProviders= jsonObject.productProviders
-initialValues.ProductTags = jsonObject.productTags;
+                } else {
+                    buttonValue = "Review And Finish";
+                }
+                initialValues.Title = jsonObject.title;
+                initialValues.Description = jsonObject.description;
+                initialValues.PrductProviders = jsonObject.productProviders
+                initialValues.ProductTags = jsonObject.productTags;
 
- for(var i=0;i<jsonObject.productTags.length;i++){
- localTagsObject.tagCategory = jsonObject.productTags[i].tagCategory;
- localTagsObject.tagString = jsonObject.productTags[i].tagString;
- localTagsObject.tagSubCategory = jsonObject.productTags[i].tagSubCategory;
- cacheLocalTags.push(localTagsObject);
-}
-
- 
-
- 
+                for (var i = 0; i < jsonObject.productTags.length; i++) {
+                    localTagsObject.tagCategory = jsonObject.productTags[i].tagCategory;
+                    localTagsObject.tagString = jsonObject.productTags[i].tagString;
+                    localTagsObject.tagSubCategory = jsonObject.productTags[i].tagSubCategory;
+                    cacheLocalTags.push(localTagsObject);
+                }
 
                 tagCreationReqeustCount = 0;
                 tagArray.clear();
@@ -667,13 +663,13 @@ initialValues.ProductTags = jsonObject.productTags;
 
             function  set_current_ProductState(value) {
 
-                var product_state_sel = document.getElementById('single_select_1');  
-                if(jsonObject.currentProductState == 'CRAWLED'){
-                   var enums = ['CURATED'];
-                  } else {
-                  var enums = ['CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
-                  }
-               // var enums = ['CRAWLED', 'CURATED', 'CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
+                var product_state_sel = document.getElementById('single_select_1');
+                if (jsonObject.currentProductState == 'CRAWLED') {
+                    var enums = ['CURATED'];
+                } else {
+                    var enums = ['CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
+                }
+                // var enums = ['CRAWLED', 'CURATED', 'CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
                 var td = document.createElement('td');
                 var name = "current_product_status";
 
@@ -690,7 +686,7 @@ initialValues.ProductTags = jsonObject.productTags;
                     }
 
                 }
- 
+
                 product_state_sel.appendChild(td);
 
             }
@@ -730,11 +726,11 @@ initialValues.ProductTags = jsonObject.productTags;
                     return false;
                 }
                 jsonObject.description = description;
- 
-               
-                if(localTags.length < 3){
-                     showAlert("Please create minimum 3 Tags.");
-                    return false; 
+
+
+                if (localTags.length < 3) {
+                    showAlert("Please create minimum 3 Tags.");
+                    return false;
                 }
 
                 if (jsonObject.currentProductState == "CRAWLED") {
@@ -788,7 +784,7 @@ initialValues.ProductTags = jsonObject.productTags;
             function updateProvider() {
 
                 var updated_id = document.getElementById('id_' + '0').value;
-                var updated_ownerProductId = document.getElementById('ownerProductId_' +'0').value;
+                var updated_ownerProductId = document.getElementById('ownerProductId_' + '0').value;
                 var updated_externalURL = document.getElementById('externalURL_' + '0').value;
                 var updated_quantity = document.getElementById('quantity_' + '0').value;
                 var updated_currencyCode = document.getElementById('currencyCode_' + '0').value;
@@ -856,12 +852,12 @@ initialValues.ProductTags = jsonObject.productTags;
                             if (providerUpdaterequest.status == 200)
                             {
 //TODO:
-                                if(curatorReview == "Curate Now"){
-                                        alert('Curated Successfully');
-                                 } else {
-                                     alert('Reviewed Successfully');
-                                     }
- 
+                                if (curatorReview == "Curate Now") {
+                                    alert('Curated Successfully : '+providerUpdaterequest.responseText);
+                                } else {
+                                    alert('Reviewed Successfully :'+providerUpdaterequest.responseText);
+                                }
+
                                 window.opener.close();
                                 close();
                             }
@@ -881,10 +877,10 @@ initialValues.ProductTags = jsonObject.productTags;
 
 
             function createTagRequest(category, string, subcat) {
-         localTagsObject.tagCategory = category;
-         localTagsObject.tagString = tagString;
-         localTagsObject.tagSubCategory = tagSubCategory;
-           cacheLocalTags.push(localTagsObject);
+                localTagsObject.tagCategory = category;
+                localTagsObject.tagString = tagString;
+                localTagsObject.tagSubCategory = tagSubCategory;
+                cacheLocalTags.push(localTagsObject);
                 var url = "https://vue-server-dev.appspot.com/api/producttag";
                 if (XMLHttpRequest) {
                     tagCreateRequest = new XMLHttpRequest();
@@ -1097,15 +1093,15 @@ initialValues.ProductTags = jsonObject.productTags;
                 valC = document.getElementById("id_tag_cat").value;
                 valS = document.getElementById("id_tag_str").value;
                 valSC = document.getElementById("id_sub_str").value;
-                if(valS == null || valS.length < 1 || valS == undefined){
-                   alert("Tag String must not empty");
+                if (valS == null || valS.length < 1 || valS == undefined) {
+                    alert("Tag String must not empty");
                     return;
-                  }
-                if(valC == null || valC.length < 1 || valC == undefined){
-                   alert("Tag Category must not empty");
+                }
+                if (valC == null || valC.length < 1 || valC == undefined) {
+                    alert("Tag Category must not empty");
                     return;
-                  }
-              document.getElementById("id_tag_str").value = "";
+                }
+                document.getElementById("id_tag_str").value = "";
                 createTagReqAndAddTable(valC, valS, valSC, 1);
             }
 
@@ -1272,7 +1268,7 @@ initialValues.ProductTags = jsonObject.productTags;
                         ];
                         $("#id_tag_cat").autocomplete({
                             source: availableTags,
-                             minLength: 0,
+                            minLength: 0,
                         }).focus(function() {
                             //Use the below line instead of triggering keydown
                             $(this).autocomplete('search');
