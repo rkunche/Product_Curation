@@ -824,6 +824,16 @@
                     showAlert("Please fill the description");
                     return false;
                 }
+                  
+ if (!description.match(/[a-z]/i)) {
+       showAlert("Description contains only Numbers");
+                    return false;
+}  
+ if (!title.match(/[a-z]/i)) {
+       showAlert("Title contains only Numbers");
+                    return false;
+}
+                    
                 jsonObject.description = description;
 
 
