@@ -149,6 +149,9 @@
 
         </style>
         <script>
+            var cacheLocalTags = [];
+            var localTagsObject = {tagCategory:"",tagString:"",tagSubCategory:""};
+            var initialValues = {Title:"",Description:"",ProductTags:null,CurrentProductState:"",PrductProviders:null};
             var available_colors = ["Red", "Green", "Blue", "Cyn", "Orange", "Purple", "Black"];
             var available_sizes = ["S", "M", "L", "XL", "XXL", "XXXL"];
             //prototype for clear the array values.
@@ -171,6 +174,7 @@
             //for tags validation.
             var localTags = [];
             var curatorReview;
+            var buttonValue;
 
             window.addEventListener("message", function(event) {
 
@@ -184,6 +188,27 @@
                 curatorReview = strings[2];
 
                 jsonObject = JSON.parse(datafromparent);
+                if(jsonObject.currentProductState == "CRAWLED"){
+                    buttonValue = "Curate And Finish";
+                  } else {
+                      buttonValue = "Review And Finish";
+                  }
+initialValues.Title = jsonObject.title;
+initialValues.Description = jsonObject.description;
+initialValues.PrductProviders= jsonObject.productProviders
+initialValues.ProductTags = jsonObject.productTags;
+
+ for(var i=0;i<jsonObject.productTags.length;i++){
+ localTagsObject.tagCategory = jsonObject.productTags[i].tagCategory;
+ localTagsObject.tagString = jsonObject.productTags[i].tagString;
+ localTagsObject.tagSubCategory = jsonObject.productTags[i].tagSubCategory;
+ cacheLocalTags.push(localTagsObject);
+}
+
+ 
+
+ 
+
                 tagCreationReqeustCount = 0;
                 tagArray.clear();
                 afterLoadingThePopup();
@@ -205,6 +230,7 @@
                 document.getElementById('id_creatorID').value = jsonResponse.creatorId;
                 document.getElementById('id_curatorID').value = jsonResponse.curatorId;
                 document.getElementById('id_relatedProductIds').value = jsonResponse.relatedProductIds;
+                document.getElementById('send_but_id').value = buttonValue;
                 //method to call to set current product state...
                 set_current_ProductState(jsonResponse.currentProductState);
                 // document.getElementById('single_select_1').value = jsonResponse.currentProductState;
@@ -630,7 +656,7 @@
                 jsonObject.description = description;
                
                 if(localTags.length < 3){
-                     showAlert("Please create Tags.");
+                     showAlert("Please create minimum 3 Tags.");
                     return false; 
                 }
                 
@@ -746,6 +772,7 @@
                                 return;
                             if (providerUpdaterequest.status == 200)
                             {
+//TODO:
                                 if(curatorReview == "Curate Now"){
                                         alert('Curated Successfully');
                                  } else {
@@ -1203,7 +1230,7 @@
                         <div id ="product_providers_div_id"></div>
 
                         <label> <span>&nbsp;</span> <input type="button"
-                                                           class="button" value="Curate and Finish" onClick="curateProduct()" />
+                                                           class="button" value="Curate and Finish" onClick="curateProduct()" id ="send_but_id"/>
                         </label>
                         </form>
                         </body>
