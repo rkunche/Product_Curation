@@ -773,7 +773,15 @@
                     return;
                 if (request.status == 200)
                 {
-                    updateProvider();
+                    //updateProvider();
+       if (curatorReview == "Curate Now") {
+                                    alert('Curated Successfully : '+request.responseText);
+                                } else {
+                                    alert('Reviewed Successfully :'+request.responseText);
+                                }
+
+                                window.opener.close();
+                                close();
                 }
                 if (request.status != 200 && request.status != 304) {
                     //alert('HTTP POST error ' + request.status + 'Response ' + request.responseText);
@@ -849,22 +857,17 @@
                         providerUpdaterequest.onreadystatechange = function providerHandler() {
                             if (providerUpdaterequest.readyState != 4)
                                 return;
-                            if (providerUpdaterequest.status == 200)
-                            {
-//TODO:
-                                if (curatorReview == "Curate Now") {
-                                    alert('Curated Successfully : '+providerUpdaterequest.responseText);
-                                } else {
-                                    alert('Reviewed Successfully :'+providerUpdaterequest.responseText);
-                                }
-
-                                window.opener.close();
-                                close();
-                            }
-                            if (providerUpdaterequest.status != 200 && providerUpdaterequest.status != 304) {
+                             if (providerUpdaterequest.status != 200 && providerUpdaterequest.status != 304) {
                                 alert('HTTP POST error ' + providerUpdaterequest.status + 'Response ' + providerUpdaterequest.responseText);
                                 return;
                             }
+                            if (providerUpdaterequest.status == 200)
+                            {
+                      
+                             curateProduct();
+                         
+                            }
+                          
                         };
                         providerUpdaterequest.send(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
                             price: updated_price, onSale: updated_onSale, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: zipcodeArray}));
@@ -1336,7 +1339,7 @@
                         <div id ="product_providers_div_id"></div>
 
                         <label> <span>&nbsp;</span> <input type="button"
-                                                           class="button" value="Curate and Finish" onClick="curateProduct()" id ="send_but_id"/>
+                                                           class="button" value="Curate and Finish" onClick="updateProvider()" id ="send_but_id"/>
                         </label>
                         </form>
                         </body>
