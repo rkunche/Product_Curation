@@ -713,7 +713,13 @@
             function getCuratedInfo() {
                 var title = document.getElementById("id_title").value;
                 var description = document.getElementById("id_description").value;
-                jsonObject.currentProductState = document.querySelector('input[name="current_product_status"]:checked').value;
+ var checkedVal = document.querySelector('input[name="current_product_status"]:checked');
+               if(checkedVal == null){
+                     alert("Please Check ProductState");
+                     return false;
+               } 
+              
+              
 
                 if (title == undefined || title.length < 1) {
                     showAlert("Please fill the title");
@@ -750,7 +756,7 @@
                 }
                 var title = document.getElementById("id_title").value;
                 var description = document.getElementById("id_description").value;
-                jsonObject.currentProductState = document.querySelector('input[name="current_product_status"]:checked').value;
+              jsonObject.currentProductState = document.querySelector('input[name="current_product_status"]:checked').value;
 
                 var url = "https://vue-server-dev.appspot.com/api/product/" + jsonObject.id;
                 if (XMLHttpRequest) {
@@ -880,10 +886,7 @@
 
 
             function createTagRequest(category, string, subcat) {
-                localTagsObject.tagCategory = category;
-                localTagsObject.tagString = tagString;
-                localTagsObject.tagSubCategory = tagSubCategory;
-                cacheLocalTags.push(localTagsObject);
+ console.log("createTagRequest fun:   CAT:"+category+" Tag String: "+string);
                 var url = "https://vue-server-dev.appspot.com/api/producttag";
                 if (XMLHttpRequest) {
                     tagCreateRequest = new XMLHttpRequest();
@@ -908,6 +911,7 @@
                 }
                 if (tagCreateRequest.status == 200)
                 {
+ console.log("createTagRequest fun success:    ");
                     var jsonTagObject = JSON.parse(tagCreateRequest.responseText);
                     tagAssociateWithProduct(jsonTagObject.tagString, "tag");
                 }
@@ -915,6 +919,7 @@
             }
             var taging;
             function tagAssociateWithProduct(tagString, tag) {
+ console.log("tagAssociateWithProduct fun success:    TAGString: "+tagString);
                 taging = tag;
                 if (tag == "untag") {
                     var position = localTags.indexOf(tagString);
@@ -946,12 +951,7 @@
                 }
                 if (productTagAssociateReq.status == 200)
                 {
-                    if (tagging == "tag") {
-                        alert("Tag was " + taging + " to product ");
-
-                    } else {
-                        alert("Tag was " + taging + " from product ");
-                    }
+                     console.log("tagAssociateWithProduct fun success:      ");
 
                 }
 
@@ -1105,6 +1105,7 @@
                     return;
                 }
                 document.getElementById("id_tag_str").value = "";
+                console.log("CAT:"+valC+" Tag String: "+valS);
                 createTagReqAndAddTable(valC, valS, valSC, 1);
             }
 
@@ -1139,9 +1140,6 @@
                 //to attach local data
 
                 localTags.push(valS);
-
-
-
                 if (addtableonly === 1)
                     createTagRequest(valC, valS, valSC)
             }
