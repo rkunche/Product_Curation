@@ -376,7 +376,7 @@
                     table.appendChild(getElemnt('originalWidth', images_array[i].originalWidth));
                     table.appendChild(getElemnt('modifiedHeight', images_array[i].modifiedHeight));
                     table.appendChild(getElemnt('modifiedWidth', images_array[i].modifiedWidth));
-                    table.appendChild(getElemnt('modifiedHeight', images_array[i].modifiedHeight));
+                    
                     tabl_div.appendChild(table);
                 }
                 var product_provider_div = document.getElementById('product_providers_div_id');
@@ -1214,6 +1214,7 @@
                 document.getElementById("id_tag_str").value = "";
                 console.log("CAT:" + valC + " Tag String: " + valS);
                 createTagReqAndAddTable(valC, valS, valSC, 1);
+               document.getElementById("id_tag_cat").value='';
             }
 
             function createTagReqAndAddTable(valC, valS, valSC, addtableonly) {
@@ -1388,10 +1389,10 @@
 
             </label>
             <label> <span>Tag String </span> <input id="id_tag_str"
-                                                    type="text" name="name"  />
+                                                    type="text" name="name" autocomplete="off"  />
             </label>
             <label> <span>Tag Sub Category </span> <input id="id_sub_str"
-                                                          type="text" name="name"  />
+                                                          type="text" name="name" autocomplete="off" />
             </label>
 
             <label> <span>&nbsp;</span> <input type="button"
