@@ -915,6 +915,10 @@
                 updated_salePrice = updated_salePrice.trim();
                 updated_store = updated_store.trim();
 
+                updated_price = parseFloat(updated_price.replace(',', ''));
+                updated_salePrice = parseFloat(updated_salePrice.replace(',', ''));
+
+
               //  alert('price: ' + updated_price + " salep: " + updated_salePrice);
 
                 if (updated_price == undefined || updated_price == null || updated_price.length < 1||updated_price==0) {
