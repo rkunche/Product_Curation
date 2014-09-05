@@ -42,7 +42,7 @@
         }
 
         function readParams() {
-            //static users
+            //ONLY ALLOWED STATIC USER
             users.push(5505177142427648);
             users.push(6419807607980032);
             var srchString = unescape(location.search.substring(1, location.search.length));
@@ -69,8 +69,8 @@
             }
             if (!boolval) {
 
-                //alert("user does not exist");
-                // return;
+                alert("user does not exist");
+                 return;
             }
             var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=CURATED&limit=50";
             if (XMLHttpRequest)
