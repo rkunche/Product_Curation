@@ -45,6 +45,7 @@
             //ONLY ALLOWED STATIC USER
             users.push(5505177142427648);
             users.push(6419807607980032);
+            users.push(5769457217568768);
             var srchString = unescape(location.search.substring(1, location.search.length));
             var name = srchString.split("=");
             curatorID = name[1];
@@ -70,7 +71,7 @@
             if (!boolval) {
 
                 alert("user does not exist");
-                 return;
+                return;
             }
             var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=CURATED_AND_VERIFIED&limit=50";
             if (XMLHttpRequest)
@@ -153,21 +154,21 @@
                 function createButton(td, curatethis_product, product) {
                     var button = document.createElement("input");
                     button.type = "button";
-                   
-                   if(product.currentProductState == "CRAWLED"){
-                    button.value = "Curate Now";
-                    button.style.backgroundColor = "RED";
-                  }else if(product.currentProductState == "NEEDS_RECURATION"){
-                         button.value = "Recurate Now";
-                    button.style.backgroundColor = "RED";
-                    product.currentProductState = "CRAWLED";
-                         }else if(product.currentProductState == "CURATED_AND_VERIFIED"){
-                                button.style.backgroundColor = "Green";
-                                button.value = "Verified";
-                                }else{
-                    button.value = "Review Now";
-                    button.style.backgroundColor = "Green";
-                     }
+
+                    if (product.currentProductState == "CRAWLED") {
+                        button.value = "Curate Now";
+                        button.style.backgroundColor = "RED";
+                    } else if (product.currentProductState == "NEEDS_RECURATION") {
+                        button.value = "Recurate Now";
+                        button.style.backgroundColor = "RED";
+                        product.currentProductState = "CRAWLED";
+                    } else if (product.currentProductState == "CURATED_AND_VERIFIED") {
+                        button.style.backgroundColor = "Green";
+                        button.value = "Verified";
+                    } else {
+                        button.value = "Review Now";
+                        button.style.backgroundColor = "Green";
+                    }
                     obj = {
                         handleEvent: function() {
 
@@ -187,21 +188,19 @@
 
                             buttonText = button.value;
 
-                            if(product.currentProductState == "CURATED_AND_VERIFIED"){
-                            //  alert("already verifed");
-     var productString = JSON.stringify(product)
-                            openOther(productString);
+                            if (product.currentProductState == "CURATED_AND_VERIFIED") {
+                                //  alert("already verifed");
+                                var productString = JSON.stringify(product)
+                                openOther(productString);
                             } else {
-                            var productString = JSON.stringify(product)
-                            openOther(productString);
-                           }
+                                var productString = JSON.stringify(product)
+                                openOther(productString);
+                            }
 
                         },
                         dude: product.title
-
                     };
                     button.addEventListener("click", obj, false);
-
                     td.appendChild(button);
                 }
         //on curate button click function
@@ -291,21 +290,24 @@
                             var button = cell.getElementsByTagName("input");
                             if (stateVal == "CRAWLED") {
                                 button[0].style.backgroundColor = "Red";
-                            }else if(stateVal == "NEEDS_RECURATION"){
-                        button[0].value = "Recurate Now";
-                    button[0].style.backgroundColor = "RED";
-                     products[k].currentProductState = "CRAWLED";
-                         } else if(stateVal == "CURATED_AND_VERIFIED"){
+                            } else if (stateVal == "NEEDS_RECURATION") {
+                                button[0].value = "Recurate Now";
+                                button[0].style.backgroundColor = "RED";
+                                products[k].currentProductState = "CRAWLED";
+                            } else if (stateVal == "CURATED_AND_VERIFIED") {
                                 button[0].style.backgroundColor = "Green";
                                 button[0].value = "Verified";
-                                }else{
+                            } else {
                                 button[0].style.backgroundColor = "Green";
                                 button[0].value = "Review Now";
                             }
+                            break;
                         }
                     }
-                    values[0].innerHTML = "Title : " + titleVal;
-                    values[1].innerHTML = "State :  " + stateVal;
+                    if (titleVal != undefined && stateVal != undefined) {
+                        values[0].innerHTML = "Title : " + titleVal;
+                        values[1].innerHTML = "State :  " + stateVal;
+                    }
 
                     break;
                 }
