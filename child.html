@@ -1102,14 +1102,14 @@
                 if (tagRequest.readyState !== 4)
                     return;
                 if (tagRequest.status !== 200 && tagRequest.status !== 304) {
-                    alert('HTTP POST error ' + tagRequest.status + 'Response ' + tagRequest.responseText);
+                   // alert('HTTP POST error ' + tagRequest.status + 'Response ' + tagRequest.responseText);
                     tagToProduct();
                     return;
                 }
                 if (tagRequest.status === 200)
                 {
                     if (tagsArray.length == 0) {
-                        alert("Tags are attached to product");
+                       // alert("Tags are attached to product");
                     }
                     tagToProduct();
                 }
