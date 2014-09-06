@@ -331,7 +331,7 @@
                     var tag_string = tag_obj.tagString;
                     var tag_sub_cat = tag_obj.tagSubCategory;
 
- 
+            
                    if(tag_cat.toLowerCase() == "Product description".toLowerCase()){
                     productDescriptionTagCount = productDescriptionTagCount +1;
                    } else if(tag_cat.toLowerCase() == "Product Type".toLowerCase()){
@@ -339,7 +339,7 @@
                   } else if(tag_cat.toLowerCase() == "Occasion".toLowerCase()){
                    occasionTagCount = occasionTagCount +1;
                        }
-
+ 
                     createTagReqAndAddTable(tag_cat, tag_string, tag_sub_cat, 0)
 
                 }
@@ -1006,7 +1006,7 @@
             function createTagRequest(category, string, subcat) {
                 console.log("createTagRequest fun:   CAT:" + category + " Tag String: " + string);
                     if(category.toLowerCase() == "Product Type".toLowerCase()){
-                       productTypeTagCount. = productTypeTagCount +1;
+                       productTypeTagCount = productTypeTagCount +1;
                       }else if(category.toLowerCase() == "Occasion".toLowerCase()){
                        occasionTagCount = occasionTagCount +1;
                       }else if(category.toLowerCase() == "Product description".toLowerCase()){
@@ -1077,6 +1077,7 @@
                 }
                 if (productTagAssociateReq.status == 200)
                 {
+console.log("tagAssociatHandler fun success response:    "+productTagAssociateReq.responseText);
                     console.log("tagAssociateWithProduct fun success:      ");
 
                 }
