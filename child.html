@@ -277,6 +277,17 @@
                 } else {
                     buttonValue = "Review And Finish";
                 }
+                // initialValues.Title = jsonObject.title;
+                // initialValues.Description = jsonObject.description;
+                // initialValues.PrductProviders = jsonObject.productProviders
+                // initialValues.ProductTags = jsonObject.productTags;
+
+                // for (var i = 0; i < jsonObject.productTags.length; i++) {
+                //   localTagsObject.tagCategory = jsonObject.productTags[i].tagCategory;
+                //   localTagsObject.tagString = jsonObject.productTags[i].tagString;
+                //  localTagsObject.tagSubCategory = jsonObject.productTags[i].tagSubCategory;
+                //  cacheLocalTags.push(localTagsObject);
+                //  }
 
                 tagCreationReqeustCount = 0;
                 tagArray.clear();
@@ -320,15 +331,15 @@
                     var tag_string = tag_obj.tagString;
                     var tag_sub_cat = tag_obj.tagSubCategory;
 
-
-                    if (tag_cat.toLowerCase() === "Product description".toLowerCase()) {
-                        productDescriptionTagCount = productDescriptionTagCount + 1;
-                    } else if (tag_cat.toLowerCase() === "Product Type".toLowerCase()) {
-                        productTypeTagCount = productTypeTagCount + 1;
-                    } else if (tag_cat.toLowerCase() === "Occasion".toLowerCase()) {
-                        occasionTagCount = occasionTagCount + 1;
-                    }
-                    cacheLocalTags.push(tag_string);
+            
+                   if(tag_cat.toLowerCase() == "Product description".toLowerCase()){
+                    productDescriptionTagCount = productDescriptionTagCount +1;
+                   } else if(tag_cat.toLowerCase() == "Product Type".toLowerCase()){
+                   productTypeTagCount = productTypeTagCount +1;
+                  } else if(tag_cat.toLowerCase() == "Occasion".toLowerCase()){
+                   occasionTagCount = occasionTagCount +1;
+                       }
+ 
                     createTagReqAndAddTable(tag_cat, tag_string, tag_sub_cat, 0)
 
                 }
@@ -356,7 +367,7 @@
                     table.appendChild(getElemnt('originalWidth', images_array[i].originalWidth));
                     table.appendChild(getElemnt('modifiedHeight', images_array[i].modifiedHeight));
                     table.appendChild(getElemnt('modifiedWidth', images_array[i].modifiedWidth));
-
+                    
                     tabl_div.appendChild(table);
                 }
                 var product_provider_div = document.getElementById('product_providers_div_id');
@@ -804,16 +815,16 @@
                     showAlert("Please fill the description");
                     return false;
                 }
-
-                if (!description.match(/[a-z]/i)) {
-                    showAlert("Description contains only Numbers");
+                  
+ if (!description.match(/[a-z]/i)) {
+       showAlert("Description contains only Numbers");
                     return false;
-                }
-                if (!title.match(/[a-z]/i)) {
-                    showAlert("Title contains only Numbers");
+}  
+ if (!title.match(/[a-z]/i)) {
+       showAlert("Title contains only Numbers");
                     return false;
-                }
-
+}
+                    
                 jsonObject.description = description;
 
 
@@ -822,19 +833,18 @@
                     return false;
                 }
 
-                if (productTypeTagCount < 1) {
-                    showAlert("Please create atleast one ProductType TAG.");
-                    return false;
-                }
-                if (occasionTagCount < 1) {
-                    showAlert("Please create atleast one Occasion TAG.");
-                    return false;
-                }
-                if (productDescriptionTagCount < 1) {
-                    showAlert("Please create atleast one Product description TAG.");
-                    return false;
-                }
-
+                   if(productTypeTagCount < 1){
+ showAlert("Please create atleast one ProductType TAG.");
+                   return false;
+                 }
+                if(occasionTagCount < 1){
+ showAlert("Please create atleast one Occasion TAG.");
+                   return false;
+ } if(productDescriptionTagCount < 1){
+ showAlert("Please create atleast one Product description TAG.");
+                return false;
+}
+     
 
                 return true;
 
@@ -922,9 +932,9 @@
                 updated_salePrice = parseFloat(updated_salePrice.replace(',', ''));
 
 
-                //  alert('price: ' + updated_price + " salep: " + updated_salePrice);
+              //  alert('price: ' + updated_price + " salep: " + updated_salePrice);
 
-                if (updated_price == undefined || updated_price == null || updated_price.length < 1 || updated_price == 0) {
+                if (updated_price == undefined || updated_price == null || updated_price.length < 1||updated_price==0) {
                     alert("Please Fill Price");
                     return;
                 }
@@ -934,7 +944,7 @@
                     return;
                 }
 
-                if (updated_onSale && (updated_salePrice == undefined || updated_salePrice == null || updated_salePrice.length < 1 || updated_salePrice == 0)) {
+                if (updated_onSale && (updated_salePrice == undefined || updated_salePrice == null || updated_salePrice.length < 1||updated_salePrice==0)) {
                     alert("Please Fill Sale Price");
                     return;
                 }
@@ -995,13 +1005,13 @@
 
             function createTagRequest(category, string, subcat) {
                 console.log("createTagRequest fun:   CAT:" + category + " Tag String: " + string);
-                if (category.toLowerCase() == "Product Type".toLowerCase()) {
-                    productTypeTagCount = productTypeTagCount + 1;
-                } else if (category.toLowerCase() == "Occasion".toLowerCase()) {
-                    occasionTagCount = occasionTagCount + 1;
-                } else if (category.toLowerCase() == "Product description".toLowerCase()) {
-                    productDescriptionTagCount = productDescriptionTagCount + 1;
-                }
+                    if(category.toLowerCase() == "Product Type".toLowerCase()){
+                       productTypeTagCount = productTypeTagCount +1;
+                      }else if(category.toLowerCase() == "Occasion".toLowerCase()){
+                       occasionTagCount = occasionTagCount +1;
+                      }else if(category.toLowerCase() == "Product description".toLowerCase()){
+                       productDescriptionTagCount = productDescriptionTagCount +1;
+                       }
 
                 var url = "https://vue-server-dev.appspot.com/api/producttag";
                 if (XMLHttpRequest) {
@@ -1016,16 +1026,16 @@
                 }
             }
             function tagHandler() {
-                if (tagCreateRequest.readyState !== 4)
+                if (tagCreateRequest.readyState != 4)
                     return;
-                if (tagCreateRequest.status !== 200 && tagCreateRequest.status !== 304) {
+                if (tagCreateRequest.status != 200 && tagCreateRequest.status != 304) {
                     //ToDO: if tag is created already just append to product.  appendtagToProduct  
-                    if (appendtagToProduct !== undefined) {
+                    if (appendtagToProduct != undefined) {
                         tagAssociateWithProduct(appendtagToProduct, "tag");
                     }
                     return;
                 }
-                if (tagCreateRequest.status === 200)
+                if (tagCreateRequest.status == 200)
                 {
                     console.log("createTagRequest fun success:    ");
                     var jsonTagObject = JSON.parse(tagCreateRequest.responseText);
@@ -1037,9 +1047,9 @@
             function tagAssociateWithProduct(tagString, tag) {
                 console.log("tagAssociateWithProduct fun success:    TAGString: " + tagString);
                 taging = tag;
-                if (tag === "untag") {
+                if (tag == "untag") {
                     var position = localTags.indexOf(tagString);
-                    if (position !== -1) {
+                    if (position != -1) {
                         localTags.splice(position, 1);
                     }
                 }
@@ -1059,15 +1069,15 @@
             }
 
             function tagAssociatHandler() {
-                if (productTagAssociateReq.readyState !== 4)
+                if (productTagAssociateReq.readyState != 4)
                     return;
-                if (productTagAssociateReq.status !== 200 && productTagAssociateReq.status !== 304) {
+                if (productTagAssociateReq.status != 200 && productTagAssociateReq.status != 304) {
                     alert('HTTP POST error ' + productTagAssociateReq.status + 'Response ' + productTagAssociateReq.responseText);
                     return;
                 }
-                if (productTagAssociateReq.status === 200)
+                if (productTagAssociateReq.status == 200)
                 {
-                    console.log("tagAssociatHandler fun success response:    " + productTagAssociateReq.responseText);
+console.log("tagAssociatHandler fun success response:    "+productTagAssociateReq.responseText);
                     console.log("tagAssociateWithProduct fun success:      ");
 
                 }
@@ -1081,7 +1091,7 @@
                 if (tagString === undefined || tagString.length < 1) {
                     return;
                 }
-
+               
                 var url = "https://vue-server-dev.appspot.com/api/product/tag/" + jsonObject.id + "/" + tagString;
                 if (XMLHttpRequest) {
                     tagRequest = new XMLHttpRequest();
@@ -1153,12 +1163,12 @@
                             var tagstr = tags[q].tagString;
                             var tagSubStr = tags[q].tagSubCategory;
                             if (cat !== null && cat !== undefined && cat.indexOf('Product Type') === 0 && tagstr.indexOf(productType[p]) === 0) {
-                                productTypeTagCount = productTypeTagCount + 1;
+                                   productTypeTagCount = productTypeTagCount +1;
                                 addElementToTable('Product Type', tagstr, tagSubStr);
                                 tagsArray.push(tagstr);
-
-
-
+                                
+                                
+   
                             }
                         }
 
@@ -1178,11 +1188,11 @@
                             var tagstr = tags[q].tagString;
                             var tagSubStr = tags[q].tagSubCategory;
                             if (cat !== null && cat !== undefined && cat.indexOf('Occasion') === 0 && tagstr.indexOf(productType[p]) === 0) {
-                                occasionTagCount = occasionTagCount + 1;
+                               occasionTagCount = occasionTagCount +1;
                                 addElementToTable('Occasion', tagstr, tagSubStr);
                                 tagsArray.push(tagstr);
-
-
+                                 
+ 
                             }
                         }
 
@@ -1199,10 +1209,10 @@
                             var tagstr = tags[q].tagString;
                             var tagSubStr = tags[q].tagSubCategory;
                             if (cat !== null && cat !== undefined && cat.indexOf('Product description') === 0 && tagstr.indexOf(productType[p]) === 0) {
-                                productDescriptionTagCount = productDescriptionTagCount + 1;
+                                productDescriptionTagCount = productDescriptionTagCount +1;
                                 addElementToTable('Product description', tagstr, tagSubStr);
                                 tagsArray.push(tagstr);
-
+                                
                             }
                         }
 
@@ -1225,26 +1235,18 @@
                 valC = document.getElementById("id_tag_cat").value;
                 valS = document.getElementById("id_tag_str").value;
                 valSC = document.getElementById("id_sub_str").value;
-                if (valS === null || valS.length < 1 || valS === undefined) {
+                if (valS == null || valS.length < 1 || valS == undefined) {
                     alert("Tag String must not empty");
                     return;
                 }
-                if (valC === null || valC.length < 1 || valC === undefined) {
+                if (valC == null || valC.length < 1 || valC == undefined) {
                     alert("Tag Category must not empty");
                     return;
                 }
                 document.getElementById("id_tag_str").value = "";
                 console.log("CAT:" + valC + " Tag String: " + valS);
-                var index =   cacheLocalTags.indexOf(valS);
-                if(index === -1){
-                  cacheLocalTags.push(valS);
-                } else {
-                  console.log("Duplicate TAG");
-                 // return;
-                }
-                
                 createTagReqAndAddTable(valC, valS, valSC, 1);
-                document.getElementById("id_tag_cat").value = '';
+               document.getElementById("id_tag_cat").value='';
             }
 
             function createTagReqAndAddTable(valC, valS, valSC, addtableonly) {
@@ -1262,13 +1264,13 @@
                     document.getElementById('created_tags_table').removeChild(row);
 
                     tagAssociateWithProduct(valS, "untag");
-                    if (valC.toLowerCase() === "Product Type".toLowerCase()) {
-                        productTypeTagCount === productTypeTagCount - 1;
-                    } else if (valC.toLowerCase() ==== "Occasion".toLowerCase()) {
-                        occasionTagCount = occasionTagCount - 1;
-                    } else if (valC.toLowerCase() === "Product description".toLowerCase()) {
-                        productDescriptionTagCount = productDescriptionTagCount - 1;
-                    }
+                     if(valC.toLowerCase() == "Product Type".toLowerCase()){
+                       productTypeTagCount = productTypeTagCount -1;
+                      }else if(valC.toLowerCase() == "Occasion".toLowerCase()){
+                        occasionTagCount = occasionTagCount -1;
+                    } else if(valC.toLowerCase() == "Product description".toLowerCase()){
+                         productDescriptionTagCount = productDescriptionTagCount -1;
+                      } 
                 };
                 del.appendChild(btn);
                 row.appendChild(thC);
@@ -1293,16 +1295,9 @@
             function  createGenderTag() {
 
                 var vl = document.querySelector('input[name="que_1"]:checked').value;
-               var index =   cacheLocalTags.indexOf(vl);
-                if(index === -1){
-                    cacheLocalTags.push(vl);
-                } else {
-                  console.log("Duplicate TAG");
-                  //return;
-                }
                 tagsArray.push(vl);
                 createTagReqAndAddTable('Product description', vl, '', 0);
-                productDescriptionTagCount = productDescriptionTagCount + 1;
+                productDescriptionTagCount = productDescriptionTagCount +1;
                 tagToProduct();
             }
         </script>
