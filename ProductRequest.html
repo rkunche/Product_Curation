@@ -77,7 +77,7 @@
                 alert("user does not exist");
                 return;
             }
-            var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=CURATED_AND_VERIFIED&limit=50";
+            var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=CRAWLED&limit=50";
             if (XMLHttpRequest)
             {
                 request = new XMLHttpRequest();
@@ -98,9 +98,10 @@
             {
 
                 var jsonResponse = JSON.parse(request.responseText);
+                 
                 //clear the old data in array and populate with new product data.
                   if(products.length > 0){
-                      return;
+                      //return;
                   }
                 products.clear();
                 for (var i = 0; i < jsonResponse.length; i++) {
@@ -127,12 +128,16 @@
                     var tr = document.createElement("tr");
                     table.appendChild(tr);
                 }
-                var td = document.createElement("td");
+              
+                var imag = document.createElement("img");
+                try{
+                imag.src = products[i].productImages[0].externalURL;
+            } catch(e){
+                continue;
+            }
+              var td = document.createElement("td");
                 td.id = products[i].id;
                 tr.appendChild(td);
-                var imag = document.createElement("img");
-
-                imag.src = products[i].productImages[0].externalURL;
                 var divImage = document.createElement("div");
                 divImage.appendChild(imag);
 
