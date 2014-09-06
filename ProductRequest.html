@@ -99,7 +99,9 @@
 
                 var jsonResponse = JSON.parse(request.responseText);
                 //clear the old data in array and populate with new product data.
-                 alert(" count: "+jsonResponse.length);
+                  if(products.length > 0){
+                      return;
+                  }
                 products.clear();
                 for (var i = 0; i < jsonResponse.length; i++) {
                     var jsonTempObject = jsonResponse[i];
