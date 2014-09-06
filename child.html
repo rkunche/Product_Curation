@@ -332,11 +332,11 @@
                     var tag_sub_cat = tag_obj.tagSubCategory;
 
  
-                   if(tag_cat == "Product description"){
+                   if(tag_cat.toLowerCase() == "Product description".toLowerCase()){
                     productDescriptionTagCount = productDescriptionTagCount +1;
-                   } else if(tag_cat == "Product Type"){
+                   } else if(tag_cat.toLowerCase() == "Product Type".toLowerCase()){
                    productTypeTagCount = productTypeTagCount +1;
-                  } else if(tag_cat == "Occasion"){
+                  } else if(tag_cat.toLowerCase() == "Occasion".toLowerCase()){
                    occasionTagCount = occasionTagCount +1;
                        }
 
@@ -1005,11 +1005,11 @@
 
             function createTagRequest(category, string, subcat) {
                 console.log("createTagRequest fun:   CAT:" + category + " Tag String: " + string);
-                    if(category == "Product Type"){
-                       productTypeTagCount = productTypeTagCount +1;
-                      }else if(category == "Occasion"){
+                    if(category.toLowerCase() == "Product Type".toLowerCase()){
+                       productTypeTagCount. = productTypeTagCount +1;
+                      }else if(category.toLowerCase() == "Occasion".toLowerCase()){
                        occasionTagCount = occasionTagCount +1;
-                      }else if(category == "Product description"){
+                      }else if(category.toLowerCase() == "Product description".toLowerCase()){
                        productDescriptionTagCount = productDescriptionTagCount +1;
                        }
 
@@ -1263,11 +1263,11 @@
                     document.getElementById('created_tags_table').removeChild(row);
 
                     tagAssociateWithProduct(valS, "untag");
-                     if(valC == "Product Type"){
+                     if(valC.toLowerCase() == "Product Type".toLowerCase()){
                        productTypeTagCount = productTypeTagCount -1;
-                      }else if(valC == "Occasion"){
+                      }else if(valC.toLowerCase() == "Occasion".toLowerCase()){
                         occasionTagCount = occasionTagCount -1;
-                    } else if(valC == "Product description"){
+                    } else if(valC.toLowerCase() == "Product description".toLowerCase()){
                          productDescriptionTagCount = productDescriptionTagCount -1;
                       } 
                 };
