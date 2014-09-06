@@ -32,17 +32,23 @@ alert("Please Enter Your Email");
         if (request.status == 200)
         {
             alert('HTTP POST success: ' + request.responseText);
+             var user = JSON.parse(request.responseText);
+            document.getElementById("UserId").value = user.id ;
         }
         if (request.status != 200 && request.status != 304) {
             alert('HTTP POST error ' + request.status + 'Response ' + request.responseText);
+           
+            JSON.parse(request.responseText);
+           
              console.log(request.responseText);
             return;
         }
     }
 </script>
 <body>
-User Name <input type="text" placeholder ="enter Name" id ="usernameId"> </input><br>
+    User Name <input type="text" placeholder ="enter Name" id ="usernameId"> </input><br>
     Email <input type ="text" placeholder ="enter Email" id ="useremailId"></input><br>
+    Created User<input type ="text" placeholder =" " id ="UserId"></input><br>
  <Button type = "button" onClick="create_user()">Create User</button>
 </body>
 </html>

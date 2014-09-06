@@ -43,9 +43,13 @@
 
         function readParams() {
             //ONLY ALLOWED STATIC USER
+            //raju ID
             users.push(5505177142427648);
             users.push(6419807607980032);
+            //sangeeth ID
             users.push(5769457217568768);
+            //Neem 
+            users.push(5169874951208960)
             var srchString = unescape(location.search.substring(1, location.search.length));
             var name = srchString.split("=");
             curatorID = name[1];
@@ -95,6 +99,7 @@
 
                 var jsonResponse = JSON.parse(request.responseText);
                 //clear the old data in array and populate with new product data.
+                 alert(" count: "+jsonResponse.length);
                 products.clear();
                 for (var i = 0; i < jsonResponse.length; i++) {
                     var jsonTempObject = jsonResponse[i];
