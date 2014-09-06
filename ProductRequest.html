@@ -214,9 +214,9 @@ document.getElementById("productTableId").innerHTML = "";
                             buttonText = button.value;
 
                             if (product.currentProductState == "CURATED_AND_VERIFIED") {
-                                //  alert("already verifed");
-                                var productString = JSON.stringify(product)
-                                openOther(productString);
+                                  alert("already verifed");
+                                //var productString = JSON.stringify(product)
+                               // openOther(productString);
                             } else {
                                 var productString = JSON.stringify(product)
                                 openOther(productString);
