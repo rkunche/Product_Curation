@@ -5,6 +5,7 @@
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
         <script>
+var searchString = "CRAWLED";
         var request;
         var products = [];
         var otherWindow;
@@ -21,10 +22,19 @@
 
         var otherWindowObserver;
         var buttonText;
+ 
         //prototype for clear the array values.
         Array.prototype.clear = function() {
             this.length = 0;
         };
+
+function getSelectedValue() {  
+    var index = document.getElementById('select').selectedIndex;  
+   // alert("value="+document.getElementById('select').value);  
+// alert("text="+document.getElementById('select').options[index].text);  
+searchString = document.getElementById('select').value;
+}
+
         function sendMessage(productString) {
             productString = tagString + "##" + productString + "##" + buttonText;
             otherWindow.postMessage(productString, "*");
@@ -40,7 +50,7 @@
 
             }, 2000)
         }
-
+ 
         function readParams() {
             //ONLY ALLOWED STATIC USER
             //raju ID
@@ -54,6 +64,7 @@
             var name = srchString.split("=");
             curatorID = name[1];
             getTags();
+searchString = "CRAWLED";
 
         }
 
@@ -77,7 +88,8 @@
                 alert("user does not exist");
                 return;
             }
-            var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=CRAWLED&limit=50";
+            //var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=CRAWLED&limit=50";
+var url = "https://vue-server-dev.appspot.com/api/product/search?productstate="+searchString+"&limit=50";
             if (XMLHttpRequest)
             {
                 request = new XMLHttpRequest();
@@ -101,6 +113,7 @@
                  
                 //clear the old data in array and populate with new product data.
                   if(products.length > 0){
+document.getElementById("productTableId").innerHTML = "";
                       //return;
                   }
                 products.clear();
@@ -169,17 +182,17 @@
 
                     if (product.currentProductState == "CRAWLED") {
                         button.value = "Curate Now";
-                        button.style.backgroundColor = "RED";
+                        button.style.backgroundColor = "#9C3325";
                     } else if (product.currentProductState == "NEEDS_RECURATION") {
                         button.value = "Recurate Now";
-                        button.style.backgroundColor = "RED";
+                        button.style.backgroundColor = "#9C3325";
                         product.currentProductState = "CRAWLED";
                     } else if (product.currentProductState == "CURATED_AND_VERIFIED") {
-                        button.style.backgroundColor = "Green";
+                        button.style.backgroundColor = "#059E24";
                         button.value = "Verified";
                     } else {
                         button.value = "Review Now";
-                        button.style.backgroundColor = "Green";
+                        button.style.backgroundColor = "#059E24";
                     }
                     obj = {
                         handleEvent: function() {
@@ -301,16 +314,16 @@
                             stateVal = products[k].currentProductState;
                             var button = cell.getElementsByTagName("input");
                             if (stateVal == "CRAWLED") {
-                                button[0].style.backgroundColor = "Red";
+                                button[0].style.backgroundColor = "#9C3325";
                             } else if (stateVal == "NEEDS_RECURATION") {
                                 button[0].value = "Recurate Now";
-                                button[0].style.backgroundColor = "RED";
+                                button[0].style.backgroundColor = "#9C3325";
                                 products[k].currentProductState = "CRAWLED";
                             } else if (stateVal == "CURATED_AND_VERIFIED") {
-                                button[0].style.backgroundColor = "Green";
+                                button[0].style.backgroundColor = "#059E24";
                                 button[0].value = "Verified";
                             } else {
-                                button[0].style.backgroundColor = "Green";
+                                button[0].style.backgroundColor = "#059E24";
                                 button[0].value = "Review Now";
                             }
                             break;
@@ -328,9 +341,65 @@
 
         }
         </script>
-        <Button onclick="getCrawledProducts();">Get CrawledPoducts</Button>
+		 			 <div id="container">
+
+ <Button onclick="getCrawledProducts(); "  >GetPoducts</Button>
+ <select id="select" name="" style="width:150;" onchange="getSelectedValue();">
+<option value="CRAWLED" title="Product Type">CRAWLED</option>
+<option value="CURATED" title="Occasion">CURATED</option>
+<option value="CURATED_AND_VERIFIED" title="Product description">CURATED_AND_VERIFIED</option>
+<option value="NEEDS_RECURATION" title="Product description">NEEDS_RECURATION</option>
+</select>
+ 
+</div>
+       
         <table id="productTableId"></table>
 
     </body>
 </html>
+<style>
+.myButtonRED {
+	-moz-box-shadow: inset 0px 39px 0px -24px #e67a73;
+	-webkit-box-shadow: inset 0px 39px 0px -24px #e67a73;
+	box-shadow: inset 0px 39px 0px -24px #e67a73;
+	background-color: #e4685d;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+	border: 1px solid #ffffff;
+	display: inline-block;
+	cursor: pointer;
+	color: #ffffff;
+	font-family: arial;
+	font-size: 15px;
+	padding: 6px 15px;
+	text-decoration: none;
+	text-shadow: 0px 1px 0px #b23e35;
+}
+ #container
+{
+    position: relative;
+}
+
+#input
+{
+position: absolute;
+top: 0;
+left: 10%;
+z-index: 999;
+padding: 0;
+margin: 0;
+}
+
+#select
+{
+position: absolute;
+top: 3%;
+left: 10%;
+padding: 0;
+margin: 0;
+}
+argin-top:5px;
+}
+</style>
 
