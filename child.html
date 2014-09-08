@@ -1161,7 +1161,7 @@
                                     addElementToTable('Product Type', tagstr, tagSubStr);
                                     tagsArray.push(tagstr);
                                 } else {
-                                    alert("duplicat tag");
+                                    //alert("duplicat tag");
                                 }
 
 
@@ -1192,7 +1192,7 @@
                                     addElementToTable('Occasion', tagstr, tagSubStr);
                                     tagsArray.push(tagstr);
                                 } else {
-                                    alert("duplicat tag");
+                                    //alert("duplicat tag");
                                 }
 
                             }
@@ -1218,7 +1218,7 @@
                                     addElementToTable('Product description', tagstr, tagSubStr);
                                     tagsArray.push(tagstr);
                                 } else {
-                                    alert("duplicat tag");
+                                    //alert("duplicat tag");
                                 }
                             }
                         }
@@ -1276,8 +1276,13 @@
                 btn.textContent = 'Untag';
                 btn.onclick = function() {
                     document.getElementById('created_tags_table').removeChild(row);
-
+                 var  index  =  cacheLocalTags.indexOf(valS);
+                   if(index !== -1){
+                     cacheLocalTags.splice(index,1); 
+                     
+                  }
                     tagAssociateWithProduct(valS, "untag");
+                    
                     if (valC.toLowerCase() == "Product Type".toLowerCase()) {
                         productTypeTagCount = productTypeTagCount - 1;
                     } else if (valC.toLowerCase() == "Occasion".toLowerCase()) {
