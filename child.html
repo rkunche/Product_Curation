@@ -270,7 +270,18 @@
 
                 curatorReview = strings[2];
                 cacheLocalTags.clear();
+                console.log(datafromparent);
                 jsonObject = JSON.parse(datafromparent);
+                for (var imgIndex = 0; imgIndex < jsonObject.productImages.length; imgIndex++) {
+                   
+                    var img = new Image();
+                    img.onload = function() {
+                        // alert(this.width + 'x' + this.height);
+                        jsonObject.productImages[imgIndex].orignalWidth = this.width;
+                        jsonObject.productImages[imgIndex].orignalHeight = this.height;
+                    }
+                    img.src = jsonObject.productImages[imgIndex].externalURL;
+                }
 
                 if (jsonObject.currentProductState == "CRAWLED") {
                     buttonValue = "Curate And Finish";
@@ -350,10 +361,10 @@
                     table.appendChild(getElemnt('ownerProductId', images_array[i].ownerProductId));
                     table.appendChild(getElemnt('externalURL', images_array[i].externalURL));
                     table.appendChild(getElemnt('internalURL', images_array[i].internalURL));
-                    table.appendChild(getElemnt('originalHeight', images_array[i].originalHeight));
-                    table.appendChild(getElemnt('originalWidth', images_array[i].originalWidth));
-                    table.appendChild(getElemnt('modifiedHeight', images_array[i].modifiedHeight));
-                    table.appendChild(getElemnt('modifiedWidth', images_array[i].modifiedWidth));
+                    // table.appendChild(getElemnt('originalHeight', images_array[i].originalHeight));
+                    //table.appendChild(getElemnt('originalWidth', images_array[i].originalWidth));
+                    //table.appendChild(getElemnt('modifiedHeight', images_array[i].modifiedHeight));
+                    //table.appendChild(getElemnt('modifiedWidth', images_array[i].modifiedWidth));
 
                     tabl_div.appendChild(table);
                 }
@@ -366,7 +377,7 @@
                     product_provider_div.appendChild(br1);
                     var table = document.createElement('table');
                     table.className = "altrowstable";
-                    // table.style.width = '400px';
+                    table.style.width = '400px';
 
 
                     var caption = document.createElement('caption');
@@ -433,60 +444,60 @@
                 return tr;
             }
 
-            function add_Product_Tags() {
-                //add provider tags
-                var tag_category_array = new Array();
-                var tag_string_array = new Array();
-                var tag_substring_array = new Array();
-                var tag_category_array_uniqueNames = [];
-                var tag_string_array_uniqueNames = [];
-                var tag_substring_array_uniqueNames = [];
-                for (var k = 0; k < tags.length; k++) {
-                    var vcat = tags[k].tagCategory;
-                    var vstr = tags[k].tagString;
-                    var vsubstr = tags[k].tagSubCategory;
-                    if (vcat !== null && vcat !== undefined && vcat !== '') {
-                        tag_category_array = tag_category_array.concat(vcat.split(','));
-                    }
-                    if (vstr !== null && vstr !== undefined && vstr !== '') {
-                        tag_string_array = tag_string_array.concat(vstr.split(','));
-                    }
-                    if (vsubstr !== null && vsubstr !== undefined && vsubstr !== '') {
-                        tag_substring_array = tag_substring_array.concat(vsubstr.split(','));
-                    }
-                }
-
-
-                $.each(tag_category_array, function(i, el) {
-                    if ($.inArray(el, tag_category_array_uniqueNames) === -1)
-                        tag_category_array_uniqueNames.push(el);
-                });
-                $.each(tag_string_array, function(i, el) {
-                    if ($.inArray(el, tag_string_array_uniqueNames) === -1)
-                        tag_string_array_uniqueNames.push(el);
-                });
-                $.each(tag_substring_array, function(i, el) {
-                    if ($.inArray(el, tag_substring_array_uniqueNames) === -1)
-                        tag_substring_array_uniqueNames.push(el);
-                });
-                //set default values from backend
-
-                var tagcatelement = document.getElementById('select_tagCategory');
-                for (var i = 0; i < tag_category_array_uniqueNames.length; i++) {
-                    tagcatelement.options[tagcatelement.options.length] = new Option(tag_category_array_uniqueNames[i], tag_category_array_uniqueNames[i], false, false);
-                }
-
-                var tagStringlement = document.getElementById('select_tagString');
-                for (var i = 0; i < tag_string_array_uniqueNames.length; i++) {
-                    tagStringlement.options[tagStringlement.options.length] = new Option(tag_string_array_uniqueNames[i], tag_string_array_uniqueNames[i], false, false);
-                }
-
-                var tagSubCatelement = document.getElementById('select_tagSubCategory');
-                for (var i = 0; i < tag_substring_array_uniqueNames.length; i++) {
-                    tagSubCatelement.options[tagSubCatelement.options.length] = new Option(tag_substring_array_uniqueNames[i], tag_substring_array_uniqueNames[i], false, false);
-                }
-                $("select").multiselect().multiselectfilter();
-            }
+//            function add_Product_Tags() {
+//                //add provider tags
+//                var tag_category_array = new Array();
+//                var tag_string_array = new Array();
+//                var tag_substring_array = new Array();
+//                var tag_category_array_uniqueNames = [];
+//                var tag_string_array_uniqueNames = [];
+//                var tag_substring_array_uniqueNames = [];
+//                for (var k = 0; k < tags.length; k++) {
+//                    var vcat = tags[k].tagCategory;
+//                    var vstr = tags[k].tagString;
+//                    var vsubstr = tags[k].tagSubCategory;
+//                    if (vcat !== null && vcat !== undefined && vcat !== '') {
+//                        tag_category_array = tag_category_array.concat(vcat.split(','));
+//                    }
+//                    if (vstr !== null && vstr !== undefined && vstr !== '') {
+//                        tag_string_array = tag_string_array.concat(vstr.split(','));
+//                    }
+//                    if (vsubstr !== null && vsubstr !== undefined && vsubstr !== '') {
+//                        tag_substring_array = tag_substring_array.concat(vsubstr.split(','));
+//                    }
+//                }
+//
+//
+//                $.each(tag_category_array, function(i, el) {
+//                    if ($.inArray(el, tag_category_array_uniqueNames) === -1)
+//                        tag_category_array_uniqueNames.push(el);
+//                });
+//                $.each(tag_string_array, function(i, el) {
+//                    if ($.inArray(el, tag_string_array_uniqueNames) === -1)
+//                        tag_string_array_uniqueNames.push(el);
+//                });
+//                $.each(tag_substring_array, function(i, el) {
+//                    if ($.inArray(el, tag_substring_array_uniqueNames) === -1)
+//                        tag_substring_array_uniqueNames.push(el);
+//                });
+//                //set default values from backend
+//
+//                var tagcatelement = document.getElementById('select_tagCategory');
+//                for (var i = 0; i < tag_category_array_uniqueNames.length; i++) {
+//                    tagcatelement.options[tagcatelement.options.length] = new Option(tag_category_array_uniqueNames[i], tag_category_array_uniqueNames[i], false, false);
+//                }
+//
+//                var tagStringlement = document.getElementById('select_tagString');
+//                for (var i = 0; i < tag_string_array_uniqueNames.length; i++) {
+//                    tagStringlement.options[tagStringlement.options.length] = new Option(tag_string_array_uniqueNames[i], tag_string_array_uniqueNames[i], false, false);
+//                }
+//
+//                var tagSubCatelement = document.getElementById('select_tagSubCategory');
+//                for (var i = 0; i < tag_substring_array_uniqueNames.length; i++) {
+//                    tagSubCatelement.options[tagSubCatelement.options.length] = new Option(tag_substring_array_uniqueNames[i], tag_substring_array_uniqueNames[i], false, false);
+//                }
+//                //$("select").multiselect().multiselectfilter();
+//            }
 
 
             function add_Product_TagsNew() {
@@ -561,7 +572,7 @@
 
             function getElemnt(key, value, id) {
 
-                var readonly = ['id', 'ownerProductId', 'originalHeight', 'originalWidth', 'modifiedHeight', 'modifiedWidth', 'modifiedWidth', 'modifiedHeight'];
+                var readonly = ['id', 'ownerProductId', 'originalHeight', 'originalWidth', 'modifiedHeight', 'modifiedWidth', 'modifiedWidth', 'modifiedHeight', 'internalURL', 'externalURL'];
                 var readstatus = false;
                 for (var s = 0; s < readonly.length; s++) {
                     if (key === readonly[s]) {
@@ -1276,13 +1287,13 @@
                 btn.textContent = 'Untag';
                 btn.onclick = function() {
                     document.getElementById('created_tags_table').removeChild(row);
-                 var  index  =  cacheLocalTags.indexOf(valS);
-                   if(index !== -1){
-                     cacheLocalTags.splice(index,1); 
-                     
-                  }
+                    var index = cacheLocalTags.indexOf(valS);
+                    if (index !== -1) {
+                        cacheLocalTags.splice(index, 1);
+
+                    }
                     tagAssociateWithProduct(valS, "untag");
-                    
+
                     if (valC.toLowerCase() == "Product Type".toLowerCase()) {
                         productTypeTagCount = productTypeTagCount - 1;
                     } else if (valC.toLowerCase() == "Occasion".toLowerCase()) {
@@ -1360,9 +1371,9 @@
             </label> <label> <span>relatedProductIds: </span> <input id="id_relatedProductIds"
                                                                      type="text" name="name" placeholder="List of related products" readonly="readonly"/>
             </label> <label> <span>comments: </span> <input id="id_comments" type="text"
-                                                            name="name" placeholder="Comments of the product" />
+                                                            name="name" placeholder="Comments of the product" readonly="readonly"/>
             </label> <label> <span>ratings: </span> <input id="id_ratings" type="text"
-                                                           name="name" placeholder="Rating of the product" />
+                                                           name="name" placeholder="Ratings of the product" readonly="readonly"/>
 
             </label> <label> <span><strong>ProductImages: </strong></span> </label>
 
