@@ -326,7 +326,7 @@
                     } else if (tag_cat.toLowerCase() == "Occasion".toLowerCase()) {
                         occasionTagCount = occasionTagCount + 1;
                     }
-
+                    cacheLocalTags.push(tag_string);
                     createTagReqAndAddTable(tag_cat, tag_string, tag_sub_cat, 0)
 
                 }
@@ -375,7 +375,7 @@
                     table.appendChild(getElemnt('id', providers_array[i].id, 'id_' + i));
                     table.appendChild(getElemnt('ownerProductId', providers_array[i].ownerProductId, 'ownerProductId_' + i));
                     table.appendChild(getElemnt('externalURL', providers_array[i].externalURL, 'externalURL_' + i));
-                    if(providers_array[i].quantity == 0){
+                    if (providers_array[i].quantity == 0) {
                         providers_array[i].quantity = 1;
                     }
                     table.appendChild(getElemnt('quantity', providers_array[i].quantity, 'quantity_' + i));
@@ -1102,14 +1102,14 @@
                 if (tagRequest.readyState !== 4)
                     return;
                 if (tagRequest.status !== 200 && tagRequest.status !== 304) {
-                   // alert('HTTP POST error ' + tagRequest.status + 'Response ' + tagRequest.responseText);
+                    // alert('HTTP POST error ' + tagRequest.status + 'Response ' + tagRequest.responseText);
                     tagToProduct();
                     return;
                 }
                 if (tagRequest.status === 200)
                 {
                     if (tagsArray.length == 0) {
-                       // alert("Tags are attached to product");
+                        // alert("Tags are attached to product");
                     }
                     tagToProduct();
                 }
@@ -1154,9 +1154,15 @@
                             var tagstr = tags[q].tagString;
                             var tagSubStr = tags[q].tagSubCategory;
                             if (cat !== null && cat !== undefined && cat.indexOf('Product Type') === 0 && tagstr.indexOf(productType[p]) === 0) {
-                                productTypeTagCount = productTypeTagCount + 1;
-                                addElementToTable('Product Type', tagstr, tagSubStr);
-                                tagsArray.push(tagstr);
+                                var index = cacheLocalTags.indexOf(tagstr);
+                                if (index == -1) {
+                                    cacheLocalTags.push(tagstr);
+                                    productTypeTagCount = productTypeTagCount + 1;
+                                    addElementToTable('Product Type', tagstr, tagSubStr);
+                                    tagsArray.push(tagstr);
+                                } else {
+                                    alert("duplicat tag");
+                                }
 
 
 
@@ -1179,10 +1185,15 @@
                             var tagstr = tags[q].tagString;
                             var tagSubStr = tags[q].tagSubCategory;
                             if (cat !== null && cat !== undefined && cat.indexOf('Occasion') === 0 && tagstr.indexOf(productType[p]) === 0) {
-                                occasionTagCount = occasionTagCount + 1;
-                                addElementToTable('Occasion', tagstr, tagSubStr);
-                                tagsArray.push(tagstr);
-
+                                var index = cacheLocalTags.indexOf(tagstr);
+                                if (index == -1) {
+                                    cacheLocalTags.push(tagstr);
+                                    occasionTagCount = occasionTagCount + 1;
+                                    addElementToTable('Occasion', tagstr, tagSubStr);
+                                    tagsArray.push(tagstr);
+                                } else {
+                                    alert("duplicat tag");
+                                }
 
                             }
                         }
@@ -1200,10 +1211,15 @@
                             var tagstr = tags[q].tagString;
                             var tagSubStr = tags[q].tagSubCategory;
                             if (cat !== null && cat !== undefined && cat.indexOf('Product description') === 0 && tagstr.indexOf(productType[p]) === 0) {
-                                productDescriptionTagCount = productDescriptionTagCount + 1;
-                                addElementToTable('Product description', tagstr, tagSubStr);
-                                tagsArray.push(tagstr);
-
+                                var index = cacheLocalTags.indexOf(tagstr);
+                                if (index == -1) {
+                                    cacheLocalTags.push(tagstr);
+                                    productDescriptionTagCount = productDescriptionTagCount + 1;
+                                    addElementToTable('Product description', tagstr, tagSubStr);
+                                    tagsArray.push(tagstr);
+                                } else {
+                                    alert("duplicat tag");
+                                }
                             }
                         }
 
@@ -1234,10 +1250,17 @@
                     alert("Tag Category must not empty");
                     return;
                 }
-                document.getElementById("id_tag_str").value = "";
-                console.log("CAT:" + valC + " Tag String: " + valS);
-                createTagReqAndAddTable(valC, valS, valSC, 1);
-                document.getElementById("id_tag_cat").value = '';
+                var index = cacheLocalTags.indexOf(valS);
+                if (index == -1) {
+                    cacheLocalTags.push(valS);
+                    document.getElementById("id_tag_str").value = "";
+                    document.getElementById("id_tag_cat").value = '';
+                    console.log("CAT:" + valC + " Tag String: " + valS);
+                    createTagReqAndAddTable(valC, valS, valSC, 1);
+                } else {
+                    alert("duplicate tag");
+                }
+
             }
 
             function createTagReqAndAddTable(valC, valS, valSC, addtableonly) {
@@ -1286,10 +1309,16 @@
             function  createGenderTag() {
 
                 var vl = document.querySelector('input[name="que_1"]:checked').value;
-                tagsArray.push(vl);
-                createTagReqAndAddTable('Product description', vl, '', 0);
-                productDescriptionTagCount = productDescriptionTagCount + 1;
-                tagToProduct();
+                var index = cacheLocalTags.indexOf(vl);
+                if (index == -1) {
+                    tagsArray.push(vl);
+                    cacheLocalTags.push(vl);
+                    createTagReqAndAddTable('Product description', vl, '', 0);
+                    productDescriptionTagCount = productDescriptionTagCount + 1;
+                    tagToProduct();
+                } else {
+                    alert("duplicat tag");
+                }
             }
         </script>
     </head>

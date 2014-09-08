@@ -5,7 +5,7 @@
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
         <script>
-var searchString = "CRAWLED";
+        var searchString = "CRAWLED";
         var request;
         var products = [];
         var otherWindow;
@@ -22,18 +22,18 @@ var searchString = "CRAWLED";
 
         var otherWindowObserver;
         var buttonText;
- 
+
         //prototype for clear the array values.
         Array.prototype.clear = function() {
             this.length = 0;
         };
 
-function getSelectedValue() {  
-    var index = document.getElementById('select').selectedIndex;  
-   // alert("value="+document.getElementById('select').value);  
+        function getSelectedValue() {
+            var index = document.getElementById('select').selectedIndex;
+            // alert("value="+document.getElementById('select').value);  
 // alert("text="+document.getElementById('select').options[index].text);  
-searchString = document.getElementById('select').value;
-}
+            searchString = document.getElementById('select').value;
+        }
 
         function sendMessage(productString) {
             productString = tagString + "##" + productString + "##" + buttonText;
@@ -50,7 +50,7 @@ searchString = document.getElementById('select').value;
 
             }, 2000)
         }
- 
+
         function readParams() {
             //ONLY ALLOWED STATIC USER
             //raju ID
@@ -59,12 +59,16 @@ searchString = document.getElementById('select').value;
             //sangeeth ID
             users.push(5769457217568768);
             //Neem 
-            users.push(5169874951208960)
+            users.push(5169874951208960);
+
+            users.push(5649648836411392);//lakshminath's id
+            users.push(5638203017003008);//vidya's id
+            
             var srchString = unescape(location.search.substring(1, location.search.length));
             var name = srchString.split("=");
             curatorID = name[1];
             getTags();
-searchString = "CRAWLED";
+            searchString = "CRAWLED";
 
         }
 
@@ -89,7 +93,7 @@ searchString = "CRAWLED";
                 return;
             }
             //var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=CRAWLED&limit=50";
-var url = "https://vue-server-dev.appspot.com/api/product/search?productstate="+searchString+"&limit=50";
+            var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=" + searchString + "&limit=50";
             if (XMLHttpRequest)
             {
                 request = new XMLHttpRequest();
@@ -110,12 +114,12 @@ var url = "https://vue-server-dev.appspot.com/api/product/search?productstate="+
             {
 
                 var jsonResponse = JSON.parse(request.responseText);
-                 
+
                 //clear the old data in array and populate with new product data.
-                  if(products.length > 0){
-document.getElementById("productTableId").innerHTML = "";
-                      //return;
-                  }
+                if (products.length > 0) {
+                    document.getElementById("productTableId").innerHTML = "";
+                    //return;
+                }
                 products.clear();
                 for (var i = 0; i < jsonResponse.length; i++) {
                     var jsonTempObject = jsonResponse[i];
@@ -141,14 +145,14 @@ document.getElementById("productTableId").innerHTML = "";
                     var tr = document.createElement("tr");
                     table.appendChild(tr);
                 }
-              
+
                 var imag = document.createElement("img");
-                try{
-                imag.src = products[i].productImages[0].externalURL;
-            } catch(e){
-                continue;
-            }
-              var td = document.createElement("td");
+                try {
+                    imag.src = products[i].productImages[0].externalURL;
+                } catch (e) {
+                    continue;
+                }
+                var td = document.createElement("td");
                 td.id = products[i].id;
                 tr.appendChild(td);
                 var divImage = document.createElement("div");
@@ -214,9 +218,9 @@ document.getElementById("productTableId").innerHTML = "";
                             buttonText = button.value;
 
                             if (product.currentProductState == "CURATED_AND_VERIFIED") {
-                                  alert("already verifed");
+                                alert("already verifed");
                                 //var productString = JSON.stringify(product)
-                               // openOther(productString);
+                                // openOther(productString);
                             } else {
                                 var productString = JSON.stringify(product)
                                 openOther(productString);
@@ -341,65 +345,66 @@ document.getElementById("productTableId").innerHTML = "";
 
         }
         </script>
-		 			 <div id="container">
+        <div id="container">
 
- <Button onclick="getCrawledProducts(); "  >GetProducts</Button>
- <select id="select" name="" style="width:150;" onchange="getSelectedValue();">
-<option value="CRAWLED" title="Product Type">CRAWLED</option>
-<option value="CURATED" title="Occasion">CURATED</option>
-<option value="CURATED_AND_VERIFIED" title="Product description">CURATED_AND_VERIFIED</option>
-<option value="NEEDS_RECURATION" title="Product description">NEEDS_RECURATION</option>
-</select>
- 
-</div>
-       
+            <Button onclick="getCrawledProducts();
+                    "  >GetProducts</Button>
+            <select id="select" name="" style="width:150;" onchange="getSelectedValue();">
+                <option value="CRAWLED" title="Product Type">CRAWLED</option>
+                <option value="CURATED" title="Occasion">CURATED</option>
+                <option value="CURATED_AND_VERIFIED" title="Product description">CURATED_AND_VERIFIED</option>
+                <option value="NEEDS_RECURATION" title="Product description">NEEDS_RECURATION</option>
+            </select>
+
+        </div>
+
         <table id="productTableId"></table>
 
     </body>
 </html>
 <style>
-.myButtonRED {
-	-moz-box-shadow: inset 0px 39px 0px -24px #e67a73;
-	-webkit-box-shadow: inset 0px 39px 0px -24px #e67a73;
-	box-shadow: inset 0px 39px 0px -24px #e67a73;
-	background-color: #e4685d;
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-	border-radius: 4px;
-	border: 1px solid #ffffff;
-	display: inline-block;
-	cursor: pointer;
-	color: #ffffff;
-	font-family: arial;
-	font-size: 15px;
-	padding: 6px 15px;
-	text-decoration: none;
-	text-shadow: 0px 1px 0px #b23e35;
-}
- #container
-{
-    position: relative;
-}
+    .myButtonRED {
+        -moz-box-shadow: inset 0px 39px 0px -24px #e67a73;
+        -webkit-box-shadow: inset 0px 39px 0px -24px #e67a73;
+        box-shadow: inset 0px 39px 0px -24px #e67a73;
+        background-color: #e4685d;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        border-radius: 4px;
+        border: 1px solid #ffffff;
+        display: inline-block;
+        cursor: pointer;
+        color: #ffffff;
+        font-family: arial;
+        font-size: 15px;
+        padding: 6px 15px;
+        text-decoration: none;
+        text-shadow: 0px 1px 0px #b23e35;
+    }
+    #container
+    {
+        position: relative;
+    }
 
-#input
-{
-position: absolute;
-top: 0;
-left: 10%;
-z-index: 999;
-padding: 0;
-margin: 0;
-}
+    #input
+    {
+        position: absolute;
+        top: 0;
+        left: 10%;
+        z-index: 999;
+        padding: 0;
+        margin: 0;
+    }
 
-#select
-{
-position: absolute;
-top: 3%;
-left: 10%;
-padding: 0;
-margin: 0;
-}
-argin-top:5px;
-}
+    #select
+    {
+        position: absolute;
+        top: 3%;
+        left: 10%;
+        padding: 0;
+        margin: 0;
+    }
+    argin-top:5px;
+    }
 </style>
 
