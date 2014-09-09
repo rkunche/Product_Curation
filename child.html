@@ -456,10 +456,10 @@
                 for (var i = 0; i < enums.length; i++) {
 
                     if (enums[i].indexOf(value) === 0) {
-                        var o1 = getRadioButton(key_name, enums[i], true);
+                        var o1 = getRadioButton(key_name, enums[i], false);
                         td.appendChild(o1);
                     } else {
-                        var o1 = getRadioButton(key_name, enums[i], false);
+                        var o1 = getRadioButton(key_name, enums[i], true);
                         td.appendChild(o1);
                     }
 
