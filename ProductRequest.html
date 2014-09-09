@@ -194,7 +194,10 @@
                     } else if (product.currentProductState == "CURATED_AND_VERIFIED") {
                         button.style.backgroundColor = "#059E24";
                         button.value = "Verified";
-                    } else {
+                    } else if (product.currentProductState === "ARCHIVED") {
+                        button.style.backgroundColor = "#059E24";
+                        button.value = "Archived";
+                    }else {
                         button.value = "Review Now";
                         button.style.backgroundColor = "#059E24";
                     }
@@ -313,20 +316,23 @@
                     var titleVal;
                     var stateVal;
                     for (var k = 0; k < products.length; k++) {
-                        if (clcickedProductId == products[k].id) {
+                        if (clcickedProductId === products[k].id) {
                             titleVal = products[k].title;
                             stateVal = products[k].currentProductState;
                             var button = cell.getElementsByTagName("input");
-                            if (stateVal == "CRAWLED") {
+                            if (stateVal === "CRAWLED") {
                                 button[0].style.backgroundColor = "#9C3325";
-                            } else if (stateVal == "NEEDS_RECURATION") {
+                            } else if (stateVal === "NEEDS_RECURATION") {
                                 button[0].value = "Recurate Now";
                                 button[0].style.backgroundColor = "#9C3325";
                                 products[k].currentProductState = "CRAWLED";
-                            } else if (stateVal == "CURATED_AND_VERIFIED") {
+                            } else if (stateVal === "CURATED_AND_VERIFIED") {
                                 button[0].style.backgroundColor = "#059E24";
                                 button[0].value = "Verified";
-                            } else {
+                            } else if (stateVal === "ARCHIVED") {
+                                button[0].style.backgroundColor = "#059E24";
+                                button[0].value = "Archived";
+                            }else {
                                 button[0].style.backgroundColor = "#059E24";
                                 button[0].value = "Review Now";
                             }
