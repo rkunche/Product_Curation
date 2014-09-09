@@ -894,7 +894,8 @@
                 // var updated_availability = $("#availability_" + '0').val();
                 var updated_availability = document.querySelector('input[name="provider_Availability"]:checked').value
 
-
+                 updated_availableSizes = toTitleCase(updated_availableSizes);
+                 updated_availableColors = toTitleCase(updated_availableColors);
                 var colorArray = updated_availableColors.split(",");
                 var sizesArray = updated_availableSizes.split(",");
                 var zipcodeArray = updated_availableAtZipCodes.split(",");
