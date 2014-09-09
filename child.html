@@ -1233,27 +1233,35 @@
                 valC = document.getElementById("id_tag_cat").value;
                 valS = document.getElementById("id_tag_str").value;
                 valSC = document.getElementById("id_sub_str").value;
-                if (valS == null || valS.length < 1 || valS == undefined) {
+                if (valS === null || valS.length < 1 || valS === undefined) {
                     alert("Tag String must not empty");
                     return;
                 }
-                if (valC == null || valC.length < 1 || valC == undefined) {
+                if (valC === null || valC.length < 1 || valC === undefined) {
                     alert("Tag Category must not empty");
                     return;
                 }
                 var index = cacheLocalTags.indexOf(valS);
-                if (index == -1) {
+                if (index === -1) {
                     cacheLocalTags.push(valS);
                     document.getElementById("id_tag_str").value = "";
                     document.getElementById("id_tag_cat").value = '';
                     console.log("CAT:" + valC + " Tag String: " + valS);
+                    valS = valS.trim();
+                    valS = toTitleCase(valS);
                     createTagReqAndAddTable(valC, valS, valSC, 1);
                 } else {
                     alert("duplicate tag");
                 }
 
             }
-
+            function toTitleCase(str)
+            {
+                //make every starting letter capital.
+                return str.replace(/\w\S*/g, function(txt) {
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                });
+            }
             function createTagReqAndAddTable(valC, valS, valSC, addtableonly) {
                 var row = document.createElement('tr');
                 var thC = document.createElement('th');
@@ -1325,7 +1333,7 @@
 
                 var r = confirm("Do you want to ARCHIVE Product?");
                 if (r === true) {
-                    
+
                     var url = "https://vue-server-dev.appspot.com/api/product/" + jsonObject.id;
                     if (XMLHttpRequest) {
                         request = new XMLHttpRequest();
@@ -1355,7 +1363,7 @@
                         }
                     }
                 } else {
-                     
+
                 }
 
 
