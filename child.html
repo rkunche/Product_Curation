@@ -1217,7 +1217,7 @@
                 if (taggingStarted == false) {
                     tagToProduct();
                 } else {
-                    
+
                 }
 
             }
@@ -1270,7 +1270,7 @@
                     var index = cacheLocalTags.indexOf(valS);
                     if (index !== -1) {
                         var removedTag = cacheLocalTags.splice(index, 1);
-                        
+
 
                     }
                     tagAssociateWithProduct(valS, "untag");
@@ -1315,11 +1315,51 @@
                     if (taggingStarted == false) {
                         tagToProduct();
                     } else {
-                         
+
                     }
                 } else {
                     alert("duplicate tag");
                 }
+            }
+            function archieveProduct() {
+                
+                var r = confirm("Do you want to ARCHIVE Product?");
+if (r == true) {
+    alert("yes");
+       var url = "https://vue-server-dev.appspot.com/api/product/" + jsonObject.id;
+                if (XMLHttpRequest) {
+                    request = new XMLHttpRequest();
+                    if ("withCredentials" in request) {
+                        // Firefox 3.5 and Safari 4
+                        request.open('PUT', url, true);
+                        request.setRequestHeader('Custom-Header', 'javascript-client');
+                        request.setRequestHeader('Content-Type', 'application/json');
+                        request.onreadystatechange = function() {
+
+                            if (request.readyState !== 4)
+                                return;
+                            if (request.status !== 200 && request.status !== 304) {
+                                // alert('HTTP POST error ' + tagRequest.status + 'Response ' + tagRequest.responseText);
+
+                                return;
+                            }
+                            if (request.status === 200)
+                            {
+window.opener.close();
+                    close();
+
+                            }
+                        };
+                        //product update request:
+                        request.send(JSON.stringify({id: jsonObject.id, ownerAisleId: jsonObject.ownerAisleId, ownerProductListId: jsonObject.ownerProductListId, creatorId: jsonObject.creatorId, curatorId: jsonObject.curatorId, title: jsonObject.title, description: jsonObject.description, currentProductState: "ARCHIVED", relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
+                    }
+                }
+} else {
+     alert("No");
+}
+                
+                
+             
             }
         </script>
     </head>
@@ -1501,10 +1541,14 @@
                         <label> <span><strong>productProviders:
                                 </strong></span></label>
                         <div id ="product_providers_div_id"></div>
+                        <div>
+                            <span>&nbsp;</span> <input type="button"
+                                                       class="button" value="Curate and Finish" onClick="updateProvider()" id ="send_but_id"/>
 
-                        <label> <span>&nbsp;</span> <input type="button"
-                                                           class="button" value="Curate and Finish" onClick="updateProvider()" id ="send_but_id"/>
-                        </label>
+                            <span>&nbsp;</span> <input type="button"
+                                                       class="button" value="Archive" onClick="archieveProduct()" id ="archive_but_id"/>
+
+                        </div>
                         </form>
                         </body>
 
