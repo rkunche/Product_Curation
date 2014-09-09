@@ -356,11 +356,11 @@
                     var tag_sub_cat = tag_obj.tagSubCategory;
 
 
-                    if (tag_cat.toLowerCase() == "Product description".toLowerCase()) {
+                    if (tag_cat.toLowerCase() === "Product description".toLowerCase()) {
                         productDescriptionTagCount = productDescriptionTagCount + 1;
-                    } else if (tag_cat.toLowerCase() == "Product Type".toLowerCase()) {
+                    } else if (tag_cat.toLowerCase() === "Product Type".toLowerCase()) {
                         productTypeTagCount = productTypeTagCount + 1;
-                    } else if (tag_cat.toLowerCase() == "Occasion".toLowerCase()) {
+                    } else if (tag_cat.toLowerCase() === "Occasion".toLowerCase()) {
                         occasionTagCount = occasionTagCount + 1;
                     }
                     cacheLocalTags.push(tag_string);
@@ -1517,12 +1517,12 @@
                         <div style="padding:20px">
                             <td >
                                 <label>
-                                    <input type="radio" id="r1" name='que_1' value="Male" />
-                                    Male<br>
+                                    <input type="radio" id="r1" name='que_1' value="Men" />
+                                    Men<br>
                                 </label>
                                 <label>
-                                    <input type="radio" id="r2" name='que_1' value="Female" />
-                                    Female<br>
+                                    <input type="radio" id="r2" name='que_1' value="Women" />
+                                    Women<br>
                                 </label>
 
                                 <label>
