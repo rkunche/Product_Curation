@@ -15,19 +15,15 @@
         var tagString;
         var tagsrequest;
         var curateProductRequest;
-
         //for user authentication
         var users = [];
         var curatorID;
-
         var otherWindowObserver;
         var buttonText;
-
         //prototype for clear the array values.
         Array.prototype.clear = function() {
             this.length = 0;
         };
-
         function getSelectedValue() {
             var index = document.getElementById('select').selectedIndex;
             // alert("value="+document.getElementById('select').value);  
@@ -60,22 +56,19 @@
             users.push(5769457217568768);
             //Neem 
             users.push(5169874951208960);
-
-            users.push(5649648836411392);//lakshminath's id
-            users.push(5638203017003008);//vidya's id
+            users.push(5649648836411392); //lakshminath's id
+            users.push(5638203017003008); //vidya's id
 
             var srchString = unescape(location.search.substring(1, location.search.length));
             var name = srchString.split("=");
             curatorID = name[1];
             getTags();
             searchString = "CRAWLED";
-
         }
 
 
         function openOther(productString) {
             otherWindow = window.open("source.html", "_blank");
-
             myVar = setInterval(function() {
                 sendMessage(productString)
             }, 1000);
@@ -114,7 +107,6 @@
             {
 
                 var jsonResponse = JSON.parse(request.responseText);
-
                 //clear the old data in array and populate with new product data.
                 if (products.length > 0) {
                     document.getElementById("productTableId").innerHTML = "";
@@ -157,15 +149,12 @@
                 tr.appendChild(td);
                 var divImage = document.createElement("div");
                 divImage.appendChild(imag);
-
                 //var div = document.createElement("div");
                 //div.className = "content";
                 //div.appendChild(imag);
                 //td.appendChild(div);
                 var title = document.createTextNode("Title : " + products[i].title);
                 var state = document.createTextNode("State : " + products[i].currentProductState);
-
-
                 var divTitle = document.createElement("div");
                 divTitle.appendChild(title);
                 var divState = document.createElement("div");
@@ -175,7 +164,6 @@
                 td.appendChild(divImage);
                 td.style.border = "thin dotted red";
                 createButton(td, curatethis_product, products[i]);
-
             }
         }
         //create button function
@@ -183,7 +171,10 @@
                 function createButton(td, curatethis_product, product) {
                     var button = document.createElement("input");
                     button.type = "button";
-
+                    var archivebutton = document.createElement("input");
+                    archivebutton.type = "button";
+                    archivebutton.value = "Archive";
+                    archivebutton.style.backgroundColor = "Orange";
                     if (product.currentProductState == "CRAWLED") {
                         button.value = "Curate Now";
                         button.style.backgroundColor = "#9C3325";
@@ -219,7 +210,6 @@
                             }
 
                             buttonText = button.value;
-
                             if (product.currentProductState == "CURATED_AND_VERIFIED") {
                                 // alert("already verifed");
                                 var productString = JSON.stringify(product)
@@ -232,8 +222,39 @@
                         },
                         dude: product.title
                     };
+                    archiveObj = {
+                        handleEvent: function() {
+                            var r = confirm("Do you want to ARCHIVE Product?");
+                            if (r === true) {
+
+                                clcickedProductId = product.id;
+                                var url = "https://vue-server-dev.appspot.com/api/product/" + product.id;
+                                if (XMLHttpRequest) {
+                                    curateProductRequest = new XMLHttpRequest();
+                                    if ("withCredentials" in curateProductRequest) {
+                                        // Firefox 3.5 and Safari 4
+                                        curateProductRequest.open('PUT', url, true);
+                                        curateProductRequest.setRequestHeader('Custom-Header', 'javascript-client');
+                                        curateProductRequest.setRequestHeader('Content-Type', 'application/json');
+                                        curateProductRequest.onreadystatechange = curateProductHandler;
+
+//                                //product update request:
+                                        curateProductRequest.send(JSON.stringify({id: product.id, ownerAisleId: product.ownerAisleId, ownerProductListId: product.ownerProductListId, creatorId: product.creatorId, curatorId: product.curatorId, title: product.title, description: product.description, currentProductState: "ARCHIVED", relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
+                                    } else {
+
+                                    }
+                                }
+                            }
+
+                        },
+                        dude: product.title
+                    }
                     button.addEventListener("click", obj, false);
+                    archivebutton.addEventListener("click", archiveObj, false);
                     td.appendChild(button);
+                    if (product.currentProductState !== "ARCHIVED") {
+                        td.appendChild(archivebutton);
+                    }
                 }
         //on curate button click function
         function curatethis_product() {
@@ -264,7 +285,6 @@
                 var blocked = [];
                 for (var k = 0; k < jsonResponse.length; k++) {
                     var tagObject = jsonResponse[k];
-
                     if (tagObject.tagString.charAt(0) === tagObject.tagString.charAt(0).toLowerCase()) {
                         console.log(tagObject.tagString + " length : " + tagObject.tagString.length);
                         blocked.push(tagObject);
@@ -274,10 +294,10 @@
                     console.log("Blocked list " + blocked[i].tagString);
                     var t = jsonResponse.indexOf(blocked[i]);
                     if (t !== -1) {
-                      jsonResponse.splice(t, 1);
+                        jsonResponse.splice(t, 1);
                     }
                 }
-                  tagString =  JSON.stringify(jsonResponse);
+                tagString = JSON.stringify(jsonResponse);
             }
             if (tagsrequest.status !== 200 && tagsrequest.status !== 304) {
                 alert('HTTP GET error ' + tagsrequest.status);
