@@ -932,13 +932,17 @@
                 }
 
                 if (updated_availableColors == undefined || updated_availableColors == null || updated_availableColors.length < 1) {
-                    alert("Please Fill Available Colors");
+                   if(!partialCurated){
+                     alert("Please Fill Available Colors");
                     return;
+                }
                 }
 
                 if (updated_availableSizes == undefined || updated_availableSizes == null || updated_availableSizes.length < 1) {
-                    alert("Please Fill Available Sizes");
+                   if(!partialCurated){
+                   alert("Please Fill Available Sizes");
                     return;
+                }
                 }
 
                 if (updated_availability == undefined || updated_availability == null || updated_availability.length < 1) {
