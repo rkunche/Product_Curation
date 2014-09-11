@@ -63,7 +63,7 @@
 
             users.push(5649648836411392);//lakshminath's id
             users.push(5638203017003008);//vidya's id
-            
+
             var srchString = unescape(location.search.substring(1, location.search.length));
             var name = srchString.split("=");
             curatorID = name[1];
@@ -197,7 +197,7 @@
                     } else if (product.currentProductState === "ARCHIVED") {
                         button.style.backgroundColor = "Orange";
                         button.value = "Archived";
-                    }else {
+                    } else {
                         button.value = "Review Now";
                         button.style.backgroundColor = "#059E24";
                     }
@@ -221,9 +221,9 @@
                             buttonText = button.value;
 
                             if (product.currentProductState == "CURATED_AND_VERIFIED") {
-                               // alert("already verifed");
+                                // alert("already verifed");
                                 var productString = JSON.stringify(product)
-                                 openOther(productString);
+                                openOther(productString);
                             } else {
                                 var productString = JSON.stringify(product)
                                 openOther(productString);
@@ -255,13 +255,31 @@
             }
         }
         function tagRespnseHandler() {
-            if (tagsrequest.readyState != 4)
+            if (tagsrequest.readyState !== 4)
                 return;
-            if (tagsrequest.status == 200)
+            if (tagsrequest.status === 200)
             {
                 tagString = tagsrequest.responseText;
+                var jsonResponse = JSON.parse(tagString);
+                var blocked = [];
+                for (var k = 0; k < jsonResponse.length; k++) {
+                    var tagObject = jsonResponse[k];
+
+                    if (tagObject.tagString.charAt(0) === tagObject.tagString.charAt(0).toLowerCase()) {
+                        console.log(tagObject.tagString + " length : " + tagObject.tagString.length);
+                        blocked.push(tagObject);
+                    }
+                }
+                for (var i = 0; i < blocked.length; i++) {
+                    console.log("Blocked list " + blocked[i].tagString);
+                    var t = jsonResponse.indexOf(blocked[i]);
+                    if (t !== -1) {
+                      jsonResponse.splice(t, 1);
+                    }
+                }
+                  tagString =  JSON.stringify(jsonResponse);
             }
-            if (tagsrequest.status != 200 && tagsrequest.status != 304) {
+            if (tagsrequest.status !== 200 && tagsrequest.status !== 304) {
                 alert('HTTP GET error ' + tagsrequest.status);
                 return;
             }
@@ -332,7 +350,7 @@
                             } else if (stateVal === "ARCHIVED") {
                                 button[0].style.backgroundColor = "Orange";
                                 button[0].value = "Archived";
-                            }else {
+                            } else {
                                 button[0].style.backgroundColor = "#059E24";
                                 button[0].value = "Review Now";
                             }
