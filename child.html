@@ -258,6 +258,8 @@
             var productTypeTagCount = 0;
             var occasionTagCount = 0;
             var productDescriptionTagCount = 0;
+            
+            var partialCurated = false;
 
             window.addEventListener("message", function(event) {
 
@@ -285,7 +287,9 @@
 //                updateImage(jsonObject.productImages[0]);
                 if (jsonObject.currentProductState == "CRAWLED") {
                     buttonValue = "Curate And Finish";
+                    partialCurated = true;
                 } else {
+                     partialCurated = false;
                     buttonValue = "Review And Finish";
                 }
 
@@ -802,7 +806,7 @@
                 jsonObject.description = description;
 
 
-                if (localTags.length < 3) {
+                if (localTags.length < 3 && !partialCurated) {
                     showAlert("Please create minimum 3 Tags.");
                     return false;
                 }
@@ -815,10 +819,12 @@
                     showAlert("Please create atleast one Occasion TAG.");
                     return false;
                 }
-                if (productDescriptionTagCount < 1) {
+           
+                if (productDescriptionTagCount < 1 && !partialCurated) {
                     showAlert("Please create atleast one Product description TAG.");
                     return false;
                 }
+             
 
 
                 return true;
