@@ -1081,6 +1081,7 @@
                     alert("Please Fill Currency Code");
                     return;
                 }
+              
                 var url = "https://vue-server-dev.appspot.com/api/productprovider/" + jsonObject.productProviders[0].id;
                 if (XMLHttpRequest) {
                     providerUpdaterequest = new XMLHttpRequest();
@@ -1107,10 +1108,10 @@
 
                         };
                         providerUpdaterequest.send(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
-                            price: updated_price, onSale: updated_onSale, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: zipcodeArray}));
+                            price: updated_price, onSale: updated_onSale, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: null}));
                         //print logs in console        
                         console.log("Provider: " + JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
-                            price: updated_price, onSale: updated_onSale, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: zipcodeArray}));
+                            price: updated_price, onSale: updated_onSale, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: null}));
                     }
                 }
             }
