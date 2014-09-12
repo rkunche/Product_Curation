@@ -233,7 +233,7 @@
             var localTagsObject = {tagCategory: "", tagString: "", tagSubCategory: ""};
             var initialValues = {Title: "", Description: "", ProductTags: null, CurrentProductState: "", PrductProviders: null};
             var available_colors = ["Red", "Green", "Blue", "Cyn", "Orange", "Purple", "Black"];
-            var available_sizes = ["No Size","XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+            var available_sizes = ["No Size", "XS", "S", "M", "L", "XL", "XXL", "XXXL"];
             //prototype for clear the array values.
             Array.prototype.clear = function() {
                 this.length = 0;
@@ -258,16 +258,16 @@
             var productTypeTagCount = 0;
             var occasionTagCount = 0;
             var productDescriptionTagCount = 0;
-            
+
             var partialCurated = false;
 
             window.addEventListener("message", function(event) {
 
                 var strings = event.data.split("##");
                 tags = JSON.parse(strings[0]);
-                for (var i = 0; i < tags.length; i++) {
-                    console.log(tags[i].tagString);
-                }
+                //for (var i = 0; i < tags.length; i++) {
+                // console.log(tags[i].tagString);
+                // }
                 datafromparent = strings[1]
 
                 curatorReview = strings[2];
@@ -289,12 +289,113 @@
                     buttonValue = "Curate And Finish";
                     partialCurated = true;
                 } else {
-                     partialCurated = false;
+                    partialCurated = false;
                     buttonValue = "Review And Finish";
                 }
 
                 tagCreationReqeustCount = 0;
                 tagArray.clear();
+                var isColorArrayNull = false;
+                var isAvailableSizes = false;
+                var isAvailableAtZipCodes = false;
+ 
+                if (jsonObject.productProviders !== null) {
+                    for (var i = 0; i < jsonObject.productProviders.length; i++) {
+                        if (jsonObject.productProviders[i].availableColors !== null && jsonObject.productProviders[i].availableColors !== undefined) {
+                            if (jsonObject.productProviders[i].availableColors.length === 1) {
+
+                                if (jsonObject.productProviders[i].availableColors[0] == null || jsonObject.productProviders[i].availableColors[0] == "null") {
+                                    isColorArrayNull = true;
+                                    console.log("isColorArrayNull setTrue " + jsonObject.productProviders[i].availableColors[0]);
+                                }
+                            }
+                        } else {
+                            console.log("NO productProviders.availableColors");
+                        }
+                        if (jsonObject.productProviders[i].availableSizes !== null && jsonObject.productProviders[i].availableSizes !== undefined) {
+
+                            if (jsonObject.productProviders[i].availableSizes.length === 1) {
+
+                                if (jsonObject.productProviders[i].availableSizes[0] == null || jsonObject.productProviders[i].availableSizes[0] == "null") {
+                                    isAvailableSizes = true;
+                                    console.log("isAvailableSizes setTrue " + jsonObject.productProviders[i].availableColors[0]);
+                                }
+                            }
+
+                        } else {
+                            console.log("NO productProviders.availableSizes");
+                        }
+
+                        if (jsonObject.productProviders[i].availableAtZipCodes !== null && jsonObject.productProviders[i].availableAtZipCodes !== undefined) {
+
+                            if (jsonObject.productProviders[i].availableAtZipCodes.length === 1) {
+
+                                if (jsonObject.productProviders[i].availableAtZipCodes[0] == null || jsonObject.productProviders[i].availableAtZipCodes[0] == "null") {
+                                    isAvailableAtZipCodes = true;
+                                    console.log("isAvailableSizes setTrue " + jsonObject.productProviders[i].availableColors[0]);
+                                }
+                            }
+                        } else {
+                            console.log("NO productProviders.availableAtZipCodes");
+                        }
+                    }
+
+                } else {
+                    console.log("NO PRODUCT PROVIDERS");
+                }
+
+
+
+                var url = "https://vue-server-dev.appspot.com/api/productprovider/" + jsonObject.productProviders[0].id;
+                if (XMLHttpRequest) {
+                    providerUpdaterequest = new XMLHttpRequest();
+                    if ("withCredentials" in providerUpdaterequest) {
+                        // Firefox 3.5 and Safari 4
+                        providerUpdaterequest.open('PUT', url, true);
+                        providerUpdaterequest.setRequestHeader('Custom-Header', 'javascript-client');
+                        providerUpdaterequest.setRequestHeader('Content-Type', 'application/json');
+                        providerUpdaterequest.onreadystatechange = function providerHandler() {
+                            if (providerUpdaterequest.readyState != 4)
+                                return;
+
+                            if (providerUpdaterequest.status != 200 && providerUpdaterequest.status != 304) {
+
+                                console.log("provder updated failed");
+                                return;
+                            }
+                            if (providerUpdaterequest.status == 200)
+                            {
+
+                                console.log("provder updated successfully&&& " + providerUpdaterequest.responseText);
+
+                            }
+
+                        };
+
+                        console.log("provder color fields " + isColorArrayNull);
+                        console.log("provder isAvailableSizes field " + isAvailableSizes);
+                        console.log("provder isAvailableAtZipCodes field " + isAvailableAtZipCodes);
+                        if (isAvailableAtZipCodes) {
+                            jsonObject.productProviders[0].availableAtZipCodes = null;
+                            console.log("provder availableAtZipCodes fields 1");
+                        }
+                        if (isColorArrayNull) {
+                            jsonObject.productProviders[0].availableColors = null;
+                            console.log("provder availableColors fields 2");
+                        }
+                        if (isAvailableSizes) {
+                            jsonObject.productProviders[0].availableSizes = null;
+                            console.log("provider availableSizes fields 3 ");
+                        }
+
+                        if (isAvailableAtZipCodes || isColorArrayNull || isAvailableSizes) {
+                            providerUpdaterequest.send(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: jsonObject.productProviders[0].quantity, currencyCode: jsonObject.productProviders[0].currencyCode, store: jsonObject.productProviders[0].store, availability: jsonObject.productProviders[0].availability,
+                                price: jsonObject.productProviders[0].price, onSale: jsonObject.productProviders[0].onSale, salePrice: jsonObject.productProviders[0].salePrice, saleExpirtyDate: 0, availableColors: jsonObject.productProviders[0].availableColors, availableSizes: jsonObject.productProviders[0].availableSizes, availableAtZipCodes: jsonObject.productProviders[0].availableAtZipCodes}));
+                        }
+                    }
+                }
+
+
                 afterLoadingThePopup();
             }, false);
 //            var imageUpdateRequest;
@@ -726,7 +827,7 @@
             function  set_current_ProductState(value) {
 
                 var product_state_sel = document.getElementById('single_select_1');
-                if (jsonObject.currentProductState == 'CRAWLED') {
+                if (jsonObject.currentProductState === 'CRAWLED') {
                     var enums = ['CURATED'];
                 } else {
                     var enums = ['CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
@@ -819,12 +920,12 @@
                     showAlert("Please create atleast one Occasion TAG.");
                     return false;
                 }
-           
+
                 if (productDescriptionTagCount < 1 && !partialCurated) {
                     showAlert("Please create atleast one Product description TAG.");
                     return false;
                 }
-             
+
 
 
                 return true;
@@ -876,7 +977,25 @@
                     return;
                 }
             }
+            function getCuratedArray(myarra) {
 
+                var curatedArray = [];
+                for (var i = 0; i < myarra.length; i++) {
+                    var item = myarra[i];
+                    if (item !== null) {
+                        item = item.trim();
+                        if (item.length === 0 || item === "null") {
+
+                        } else {
+                            curatedArray.push(item);
+                        }
+                    }
+                }
+                if (curatedArray.length == 0) {
+                    curatedArray = null;
+                }
+                return curatedArray;
+            }
             function updateProvider() {
 
                 var updated_id = document.getElementById('id_' + '0').value;
@@ -900,12 +1019,20 @@
                 // var updated_availability = $("#availability_" + '0').val();
                 var updated_availability = document.querySelector('input[name="provider_Availability"]:checked').value
 
-                 updated_availableSizes = toTitleCase(updated_availableSizes);
-                 updated_availableColors = toTitleCase(updated_availableColors);
+                updated_availableSizes = toTitleCase(updated_availableSizes);
+                updated_availableColors = toTitleCase(updated_availableColors);
                 var colorArray = updated_availableColors.split(",");
                 var sizesArray = updated_availableSizes.split(",");
                 var zipcodeArray = updated_availableAtZipCodes.split(",");
 
+                alert("colB: " + colorArray);
+                alert("sizeB: " + sizesArray);
+                colorArray = getCuratedArray(colorArray);
+                sizesArray = getCuratedArray(sizesArray);
+                zipcodeArray = getCuratedArray(zipcodeArray);
+
+                alert("colA: " + colorArray);
+                alert("sizeA: " + sizesArray)
                 updated_price = updated_price.trim();
                 updated_salePrice = updated_salePrice.trim();
                 updated_store = updated_store.trim();
@@ -917,13 +1044,13 @@
                 //  alert('price: ' + updated_price + " salep: " + updated_salePrice);
 
                 if (updated_price == undefined || updated_price == null || updated_price.length < 1 || updated_price == 0) {
-                    alert("Please Fill Price");
-                    return;
+                    // alert("Please Fill Price");
+                    // return;
                 }
 
                 if (updated_store == undefined || updated_store == null || updated_store.length < 1) {
-                    alert("Please Fill Store");
-                    return;
+                    //alert("Please Fill Store");
+                    // return;
                 }
 
                 if (updated_onSale && (updated_salePrice == undefined || updated_salePrice == null || updated_salePrice.length < 1 || updated_salePrice == 0)) {
@@ -931,18 +1058,18 @@
                     return;
                 }
 
-                if (updated_availableColors == undefined || updated_availableColors == null || updated_availableColors.length < 1) {
-                   if(!partialCurated){
-                     alert("Please Fill Available Colors");
-                    return;
-                }
+                if (colorArray === undefined || colorArray === null || colorArray.length < 1) {
+                    if (!partialCurated) {
+                        alert("Please Fill Available Colors");
+                        return;
+                    }
                 }
 
-                if (updated_availableSizes == undefined || updated_availableSizes == null || updated_availableSizes.length < 1) {
-                   if(!partialCurated){
-                   alert("Please Fill Available Sizes");
-                    return;
-                }
+                if (sizesArray === undefined || sizesArray === null || sizesArray.length < 1) {
+                    if (!partialCurated) {
+                        alert("Please Fill Available Sizes");
+                        return;
+                    }
                 }
 
                 if (updated_availability == undefined || updated_availability == null || updated_availability.length < 1) {
@@ -1540,11 +1667,11 @@
                                     <input type="radio" id="r3" name='que_1' value="Unisex" />
                                     Unisex<br>
                                 </label>
-                                  <label>
+                                <label>
                                     <input type="radio" id="r3" name='que_1' value="Boys" />
                                     Boys<br>
                                 </label>
-                                  <label>
+                                <label>
                                     <input type="radio" id="r3" name='que_1' value="Girls" />
                                     Girls<br>
                                 </label>
