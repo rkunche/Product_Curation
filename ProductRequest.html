@@ -1,16 +1,56 @@
+<!DOCTYPE html>
 <html>
+    <head>
+    <title>Vue 2.0 Product Curation - Fetch Products</title>
+
+    <style>
+        
+    
+    #header {
+        background-color:white;
+        color:black;
+        text-align:center;
+        padding:4px;
+        box-shadow: 2px 2px 2px 1px #aaaaaa;
+    }
+    #instructions {
+        width: 500px;
+        height: 80px;
+        text-align:left;
+        background-color: lightcyan;
+        box-shadow: 1px 1px 1px #aaaaaa;
+    }
+    
+    #fetchButton {
+        width: 200px;
+        height: 50px;
+        text-align:center;
+        font-size: 18px;
+        color:white;
+        background-color: green;
+        box-shadow: 1px 1px 0px #999999;
+
+    }
+
+    
+    </style>
+    
+    
+    </head>
 
     <body onLoad = "readParams()">
+
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
         <script>
-        var searchString = "CRAWLED";
+        var productStatusTag = "CRAWLED";
+        var numProducts = 1;
         var request;
         var products = [];
         var otherWindow;
         var myVar;
-        var clcickedProductId;
+        var clickedProductId;
         //get tags from server.
         var tagString;
         var tagsrequest;
@@ -24,13 +64,17 @@
         Array.prototype.clear = function() {
             this.length = 0;
         };
-        function getSelectedValue() {
-            var index = document.getElementById('select').selectedIndex;
-            // alert("value="+document.getElementById('select').value);  
-// alert("text="+document.getElementById('select').options[index].text);  
-            searchString = document.getElementById('select').value;
+        
+        function getSelectedProductState() {
+            var index = document.getElementById('selectProductState').selectedIndex;
+            productStatusTag = document.getElementById('selectProductState').value;
         }
 
+        function getNumProducts() {
+            var productIndex = document.getElementById('selectNumProducts').selectedIndex;
+            numProducts = document.getElementById('selectNumProducts').value;
+        }
+        
         function sendMessage(productString) {
             productString = tagString + "##" + productString + "##" + buttonText;
             otherWindow.postMessage(productString, "*");
@@ -64,6 +108,7 @@
             curatorID = name[1];
             getTags();
             searchString = "CRAWLED";
+            numElements = 1;
         }
 
 
@@ -82,11 +127,10 @@
             }
             if (!boolval) {
 
-                alert("user does not exist");
+                alert("Error: User " + curatorID + " does not exist");
                 return;
             }
-            //var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=CRAWLED&limit=50";
-            var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=" + searchString + "&limit=50";
+            var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=" + productStatusTag + "&limit=" + numProducts;
             if (XMLHttpRequest)
             {
                 request = new XMLHttpRequest();
@@ -133,28 +177,27 @@
         function prepareTable() {
             var table = document.getElementById("productTableId");
             for (var i = 0; i < products.length; i++) {
-                if (i % 5 == 0) {
+
+                if (i % 2 == 0) {
                     var tr = document.createElement("tr");
                     table.appendChild(tr);
                 }
 
                 var imag = document.createElement("img");
+                
                 try {
                     imag.src = products[i].productImages[0].externalURL;
                 } catch (e) {
-                    continue;
+                    imag.src = "assets/noImageAvailable.gif";
                 }
+
                 var td = document.createElement("td");
                 td.id = products[i].id;
                 tr.appendChild(td);
                 var divImage = document.createElement("div");
                 divImage.appendChild(imag);
-                //var div = document.createElement("div");
-                //div.className = "content";
-                //div.appendChild(imag);
-                //td.appendChild(div);
-                var title = document.createTextNode("Title : " + products[i].title);
-                var state = document.createTextNode("State : " + products[i].currentProductState);
+                var title = document.createTextNode("Item " + i + ": " + products[i].title);
+                var state = document.createTextNode("State:    " + products[i].currentProductState);
                 var divTitle = document.createElement("div");
                 divTitle.appendChild(title);
                 var divState = document.createElement("div");
@@ -162,31 +205,40 @@
                 td.appendChild(divTitle);
                 td.appendChild(divState);
                 td.appendChild(divImage);
-                td.style.border = "thin dotted red";
+                td.style.border = "thin solid grey";
                 createButton(td, curatethis_product, products[i]);
-            }
+                
+                            }
         }
-        //create button function
-        http://stackoverflow.com/questions/9810035/how-to-get-element-and-html-from-window-open-js-function-with-jquery
-                function createButton(td, curatethis_product, product) {
+        
+        
+        
+        function createButton(td, curatethis_product, product) {
                     var button = document.createElement("input");
                     button.type = "button";
                     var archivebutton = document.createElement("input");
                     archivebutton.type = "button";
                     archivebutton.value = "Archive";
-                    archivebutton.style.backgroundColor = "Orange";
+                    archivebutton.style.backgroundColor = "white";
+                    archivebutton.style.color = "orange";
+                    archivebutton.style.outline = "solid orange";
+                    
                     if (product.currentProductState == "CRAWLED") {
                         button.value = "Curate Now";
-                        button.style.backgroundColor = "#9C3325";
+                        button.style.backgroundColor = "white";
+                        button.style.color="blue";
+                        button.style.outline="thick solid blue";
+                        button.style.padding="5px";
+                        button.style.margin="12px";
                     } else if (product.currentProductState == "NEEDS_RECURATION") {
                         button.value = "Recurate Now";
-                        button.style.backgroundColor = "#9C3325";
+                        button.style.backgroundColor = "#B6C6F2";
                         product.currentProductState = "CRAWLED";
                     } else if (product.currentProductState == "CURATED_AND_VERIFIED") {
-                        button.style.backgroundColor = "#059E24";
+                        button.style.backgroundColor = "#A8E6B6";
                         button.value = "Verified";
                     } else if (product.currentProductState === "ARCHIVED") {
-                        button.style.backgroundColor = "Orange";
+                        button.style.backgroundColor = "#F1F498";
                         button.value = "Archived";
                     } else {
                         button.value = "Review Now";
@@ -195,9 +247,9 @@
                     obj = {
                         handleEvent: function() {
 
-                            clcickedProductId = product.id;
+                            clickedProductId = product.id;
                             for (var i = 0; i < products.length; i++) {
-                                if (clcickedProductId === products[i].id) {
+                                if (clickedProductId === products[i].id) {
                                     product = products[i];
                                     if (curatorID == null || curatorID == undefined || curatorID.length < 1) {
                                         product.curatorId = "6419807607980032";
@@ -224,10 +276,10 @@
                     };
                     archiveObj = {
                         handleEvent: function() {
-                            var r = confirm("Do you want to ARCHIVE Product?");
+                            var r = confirm("Archiving the product, confirm?");
                             if (r === true) {
 
-                                clcickedProductId = product.id;
+                                clickedProductId = product.id;
                                 var url = "https://vue-server-dev.appspot.com/api/product/" + product.id;
                                 if (XMLHttpRequest) {
                                     curateProductRequest = new XMLHttpRequest();
@@ -305,7 +357,7 @@
             }
         }
         function getCurateProduct() {
-            var url = "https://vue-server-dev.appspot.com/api/product/" + clcickedProductId;
+            var url = "https://vue-server-dev.appspot.com/api/product/" + clickedProductId;
             if (XMLHttpRequest)
             {
                 curateProductRequest = new XMLHttpRequest();
@@ -327,7 +379,7 @@
 
                 var curatedProduct = JSON.parse(curateProductRequest.responseText);
                 for (var i = 0; i < products.length; i++) {
-                    if (clcickedProductId === products[i].id) {
+                    if (clickedProductId === products[i].id) {
 
                         products[i] = curatedProduct;
                         getAllCellValues();
@@ -348,21 +400,23 @@
             var cells = Array.prototype.slice.call(document.getElementById("productTableId").getElementsByTagName("td"));
             var cell;
             for (var i in cells) {
-                if (clcickedProductId == cells[i].id) {
+                if (clickedProductId == cells[i].id) {
                     cell = cells[i];
                     var values = cell.getElementsByTagName("div");
                     var titleVal;
                     var stateVal;
                     for (var k = 0; k < products.length; k++) {
-                        if (clcickedProductId === products[k].id) {
+                        if (clickedProductId === products[k].id) {
                             titleVal = products[k].title;
                             stateVal = products[k].currentProductState;
                             var button = cell.getElementsByTagName("input");
                             if (stateVal === "CRAWLED") {
                                 button[0].style.backgroundColor = "#9C3325";
+                                button[0].style.color="white";
                             } else if (stateVal === "NEEDS_RECURATION") {
                                 button[0].value = "Recurate Now";
                                 button[0].style.backgroundColor = "#9C3325";
+                                button[0].style.color="white";
                                 products[k].currentProductState = "CRAWLED";
                             } else if (stateVal === "CURATED_AND_VERIFIED") {
                                 button[0].style.backgroundColor = "#059E24";
@@ -388,22 +442,45 @@
             }
 
         }
+        
+        
         </script>
-        <div id="container">
+        
+        <div id="header"><h3>Vue 2.0 Product Curation - Fetch Products</h3></div>
 
-            <Button onclick="getCrawledProducts();
-                    "  >GetProducts</Button>
-            <select id="select" name="" style="width:150;" onchange="getSelectedValue();">
+        <div id="instructions">
+            <p><br>Fetch CRAWLED products and <font color=blue><b>Curate Now</b></font>;<br>
+            <font color=Orange><b>Archive</b></font> products that are not in stock or do not have a product image:
+            </p>
+        </div>
+        <div>
+            <p>
+            Product State:
+            <select id="selectProductState" name="" style="width:150;" onchange="getSelectedProductState();">
                 <option value="CRAWLED" title=" ">CRAWLED</option>
                 <option value="CURATED" title=" ">CURATED</option>
                 <option value="CURATED_AND_VERIFIED" title=" ">CURATED_AND_VERIFIED</option>
                 <option value="NEEDS_RECURATION" title=" ">NEEDS_RECURATION</option>
                 <option value="ARCHIVED" title=" ">ARCHIVED</option>
             </select>
-
+            <br>
+            Number of Products:
+            <select id="selectNumProducts" name="" style="width:150;" onchange="getNumProducts();">
+                <option value=1 title=" ">One</option>
+                <option value=3 title=" ">Few</option>
+                <option value=5 title=" ">Several</option>
+                <option value=20 title=" ">Many</option>
+            </select>
+            </p>
+            
+            <Button id="fetchButton" onclick="getCrawledProducts();" >Fetch Products</Button>
+            <p></p>
+            
+            
         </div>
-
-        <table id="productTableId"></table>
+        
+        <table id="productTableId">
+        </table>
 
     </body>
 </html>
@@ -425,10 +502,6 @@
         padding: 6px 15px;
         text-decoration: none;
         text-shadow: 0px 1px 0px #b23e35;
-    }
-    #container
-    {
-        position: relative;
     }
 
     #input

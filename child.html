@@ -1,203 +1,45 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <title>Vue 2.0 Product Curation - Curate Product</title>
+
         <style>
-            /*######## Smart Green ########*/
-            .smart-green {
-                margin-left: 10px;
-                margin-right: auto;
-                max-width: 650px;
-                background: #F8F8F8;
-                padding: 30px 30px 20px 30px;
-                font: 12px Arial, Helvetica, sans-serif;
-                color: #666;
-                border-radius: 5px;
-                -webkit-border-radius: 5px;
-                -moz-border-radius: 5px;
+            #header {
+                background-color:white;
+                color:black;
+                text-align:center;
+                padding:4px;
+                box-shadow: 2px 2px 2px 1px #aaaaaa;
             }
-
-            .smart-green h1 {
-                font: 24px "Trebuchet MS", Arial, Helvetica, sans-serif;
-                padding: 20px 0px 20px 40px;
-                display: block;
-                margin: -30px -30px 10px -30px;
-                color: #FFF;
-                background: #9DC45F;
-                text-shadow: 1px 1px 1px #949494;
-                border-radius: 5px 5px 0px 0px;
-                -webkit-border-radius: 5px 5px 0px 0px;
-                -moz-border-radius: 5px 5px 0px 0px;
-                border-bottom: 1px solid #89AF4C;
-            }
-
-            .smart-green h1>span {
-                display: block;
-                font-size: 11px;
-                color: #FFF;
-            }
-
-            .smart-green label {
-                display: block;
-                margin: 0px 0px 5px;
-            }
-
-            .smart-green label>span {
-                float: left;
-                margin-top: 10px;
-                color: #5E5E5E;
-            }
-
-            .smart-green input[type="text"], .smart-green input[type="email"],
-            .smart-green textarea, .smart-green select {
-                color: #555;
-                height: 30px;
-                line-height: 15px;
-                width: 100%;
-                padding: 0px 0px 0px 10px;
-                margin-top: 2px;
-                border: 1px solid #E5E5E5;
-                background: #FBFBFB;
-                outline: 0;
-                -webkit-box-shadow: inset 1px 1px 2px rgba(238, 238, 238, 0.2);
-                box-shadow: inset 1px 1px 2px rgba(238, 238, 238, 0.2);
-                font: normal 14px/14px Arial, Helvetica, sans-serif;
-            }
-
-            .smart-green input[readonly="readonly"]
-            {
-                background-color:#d4cbe8;
-            }
-
-            .smart-green textarea {
-                height: 100px;
-                padding-top: 10px;
-            }
-
-            .smart-green select {
-
-                appearance: none;
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                text-indent: 0.01px;
-                text-overflow: '';
-                width: 100%;
-                height: 30px;
-            }
-
-            .smart-green .button {
-                background-color: #9DC45F;
-                border-radius: 5px;
-                -webkit-border-radius: 5px;
-                -moz-border-border-radius: 5px;
-                border: none;
-                padding: 10px 25px 10px 25px;
-                color: #FFF;
-                text-shadow: 1px 1px 1px #949494;
-            }
-
-            .smart-green .button:hover {
-                background-color: #80A24A;
-            }
-
-
-            .smart-green input[type="radio"] {
-                background-color: #ddd;
-                background-image: -webkit-linear-gradient(0deg, transparent 20%, hsla(0,0%,100%,.7), transparent 80%),
-                    -webkit-linear-gradient(90deg, transparent 20%, hsla(0,0%,100%,.7), transparent 80%);
-                border-radius: 10px;
-                box-shadow: inset 0 1px 1px hsla(0,0%,100%,.8),
-                    0 0 0 1px hsla(0,0%,0%,.6),
-                    0 2px 3px hsla(0,0%,0%,.6),
-                    0 4px 3px hsla(0,0%,0%,.4),
-                    0 6px 6px hsla(0,0%,0%,.2),
-                    0 10px 6px hsla(0,0%,0%,.2);
-                cursor: pointer;
-                display: inline-block;
-                height: 15px;
-                margin-right: 15px;
-                position: relative;
-                width: 15px;
-                -webkit-appearance: none;
-            }
-            .smart-green input[type="radio"]:after {
-                background-color: #444;
-                border-radius: 25px;
-                box-shadow: inset 0 0 0 1px hsla(0,0%,0%,.4),
-                    0 1px 1px hsla(0,0%,100%,.8);
-                content: '';
-                display: block;
-                height: 7px;
-                left: 4px;
-                position: relative;
-                top: 4px;
-                width: 7px;
-            }
-            .smart-green input[type="radio"]:checked:after {
-                background-color: #f66;
-                box-shadow: inset 0 0 0 1px hsla(0,0%,0%,.4),
-                    inset 0 2px 2px hsla(0,0%,100%,.4),
-                    0 1px 1px hsla(0,0%,100%,.8),
-                    0 0 2px 2px hsla(0,70%,70%,.4);
-            }
-
-
-
-
-
-
-            label {
-                color: #16116a;
-                text-decoration: none;
-            }
-
-            label:hover {
-                color: #9b98d9;
-                position: relative;
-            }
-
-            label[title]:hover:after {
-                content: attr(title);
-                padding: 4px 8px;
-                color: 9b98d9;
-                position: absolute;
-                left: 0;
-                top: 100%;
-                white-space: nowrap;
-                z-index: 20px;
-                -moz-border-radius: 5px;
-                -webkit-border-radius: 5px;
-                border-radius: 5px;
-                -moz-box-shadow: 0px 0px 4px #222;
-                -webkit-box-shadow: 0px 0px 4px #222;
-                box-shadow: 0px 0px 4px #222;
-                background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
-                background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #eeeeee),color-stop(1, #cccccc));
-                background-image: -webkit-linear-gradient(top, #eeeeee, #cccccc);
-                background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
-                background-image: -ms-linear-gradient(top, #eeeeee, #cccccc);
-                background-image: -o-linear-gradient(top, #eeeeee, #cccccc);
+            #instructions {
+                width: 500px;
+                height: 80px;
+                text-align:left;
+                background-color: lightcyan;
+                box-shadow: 1px 1px 1px #aaaaaa;
             }
             table.altrowstable {
                 font-family: verdana, arial, sans-serif;
-                font-size: 11px;
                 color: #333333;
                 border-width: 1px;
-                border-color: #a9c6c9;
+                border-color: #6B9FFF;
                 border-collapse: collapse;
             }
 
             table.altrowstable th {
+                font-size: 12px;
                 border-width: 1px;
                 padding: 8px;
                 border-style: solid;
-                border-color: #a9c6c9;
+                border-color: #6B9FFF;
             }
 
             table.altrowstable td {
                 border-width: 1px;
+                font-size: 10px;
                 padding: 8px;
                 border-style: solid;
-                border-color: #a9c6c9;
+                border-color: #6B9FFF;
             }
 
             .oddrowcolor {
@@ -207,7 +49,6 @@
             .evenrowcolor {
                 background-color: #c3dde0;
             }
-
 
             .multiselect {
                 width:20em;
@@ -225,6 +66,149 @@
                 background-color:#000099;
             }
 
+            .inline-radio {
+                display: inline-block;
+            }
+
+        </style>
+
+        <style type="text/css">
+            .form-style-7{
+                max-width:660px;
+                margin:50px auto;
+                background:#fff;
+                border-radius:2px;
+                padding:20px;
+                font-family: Georgia, "Times New Roman", Times, serif;
+            }
+            .form-style-7 h1{
+                display: block;
+                text-align: center;
+                padding: 0;
+                margin: 0px 0px 20px 0px;
+                color: #5C5C5C;
+                font-size:x-large;
+            }
+            .form-style-7 ul{
+                list-style:none;
+                padding:0;
+                margin:0;
+            }
+            .form-style-7 li{
+                display: block;
+                padding: 9px;
+                border:1px solid #DDDDDD;
+                margin-bottom: 30px;
+                border-radius: 3px;
+            }
+            .form-style-7 li:last-child{
+                border:none;
+                margin-bottom: 0px;
+                text-align: center;
+            }
+            .form-style-7 li > label{
+                display: block;
+                float: left;
+                margin-top: -19px;
+                background: #FFFFFF;
+                height: 14px;
+                padding: 2px 5px 2px 5px;
+                color: #B9B9B9;
+                font-size: 14px;
+                overflow: hidden;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            .form-style-7 input[type="text"],
+            .form-style-7 input[type="date"],
+            .form-style-7 input[type="datetime"],
+            .form-style-7 input[type="email"],
+            .form-style-7 input[type="number"],
+            .form-style-7 input[type="search"],
+            .form-style-7 input[type="time"],
+            .form-style-7 input[type="url"],
+            .form-style-7 input[type="password"],
+            .form-style-7 textarea,
+            .form-style-7 select
+            {
+                box-sizing: border-box;
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                width: 100%;
+                display: block;
+                outline: none;
+                border: none;
+                height: 25px;
+                line-height: 25px;
+                font-size: 14px;
+                padding: 0;
+                font-family: Georgia, "Times New Roman", Times, serif;
+            }
+            .form-style-7 input[type="text"]:focus,
+            .form-style-7 input[type="date"]:focus,
+            .form-style-7 input[type="datetime"]:focus,
+            .form-style-7 input[type="email"]:focus,
+            .form-style-7 input[type="number"]:focus,
+            .form-style-7 input[type="search"]:focus,
+            .form-style-7 input[type="time"]:focus,
+            .form-style-7 input[type="url"]:focus,
+            .form-style-7 input[type="password"]:focus,
+            .form-style-7 textarea:focus,
+            .form-style-7 select:focus 
+            {
+            }
+            .form-style-7 li > span{
+                background: #F3F3F3;
+                display: block;
+                padding: 3px;
+                margin: 0 -9px -9px -9px;
+                text-align: center;
+                color: #C0C0C0;
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 11px;
+            }
+            .form-style-7 textarea{
+                height: 60px;
+            }
+            .form-style-7 input[type="submit"],
+            .form-style-7 input[type="button"]{
+                background: #2471FF;
+                border: none;
+                padding: 10px 20px 10px 20px;
+                border-bottom: 3px solid #5994FF;
+                border-radius: 3px;
+                color: #D2E2FF;
+            }
+            .form-style-7 input[type="submit"]:hover,
+            .form-style-7 input[type="button"]:hover{
+                background: #6B9FFF;
+                color:#fff;
+            }
+            .myButtonRED {
+                -moz-box-shadow: inset 0px 39px 0px -24px #e67a73;
+                -webkit-box-shadow: inset 0px 39px 0px -24px #e67a73;
+                box-shadow: inset 0px 39px 0px -24px #e67a73;
+                background-color: #e4685d;
+                -moz-border-radius: 4px;
+                -webkit-border-radius: 4px;
+                border-radius: 4px;
+                border: 1px solid #ffffff;
+                display: inline-block;
+                cursor: pointer;
+                color: #ffffff;
+                font-family: arial;
+                font-size: 15px;
+                padding: 6px 15px;
+                text-decoration: none;
+                text-shadow: 0px 1px 0px #b23e35;
+            }
+            tr td:hover
+            {
+                background-color: #DBE9FF;
+            }
+            .active
+            {
+                background-color: #7DAFFF;
+            }
 
         </style>
         <script>
@@ -232,7 +216,7 @@
             var cacheLocalTags = [];
             var localTagsObject = {tagCategory: "", tagString: "", tagSubCategory: ""};
             var initialValues = {Title: "", Description: "", ProductTags: null, CurrentProductState: "", PrductProviders: null};
-            var available_colors = ["Red", "Green", "Blue", "Cyn", "Orange", "Purple", "Black"];
+            var available_colors = ["Red", "Green", "Blue", "Cyan", "Orange", "Purple", "Black"];
             var available_sizes = ["No Size", "XS", "S", "M", "L", "XL", "XXL", "XXXL"];
             //prototype for clear the array values.
             Array.prototype.clear = function() {
@@ -273,6 +257,7 @@
                 curatorReview = strings[2];
                 cacheLocalTags.clear();
                 console.log(datafromparent);
+                console.log(datafromparent);
                 jsonObject = JSON.parse(datafromparent);
 //                for (var imgIndex = 0; imgIndex < jsonObject.productImages.length; imgIndex++) {
 //
@@ -298,7 +283,7 @@
                 var isColorArrayNull = false;
                 var isAvailableSizes = false;
                 var isAvailableAtZipCodes = false;
- 
+
                 if (jsonObject.productProviders !== null) {
                     for (var i = 0; i < jsonObject.productProviders.length; i++) {
                         if (jsonObject.productProviders[i].availableColors !== null && jsonObject.productProviders[i].availableColors !== undefined) {
@@ -345,7 +330,6 @@
                 }
 
 
-
                 var url = "https://vue-server-dev.appspot.com/api/productprovider/" + jsonObject.productProviders[0].id;
                 if (XMLHttpRequest) {
                     providerUpdaterequest = new XMLHttpRequest();
@@ -372,16 +356,16 @@
 
                         };
 
-                        console.log("provder color fields " + isColorArrayNull);
-                        console.log("provder isAvailableSizes field " + isAvailableSizes);
-                        console.log("provder isAvailableAtZipCodes field " + isAvailableAtZipCodes);
+                        console.log("provider color fields " + isColorArrayNull);
+                        console.log("provider isAvailableSizes field " + isAvailableSizes);
+                        console.log("provider isAvailableAtZipCodes field " + isAvailableAtZipCodes);
                         if (isAvailableAtZipCodes) {
                             jsonObject.productProviders[0].availableAtZipCodes = null;
-                            console.log("provder availableAtZipCodes fields 1");
+                            console.log("provider availableAtZipCodes fields 1");
                         }
                         if (isColorArrayNull) {
                             jsonObject.productProviders[0].availableColors = null;
-                            console.log("provder availableColors fields 2");
+                            console.log("provider availableColors fields 2");
                         }
                         if (isAvailableSizes) {
                             jsonObject.productProviders[0].availableSizes = null;
@@ -398,55 +382,57 @@
 
                 afterLoadingThePopup();
             }, false);
-//            var imageUpdateRequest;
-//            function updateImage(prodcutImage) {
-//                var image_update_url = "https://vue-server-dev.appspot.com/api/productimage/6473923122167808";
-//                if (XMLHttpRequest) {
-//                imageUpdateRequest = new XMLHttpRequest();
-//                        if ("withCredentials" in request) {
-//                // Firefox 3.5 and Safari 4
-//                imageUpdateRequest.open('PUT', image_update_url, true);
-//                        imageUpdateRequest.setRequestHeader('Custom-Header', 'javascript-client');
-//                        imageUpdateRequest.setRequestHeader('Content-Type', 'application/json');
-//                        imageUpdateRequest.onreadystatechange = image_update_handler;
-//                        request.send(JSON.stringify({ id:prodcutImage.id,  ownerProductId: prodcutImage.ownerProductId,externalURL:prodcutImage.externalURL, internalURL:prodcutImage.internalURL,  orignalHeight:prodcutImage.orignalHeight,  orignalWidth:prodcutImage.orignalWidth, modifiedHeight:prodcutImage.modifiedHeight, modifiedWidth:prodcutImage.modifiedWidth, description:prodcutImage.description}));
-//                }
-//                function image_update_handler() {
-//                    if (imageUpdateRequest.readyState != 4)
-//                        return;
-//                    if (imageUpdateRequest.status == 200)
-//                    {
-//                        alert('HTTP POST success: ' + imageUpdateRequest.responseText);
-//                    }
-//                    if (imageUpdateRequest.status != 200 && imageUpdateRequest.status != 304) {
-//
-//
-//                        return;
-//                    }
-//                }
+
             function dataloader() {
                 var val = document.getElementById('divid');
                 val.innerHTML = datafromparent;
                 console.log(datafromparent);
             }
             function afterLoadingThePopup() {
+                // document.getElementById('currency_id').style.border="thick solid #0000FF";
+                // document.getElementById('price_id').style.border="thick solid #0000FF";
                 var jsonResponse = JSON.parse(datafromparent);
-                document.getElementById('id_id').value = jsonResponse.id;
-                document.getElementById('id_ownerAisleId').value = jsonResponse.ownerAisleId;
-                document.getElementById('id_ownerProductListId').value = jsonResponse.ownerProductListId;
+                //document.getElementById('id_id').value = jsonResponse.id;
+                // document.getElementById('id_ownerAisleId').value = jsonResponse.ownerAisleId;
+                // document.getElementById('id_ownerProductListId').value = jsonResponse.ownerProductListId;
                 document.getElementById('id_title').value = jsonResponse.title;
                 document.getElementById('id_description').value = jsonResponse.description;
-                document.getElementById('id_creatorID').value = jsonResponse.creatorId;
-                document.getElementById('id_curatorID').value = jsonResponse.curatorId;
-                document.getElementById('id_relatedProductIds').value = jsonResponse.relatedProductIds;
-                document.getElementById('send_but_id').value = buttonValue;
+                // document.getElementById('id_creatorID').value = jsonResponse.creatorId;
+                //document.getElementById('id_curatorID').value = jsonResponse.curatorId;
+                // document.getElementById('id_relatedProductIds').value = jsonResponse.relatedProductIds;
+                // document.getElementById('send_but_id').value = buttonValue;
                 //method to call to set current product state...
                 set_current_ProductState(jsonResponse.currentProductState);
                 // document.getElementById('single_select_1').value = jsonResponse.currentProductState;
+                
+                
+               
+               document.getElementById('currency_id').value = jsonObject.productProviders[0].currencyCode;
+               document.getElementById('price_id').value = jsonObject.productProviders[0].price;
+                document.getElementById('store_id').value = jsonObject.productProviders[0].store;
+                var offerEnable = jsonObject.productProviders[0].onSale;
+                var saleExpiryDate = document.getElementById('expiry_date_id');
+                var salePrice = document.getElementById('sale_price_id');
+                saleExpiryDate.value = jsonObject.productProviders[0].saleExpirtyDate;
+                salePrice.value = jsonObject.productProviders[0].salePrice;
+                if(offerEnable){
+                document.getElementById('onSale_selection_id').checked = true;
+                    } else {
+                     document.getElementById('onSale_selection_id').checked = false;
+                     salePrice.style.backgroundColor="gray";  
+                      saleExpiryDate.style.backgroundColor="gray"; 
+                      
+                      
+                      salePrice.readOnly = "true";
+                       saleExpiryDate.readOnly = "true";
+                      salePrice.value = "No Offers";
+                       saleExpiryDate.value = "No Offers";
+                }
+               document.getElementById('color_id').value = jsonObject.productProviders[0].availableColors;
+               document.getElementById('size_id').value = jsonObject.productProviders[0].availableSizes;
 
-
-                document.getElementById('id_comments').value = jsonResponse.comments;
-                document.getElementById('id_ratings').value = jsonResponse.ratings;
+                //document.getElementById('id_comments').value = jsonResponse.comments;  
+                //document.getElementById('id_ratings').value = jsonResponse.ratings;
                 // product tags..
                 var product_tags = jsonResponse.productTags;
                 for (var m = 0; m < product_tags.length; m++) {
@@ -461,7 +447,7 @@
                     var tag_sub_cat = tag_obj.tagSubCategory;
 
 
-                    if (tag_cat.toLowerCase() === "Product description".toLowerCase()) {
+                    if (tag_cat.toLowerCase() === "Product Description".toLowerCase()) {
                         productDescriptionTagCount = productDescriptionTagCount + 1;
                     } else if (tag_cat.toLowerCase() === "Product Type".toLowerCase()) {
                         productTypeTagCount = productTypeTagCount + 1;
@@ -473,32 +459,29 @@
 
                 }
 
-                var images_array = jsonResponse.productImages;
-                var tabl_div = document.getElementById('image_table_id');
-                for (var i = 0; i < images_array.length; i++) {
-
-                    var br0 = document.createElement('br');
-                    var br1 = document.createElement('br');
-                    tabl_div.appendChild(br0);
-                    tabl_div.appendChild(br1);
-                    var table = document.createElement('table');
-                    table.className = "altrowstable";
-                    table.setAttribute('width', '600')
-
-                    var caption = document.createElement('caption');
-                    caption.textContent = 'For The Image: ' + (i + 1);
-                    table.appendChild(caption);
-                    table.appendChild(getElemnt('id', images_array[i].id));
-                    table.appendChild(getElemnt('ownerProductId', images_array[i].ownerProductId));
-                    table.appendChild(getElemnt('externalURL', images_array[i].externalURL));
-                    table.appendChild(getElemnt('internalURL', images_array[i].internalURL));
-                    // table.appendChild(getElemnt('originalHeight', images_array[i].originalHeight));
-                    //table.appendChild(getElemnt('originalWidth', images_array[i].originalWidth));
-                    //table.appendChild(getElemnt('modifiedHeight', images_array[i].modifiedHeight));
-                    //table.appendChild(getElemnt('modifiedWidth', images_array[i].modifiedWidth));
-
-                    tabl_div.appendChild(table);
-                }
+//                var images_array = jsonResponse.productImages;
+//                var tabl_div = document.getElementById('image_table_id');
+//                for (var i = 0; i < images_array.length; i++) {
+//
+//                    var br0 = document.createElement('br');
+//                    var br1 = document.createElement('br');
+//                    tabl_div.appendChild(br0);
+//                    tabl_div.appendChild(br1);
+//                    var table = document.createElement('table');
+//                    table.className = "altrowstable";
+//                    table.setAttribute('width', '600')
+//
+//                    var caption = document.createElement('caption');
+//                    caption.textContent = 'For The Image: ' + (i + 1);
+//                    table.appendChild(caption);
+//                    table.appendChild(getElemnt('id', images_array[i].id));
+//                    table.appendChild(getElemnt('ownerProductId', images_array[i].ownerProductId));
+//                    table.appendChild(getElemnt('externalURL', images_array[i].externalURL));
+//                    table.appendChild(getElemnt('internalURL', images_array[i].internalURL));
+//
+//
+//                    tabl_div.appendChild(table);
+//                }
                 var product_provider_div = document.getElementById('product_providers_div_id');
                 var providers_array = jsonResponse.productProviders;
                 for (var i = 0; i < providers_array.length; i++) {
@@ -580,7 +563,7 @@
 
             function add_Product_TagsNew() {
 
-                var static_categoryNames = ["Product Type", "Occasion", "Product description"]
+                var static_categoryNames = ["Product Type", "Occasion", "Product Description"]
                 //add provider tags
                 var tag_category_array = new Array();
                 var tag_string_array = new Array();
@@ -611,7 +594,7 @@
 
                 }
 
-
+               
                 $.each(tag_category_array, function(i, el) {
                     if ($.inArray(el, tag_category_array_uniqueNames) === -1)
                         tag_category_array_uniqueNames.push(el);
@@ -650,7 +633,7 @@
 
             function getElemnt(key, value, id) {
 
-                var readonly = ['id', 'ownerProductId', 'originalHeight', 'originalWidth', 'modifiedHeight', 'modifiedWidth', 'modifiedWidth', 'modifiedHeight', 'internalURL', 'externalURL','availableAtZipCodes'];
+                var readonly = ['id', 'ownerProductId', 'originalHeight', 'originalWidth', 'modifiedHeight', 'modifiedWidth', 'modifiedWidth', 'modifiedHeight', 'internalURL', 'externalURL', 'availableAtZipCodes'];
                 var readstatus = false;
                 for (var s = 0; s < readonly.length; s++) {
                     if (key === readonly[s]) {
@@ -908,21 +891,21 @@
 
 
                 if (localTags.length < 3 && !partialCurated) {
-                    showAlert("Please create minimum 3 Tags.");
+                    showAlert("Error: Please create minimum 3 Tags.");
                     return false;
                 }
 
                 if (productTypeTagCount < 1) {
-                    showAlert("Please create atleast one ProductType TAG.");
+                    showAlert("Error: Please create atleast one ProductType Tag.");
                     return false;
                 }
                 if (occasionTagCount < 1) {
-                    showAlert("Please create atleast one Occasion TAG.");
+                    showAlert("Error: Please create atleast one Occasion Tag.");
                     return false;
                 }
 
                 if (productDescriptionTagCount < 1 && !partialCurated) {
-                    showAlert("Please create atleast one Product description TAG.");
+                    showAlert("Error: Please create atleast one Product Description Tag.");
                     return false;
                 }
 
@@ -964,9 +947,9 @@
                 {
                     //updateProvider();
                     if (curatorReview == "Curate Now") {
-                        alert('Curated Successfully : ');
+                        alert('Info: Curated Successfully : ');
                     } else {
-                        alert('Reviewed Successfully :');
+                        alert('Info: Reviewed Successfully :');
                     }
 
                     window.opener.close();
@@ -1025,11 +1008,11 @@
                 var sizesArray = updated_availableSizes.split(",");
                 var zipcodeArray = updated_availableAtZipCodes.split(",");
 
-             
+
                 colorArray = getCuratedArray(colorArray);
                 sizesArray = getCuratedArray(sizesArray);
                 zipcodeArray = getCuratedArray(zipcodeArray);
- 
+
                 updated_price = updated_price.trim();
                 updated_salePrice = updated_salePrice.trim();
                 updated_store = updated_store.trim();
@@ -1078,7 +1061,7 @@
                     alert("Please Fill Currency Code");
                     return;
                 }
-              
+
                 var url = "https://vue-server-dev.appspot.com/api/productprovider/" + jsonObject.productProviders[0].id;
                 if (XMLHttpRequest) {
                     providerUpdaterequest = new XMLHttpRequest();
@@ -1237,7 +1220,29 @@
                 }
 
             }
-
+function handleOnSAleClick(cb) {
+  var saleExpiryDate = document.getElementById('expiry_date_id');
+  var salePrice = document.getElementById('sale_price_id'); 
+  if(cb.checked){
+        salePrice.style.backgroundColor="white";  
+        saleExpiryDate.style.backgroundColor="white"; 
+        salePrice.readOnly = "false";
+        saleExpiryDate.readOnly = "false";
+        salePrice.removeAttribute("readonly");
+        saleExpiryDate.removeAttribute("readonly");
+        salePrice.value = "";
+        saleExpiryDate.value = ""; 
+        saleExpiryDate.placeholder = "Please Enter Valid Date";
+        salePrice.placeholder = "Please Enter Sale Price";
+  }else {
+            salePrice.style.backgroundColor="gray";  
+            saleExpiryDate.style.backgroundColor="gray"; 
+            salePrice.readOnly = "true";
+            saleExpiryDate.readOnly = "true";
+            salePrice.value = "No Offers";
+            saleExpiryDate.value = "No Offers";
+  }
+}
         </script>
 
         <link rel="stylesheet" type="text/css" href="src/jquery.multiselect.css" />
@@ -1423,7 +1428,7 @@
                         productTypeTagCount = productTypeTagCount - 1;
                     } else if (valC.toLowerCase() == "Occasion".toLowerCase()) {
                         occasionTagCount = occasionTagCount - 1;
-                    } else if (valC.toLowerCase() == "Product description".toLowerCase()) {
+                    } else if (valC.toLowerCase() == "Product Description".toLowerCase()) {
                         productDescriptionTagCount = productDescriptionTagCount - 1;
                     }
                 };
@@ -1449,12 +1454,12 @@
 
             function  createGenderTag() {
 
-                var vl = document.querySelector('input[name="que_1"]:checked').value;
+                var vl = document.querySelector('input[name="gender"]:checked').value;
                 var index = cacheLocalTags.indexOf(vl);
                 if (index == -1) {
                     tagsArray.push(vl);
                     cacheLocalTags.push(vl);
-                    createTagReqAndAddTable('Product description', vl, '', 0);
+                    createTagReqAndAddTable('Product Description', vl, '', 0);
                     productDescriptionTagCount = productDescriptionTagCount + 1;
                     if (taggingStarted == false) {
                         tagToProduct();
@@ -1462,12 +1467,12 @@
 
                     }
                 } else {
-                    alert("duplicate tag");
+                    alert("Warning: Duplicate tag");
                 }
             }
             function archieveProduct() {
 
-                var r = confirm("Do you want to ARCHIVE Product?");
+                var r = confirm("Do you want to Archive Product?");
                 if (r === true) {
 
                     var url = "https://vue-server-dev.appspot.com/api/product/" + jsonObject.id;
@@ -1506,203 +1511,338 @@
 
             }
         </script>
-    </head>
-    <body onblur="window.focus()" onload="prettyPrint();" >
+        <script type="text/javascript">
+            //auto expand textarea
+            function adjust_textarea(h) {
+                h.style.height = "20px";
+                h.style.height = (h.scrollHeight) + "px";
+            }
+        </script>
 
-        <form action="" method="post" class="smart-green">
-            <h1>
-                Product Information <span>Please fill all the texts in the
-                    fields.</span>
-            </h1>
-            <label> <span>id: </span> <input id="id_id" type="text"
-                                             name="name" placeholder="Id of the product" readonly="readonly" />
-            </label> <label> <span>ownerAisleId: </span> <input id="id_ownerAisleId"
-                                                                type="text" name="name" placeholder="Id of the owner aisle" readonly="readonly"/>
-            </label> <label> <span>ownerProductListId: </span> <input id="id_ownerProductListId"
-                                                                      type="text" name="name" placeholder="Id of the owner product" readonly="readonly"/>
-            </label> <label> <span>title: </span> <input id="id_title" type="text" name="name" placeholder="Title of the product" />
-            </label> <label> <span>description: </span> <textarea id="id_description"
-                                                                  name="name" placeholder="Description of the product"></textarea>
-            </label> <label> <span>creatorID: </span> <input id="id_creatorID" type="text"
-                                                             name="name" placeholder="Id of the product creator" readonly="readonly"/>
-            </label> <label> <span>curatorID: </span> <input id="id_curatorID" type="text"
-                                                             name="name" placeholder="Id of the product curator" readonly="readonly"/>
-            </label> <label> <span>currentProductState: </span> 
+    <div id="header"><h3>Vue 2.0 Product Curation - Curate Product</h3></div>
 
-                <!--                <select id="single_select_1" name="selection" onchange="myNewFunction(this.value)"   style="width: 300px">
-                
-                                </select>-->
-                <br><br>
-                <di id="single_select_1" ></di>
+    <div id="instructions">
+        <p><br>Please ensure that the data is accurate and make necessary corrections.</br>
 
-                </select>
+            <br>Tag the product appropriately and submit the finished product</br>
+        </p>
 
-            </label> <label> <span>relatedProductIds: </span> <input id="id_relatedProductIds"
-                                                                     type="text" name="name" placeholder="List of related products" readonly="readonly"/>
-            </label> <label> <span>comments: </span> <input id="id_comments" type="text"
-                                                            name="name" placeholder="Comments of the product" readonly="readonly"/>
-            </label> <label> <span>ratings: </span> <input id="id_ratings" type="text"
-                                                           name="name" placeholder="Ratings of the product" readonly="readonly"/>
-
-            </label> <label> <span><strong>ProductImages: </strong></span> </label>
-
-            <div id="image_table_id"></div>
-
-            <br> <br> <label> <span><strong>productTags:
-
-                    </strong></span>
-
-            </label> <br> <br>
-
-
-            <table class="altrowstable" id="created_tags_table" width="600">
-                <caption>Tags Created</caption>
-
-                <tr>
-                    <th><strong>Tag Category:</strong>
-                    </th>
-                    <th><strong>Tag String:</strong>
-                    </th>
-                    <th><strong>Tag Sub Category:</strong>                      
-                    </th>
-                    <th><strong>Tag Deletion:</strong>                      
-                    </th>
-                </tr>
-            </table>
+    </div>
 
 
 
-            <table class="altrowstable" id="alternatecolor"  width="600">
+</head>
+<body onblur="window.focus()" onload="prettyPrint();" >
 
-                <caption>we can create tags from here</caption>
+    <input type="button" class="myButtonRED" value="Archive"  onClick="archieveProduct()" id ="archive_but_id_start" style="float: right;" width="200" height="200"/>
+    <form action="" method="post" class="form-style-7">
 
-                <tr>
-                    <th><strong>Product Type:</strong>
+        <ul>
+            <li>
+                <label for="id_title">Product Title or Name</label>
+                <input id="id_title" type="text" name="id_title">
+                <span>Review the title for completeness; ensure that there are no junk characters. Copy-Paste from the original website to fix errors.</span>
+            </li>
 
-                        <select id="select_tagCategory" name="selection" multiple="multiple"  style="width: 200px">
+            <li>
+                <label for="id_description">Product Description</label>
+                <textarea id="id_description" name="id_description" onclick="adjust_textarea(this)">
+                </textarea>
+                <span>Review description for completeness and any mixed up words. Copy-Paste all relevant text from Product Description.</span>
+            </li>
+
+            <li>
+                <label for="id_gender">Add Gender Tag</label>
+                <br>
+                <input type="radio" name="gender" value="Women" id="r2" checked="checked">Women
+                <input type="radio" name="gender" value="Men" id="r1">Men
+                <input type="radio" name="gender" value="Unisex" id="r3">Unisex
+                <input type="radio" name="gender" value="Boys" id="r4">Boys
+                <input type="radio" name="gender" value="Girls" id="r5">Girls<br>
+                <input type="button" class="button" value="Create Gender Tag" onclick="createGenderTag()"  />
+                <span>Select One and Create Gender Tag</span>
+            </li>
+
+
+
+
+            <li>
+                <label>Create Tags</label>
+                <br>
+                <table class="altrowstable" id="alternatecolor"  width="600">
+
+                    <tr>
+                        <th><strong>Product Type:</strong>
+                    <div style="padding:20px">
+                        <select id="select_tagCategory" name="selection" multiple="multiple"  style="width: 150px">
 
                         </select>
-                    </th>
-                    <th><strong>Occasion:</strong>
-                <div style="padding:20px">
-                    <select id="select_tagString" name="selection"  multiple="multiple"  style="width: 200px" data-native-menu="false">
+                        </th>
 
-                    </select>
-                </div>
-
-                </th>
-                <th><strong>Product description:</strong>
-                <div style="padding:20px">
-                    <select id="select_tagSubCategory" name="selection" multiple="multiple"   style="width: 200px" data-native-menu="false">
-
-
-                    </select>
-                </div>
-
-                </th>
-
-                </tr>
-
-            </table>
-
-            <input type="button" class="button" value="Tag to product" onclick="addTagsToTableVaz()" />
-
-            <br><br><br>
-
-            <label for="id_tag_cat"> <span>Tag Category </span> <input id="id_tag_cat"
-                                                                       type="text" name="name"  />
-
-                <script type="text/javascript">
-
-                    $(function() {
-                        var availableTags = [
-                            "Product Type",
-                            "Occasion",
-                            "Product description",
-                        ];
-                        $("#id_tag_cat").autocomplete({
-                            source: availableTags,
-                            minLength: 0,
-                        }).focus(function() {
-                            //Use the below line instead of triggering keydown
-                            $(this).autocomplete('search');
-                        });
-                    });</script>
-
-            </label>
-            <label> <span>Tag String </span> <input id="id_tag_str"
-                                                    type="text" name="name" autocomplete="off"  />
-            </label>
-            <label> <span>Tag Sub Category </span> <input id="id_sub_str"
-                                                          type="text" name="name" autocomplete="off" />
-            </label>
-
-            <label> <span>&nbsp;</span> <input type="button"
-                                               class="button" value="Create&Attach Custom Tag" onclick="createCustomTag()"  /></label>
-
-
-
-            <br><br>
-            <table class="altrowstable" id="alternatecolor"  width="600">
-
-                <caption><strong>Add Gender Tag</strong><caption>
-
-                        <tr>
-
-                            <th><strong>Product description:</strong>
+                        <th><strong>Occasion:</strong>
                         <div style="padding:20px">
-                            <td >
-                                <label>
-                                    <input type="radio" id="r1" name='que_1' value="Men" />
-                                    Men<br>
-                                </label>
-                                <label>
-                                    <input type="radio" id="r2" name='que_1' value="Women" />
-                                    Women<br>
-                                </label>
+                            <select id="select_tagString" name="selection"  multiple="multiple"  style="width: 150px" data-native-menu="false">
 
-                                <label>
-                                    <input type="radio" id="r3" name='que_1' value="Unisex" />
-                                    Unisex<br>
-                                </label>
-                                <label>
-                                    <input type="radio" id="r3" name='que_1' value="Boys" />
-                                    Boys<br>
-                                </label>
-                                <label>
-                                    <input type="radio" id="r3" name='que_1' value="Girls" />
-                                    Girls<br>
-                                </label>
-                            </td>
-                            <td>
-                                <input type="button"
-                                       class="button" value="Attach Gender Tag" onclick="createGenderTag()"  />
-
-                            </td>
+                            </select>
                         </div>
 
+                        </th>
+
+                        <th><strong>Product Description:</strong>
+                        <div style="padding:20px">
+                            <select id="select_tagSubCategory" name="selection" multiple="multiple"   style="width: 150px" data-native-menu="false">
+
+
+                            </select>
+                        </div>
 
                         </th>
 
                         </tr>
 
-                        </table>
+                </table>
+
+                <input type="button" class="button" value="Tag to product" onclick="addTagsToTableVaz()" />
+
+                <br><br><br>
+
+                <label for="id_tag_cat"> <span>Tag Category </span> <input id="id_tag_cat"
+                                                                           type="text" name="name"  />
+
+                    <script type="text/javascript">
+
+                        $(function() {
+                            var availableTags = [
+                                "Product Type",
+                                "Occasion",
+                                "Product Description",
+                            ];
+                            $("#id_tag_cat").autocomplete({
+                                source: availableTags,
+                                minLength: 0,
+                            }).focus(function() {
+                                //Use the below line instead of triggering keydown
+                                $(this).autocomplete('search');
+                            });
+                        });
+                    </script>
+
+                </label>
+                <label> <span>Tag String </span> <input id="id_tag_str" type="text" name="name" autocomplete="off"  />
+                </label>
+                <label> <span>Tag Sub Category </span> <input id="id_sub_str" type="text" name="name" autocomplete="off" />
+                </label>
+
+                <label> <span>&nbsp;</span> <input type="button" class="button" value="Create&Attach Custom Tag" onclick="createCustomTag()"  /></label>
+
+            </li>
 
 
-                        <br> <br>
-                        <label> <span><strong>productProviders:
-                                </strong></span></label>
-                        <div id ="product_providers_div_id"></div>
-                        <div>
-                            <span>&nbsp;</span> <input type="button"
-                                                       class="button" value="Curate and Finish" onClick="updateProvider()" id ="send_but_id"/>
+            <li>
+                <label>Product Tags</label>
+                <br>
+                <table class="altrowstable" id="created_tags_table" width="600">
+                    <tr>
+                        <th>Tag Category</th>
+                        <th>Tag String</th>
+                        <th>Tag Sub Category</th>
+                        <th>Delete Tag?</th>
+                    </tr>
+                </table>
+                <br>
+                <span>Tags show up here as you create them; you may correct errors by clicking on Untag</span>
 
-                            <span>&nbsp;</span> <input type="button"
-                                                       class="button" value="Archive" onClick="archieveProduct()" id ="archive_but_id"/>
 
-                        </div>
-                        </form>
-                        </body>
+            </li>
 
 
-                        </html>
+
+            <li>
+                <label for="id_productstate">Current Product State</label>
+                <br>
+                <div id="single_select_1"></div><br>
+                <span>Set Product State (Advanced Users only)</span>
+
+            </li>
+
+            <li>
+                <label>Provider Info</label>
+                <table boarder = "1">
+                    <tr>
+                        <td> <div>Currency <br> <input type="text" width="200" id="currency_id" style="border:1px solid #6B9FFF"/></div></td>
+                        <td boarder ="1"> <div>Price <br> <input type="text" width="200" id="price_id" style="border:1px solid #6B9FFF"/></div></td>
+                        <td boarder ="1"> <div>Store <br> <input type="text" width="200" id="store_id" style="border:1px solid #6B9FFF"/></div></td>
+                    </tr>
+                    <tr>
+
+                        <td> <div>Sale Price <br> <input type="text" width="200" id="sale_price_id" style="border:1px solid #6B9FFF"/></div></td>
+                        <td boarder ="1"> <div>Sale Expiry Date <br> <input type="text" width="200" id="expiry_date_id" style="border:1px solid #6B9FFF"/></div></td>
+                        <td><div>OnSale<br><input type="checkbox" id="onSale_selection_id" onclick='handleOnSAleClick(this);'>  </div></td>
+                    </tr>
+                    <tr>
+                        <td style="border:1px solid #6B9FFF"><div> Availability <br>
+                                <div align="center"><br>
+                                    <input type="radio" name="group1" class="inline-radio" value="IN_STOCK" checked="true"> IN_STOCK<br>
+                                    <input type="radio" name="group1" class="inline-radio" value="OUT_OF_STOCK"> OUT_OF_STOCK<br>
+                                    <input type="radio" name="group1" class="inline-radio"value="RUNNING_LOW"> RUNNING_LOW<br>
+                                    <input type="radio" name="group1" class="inline-radio" value="EXCESS_INVENTORY"> EXCESS_INVENTORY<br>
+                                    <input type="radio" name="group1" class="inline-radio" value="TEMPORARY_UNAVAILABLE"> TEMPORARY_UNAVAILABLE<br>
+                                    <input type="radio" name="group1" class="inline-radio" value="PERMANENTLY_UNAVAILABLE"> PERMANENTLY_UNAVAILABLE<br>
+
+                                </div>
+
+                            </div></td>
+                    </tr>
+                </table>
+                <span>Must fill  provider info</span>
+            </li>
+
+            <li>
+                <label>Colors</label>
+                <table class="altrowstable"  ><tr><td align="center"    width="600"><input type="text" name="name"   placeholder="Enter Color" id="color_id"></td></tr></table>
+
+                <span>Enter comma separated Colors</span>
+
+            </li>
+
+            <li>
+                <label>Sizes</label>
+                <table> 
+
+
+                    <tr> <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('S')"> S</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('M')"> M</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('L')"> L</td>
+                        <td bgcolor="#bcd7e5" align="center" width="40px" height="40px" onclick="clickedValue('XL')"> XL</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('No size')"> No size</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('One size')"> One size</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('XS')"> XS</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('XXXL')">XXXL</td>
+
+
+
+                    </tr>
+                    <tr> <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('1')"> 1</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('2')"> 2</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('3')">3</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('4')">4</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('5')">5</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('6')">6</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('7')">7</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('8')"> 8</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('9')"> 9</td></tr>
+                    <tr> <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('10')">10</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('11')">11</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('12')">12</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('13')">13</td>
+                        <td  align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('14')">14</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('15')"> 15</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('16')"> 16</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('17')">17</td></tr>
+                    <tr><td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('18')">18</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('19')">19</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('20')">20</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('21')">21</td>
+
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('32')">32</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('34')">34</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('35')">35</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('36')">36</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('37')">37</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('38')">38</td>
+                        <td align="center" bgcolor="#bcd7e5" width="40px" height="40px" onclick="clickedValue('40')">40</td>
+
+
+
+                    </tr>
+
+                </table>
+                <table class="altrowstable"  ><tr><td align="center"    width="600"><input type="text" name="name"   placeholder="Select or enter sizes" id="size_id"></td></tr></table>
+                <span>Select Size or Enter</span>
+            </li>   
+            <input type="button" class="button" value="Curate and Finish" onClick="updateProvider()" id ="send_but_id"/>
+
+            <input type="button" class="button" value="Archive" onClick="archieveProduct()" id ="archive_but_id"/>
+
+
+            </li>
+
+        </ul>
+
+
+
+    </form>
+    <script>
+
+        function clickedValue(val) {
+            var strings = [];
+
+            strings = document.getElementById("size_id").value.split(",");
+
+            for (var j = 0; j < strings.length; j++) {
+                if (val.trim() === strings[j].trim()) {
+                    alert("Duplicate Size");
+                    return;
+                }
+            }
+
+            if (strings.length === 1) {
+                if (strings[0].length === 0) {
+                    document.getElementById("size_id").value = val;
+                } else {
+                    document.getElementById("size_id").value = document.getElementById("size_id").value + ", " + val;
+                }
+            } else {
+                document.getElementById("size_id").value = document.getElementById("size_id").value + ", " + val;
+            }
+
+        }
+    </script>
+    <form action="" method="post" class="smart-green">
+
+        <di id="single_select_1" ></di>
+
+    </select>
+
+
+
+    <div id="image_table_id"></div>
+
+
+
+    <script type="text/javascript">
+
+        $(function() {
+            var availableTags = [
+                "Product Type",
+                "Occasion",
+                "Product description",
+            ];
+            $("#id_tag_cat").autocomplete({
+                source: availableTags,
+                minLength: 0,
+            }).focus(function() {
+                //Use the below line instead of triggering keydown
+                $(this).autocomplete('search');
+            });
+        });
+          $(function() {
+                    $('table').on('click', 'td', function() {
+                       // $(this).parent().children().removeClass('active');
+                        $(this).addClass('active');
+                    });
+                });  
+    
+    </script>
+
+</label>
+
+
+
+</form> 
+
+
+</body>
+
+
+</html>
