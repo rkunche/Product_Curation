@@ -70,6 +70,7 @@
                 display: inline-block;
             }
             p { display: inline-block; }
+ 
         </style>
 
         <style type="text/css">
@@ -1590,37 +1591,42 @@
 
                 <input type="button" class="button" value="Tag to product" onclick="addTagsToTableVaz()" />
 
-                <br><br><br>
-
-                <label for="id_tag_cat"> <span>Tag Category </span> <input id="id_tag_cat"
-                                                                           type="text" name="name"  />
-
-                    <script type="text/javascript">
-
-                        $(function() {
-                            var availableTags = [
-                                "Product Type",
-                                "Occasion",
-                                "Product Description",
-                            ];
-                            $("#id_tag_cat").autocomplete({
-                                source: availableTags,
-                                minLength: 0,
-                            }).focus(function() {
-                                //Use the below line instead of triggering keydown
-                                $(this).autocomplete('search');
-                            });
-                        });
-                    </script>
-
-                </label>
-                <label> <span>Tag String </span> <input id="id_tag_str" type="text" name="name" autocomplete="off"  />
-                </label>
-                <label> <span>Tag Sub Category </span> <input id="id_sub_str" type="text" name="name" autocomplete="off" />
-                </label>
-
-                <label> <span>&nbsp;</span> <input type="button" class="button" value="Create&Attach Custom Tag" onclick="createCustomTag()"  /></label>
-
+            </li>
+            <li> <label>Create Custom Tag</label>
+                <br>
+                <table    class="altrowstable" id="create_custom_tag"   width="600">
+                    <tr>
+                        
+                        <td>
+                            <div>
+                                Tag Category <br><br>
+                                <input id="id_tag_cat" type="text" width="200" name="name"  placeholder="Enter Tag Category" style="border:1px solid #6B9FFF"/>
+                                
+                            </div>
+ 
+                        </td>
+                             <td>
+                            <div>
+                                Tag String <br><br>
+                                <input id="id_tag_str" type="text" width="200" name="name" autocomplete="off"   placeholder="Enter Tag String" style="border:1px solid #6B9FFF"/>
+                                
+                            </div>
+ 
+                        </td>
+                         <td boarder ="1">
+                            <div>
+                                Tag Sub Category <br> <br>
+                                <input  type="text" width="200"  name="name"  placeholder="Enter Tag SubCat" id="id_sub_str" style="border:1px solid #6B9FFF"/>
+                                
+                            </div>
+ 
+                        </td> 
+                    </tr>
+                    
+                    
+                </table>
+                  <input type="button" class="button" value="Create&Attach Custom Tag" onclick="createCustomTag()"  /> 
+<span>Enter new tags with out typing mistakes</span>
             </li>
 
 
@@ -1670,7 +1676,7 @@
                                 <div align="center"><br>
                                     <input type="radio" id="availability_id" name="group1" class="inline-radio" value="IN_STOCK" checked="true"> IN_STOCK<br>
                                     <input type="radio" id="availability_id" name="group1" class="inline-radio" value="OUT_OF_STOCK"> OUT_OF_STOCK<br>
-                                    <input type="radio" id="availability_id" name="group1" class="inline-radio"value="RUNNING_LOW"> RUNNING_LOW<br>
+                                    <input type="radio" id="availability_id" name="group1" class="inline-radio" value="RUNNING_LOW"> RUNNING_LOW<br>
                                     <input type="radio" id="availability_id" name="group1" class="inline-radio" value="EXCESS_INVENTORY"> EXCESS_INVENTORY<br>
                                     <input type="radio" id="availability_id" name="group1" class="inline-radio" value="TEMPORARY_UNAVAILABLE"> TEMPORARY_UNAVAILABLE<br>
                                     <input type="radio" id="availability_id" name="group1" class="inline-radio" value="PERMANENTLY_UNAVAILABLE"> PERMANENTLY_UNAVAILABLE<br>
@@ -1819,6 +1825,23 @@
             });
         });
 
+  
+
+                        $(function() {
+                            var availableTags = [
+                                "Product Type",
+                                "Occasion",
+                                "Product Description",
+                            ];
+                            $("#id_tag_cat").autocomplete({
+                                source: availableTags,
+                                minLength: 0,
+                            }).focus(function() {
+                                //Use the below line instead of triggering keydown
+                                $(this).autocomplete('search');
+                            });
+                        });
+                    
     </script>
 
 </label>
