@@ -210,1271 +210,925 @@
                 background-color: #7DAFFF;
             }
 
-        </style>
-        <script>
 
-            var cacheLocalTags = [];
-            var localTagsObject = {tagCategory: "", tagString: "", tagSubCategory: ""};
-            var initialValues = {Title: "", Description: "", ProductTags: null, CurrentProductState: "", PrductProviders: null};
-            var available_colors = ["Red", "Green", "Blue", "Cyan", "Orange", "Purple", "Black"];
-            var available_sizes = ["No Size", "XS", "S", "M", "L", "XL", "XXL", "XXXL"];
-            //prototype for clear the array values.
-            Array.prototype.clear = function() {
-                this.length = 0;
-            };
-            var datafromparent;
-            var jsonObject;
-            var providerUpdaterequest;
-            var tagCreateRequest;
-            var tagCreationReqeustCount = 0;
-            var productTagAssociateReq;
-            var appendtagToProduct;
-            var tagObject = {tagCategory: "", tagString: "", tagSubCategory: ""};
-            var tagArray = [];
-            var tags;
-            var tagRequest;
-            var tagsArray = [];
-            var curatorId;
-            //for tags validation.
-            var localTags = [];
-            var curatorReview;
-            var buttonValue;
-            var productTypeTagCount = 0;
-            var occasionTagCount = 0;
-            var productDescriptionTagCount = 0;
 
-            var partialCurated = false;
 
-            window.addEventListener("message", function(event) {
-
-                var strings = event.data.split("##");
-                tags = JSON.parse(strings[0]);
-                //for (var i = 0; i < tags.length; i++) {
-                // console.log(tags[i].tagString);
-                // }
-                datafromparent = strings[1]
-
-                curatorReview = strings[2];
-                cacheLocalTags.clear();
-                console.log(datafromparent);
-                console.log(datafromparent);
-                jsonObject = JSON.parse(datafromparent);
-//                for (var imgIndex = 0; imgIndex < jsonObject.productImages.length; imgIndex++) {
-//
-//                    var img = new Image();
-//                    img.onload = function() {
-//                        // alert(this.width + 'x' + this.height);
-//                        jsonObject.productImages[imgIndex].orignalWidth = this.width;
-//                        jsonObject.productImages[imgIndex].orignalHeight = this.height;
-//                    }
-//                    img.src = jsonObject.productImages[imgIndex].externalURL;
-//                }
-//                updateImage(jsonObject.productImages[0]);
-                if (jsonObject.currentProductState == "CRAWLED") {
-                    buttonValue = "Curate And Finish";
-                    partialCurated = true;
-                } else {
-                    partialCurated = false;
-                    buttonValue = "Review And Finish";
-                }
-
-                tagCreationReqeustCount = 0;
-                tagArray.clear();
-                var isColorArrayNull = false;
-                var isAvailableSizes = false;
-                var isAvailableAtZipCodes = false;
-
-                if (jsonObject.productProviders !== null) {
-                    for (var i = 0; i < jsonObject.productProviders.length; i++) {
-                        if (jsonObject.productProviders[i].availableColors !== null && jsonObject.productProviders[i].availableColors !== undefined) {
-                            if (jsonObject.productProviders[i].availableColors.length === 1) {
-
-                                if (jsonObject.productProviders[i].availableColors[0] == null || jsonObject.productProviders[i].availableColors[0] == "null") {
-                                    isColorArrayNull = true;
-                                    console.log("isColorArrayNull setTrue " + jsonObject.productProviders[i].availableColors[0]);
-                                }
-                            }
-                        } else {
-                            console.log("NO productProviders.availableColors");
-                        }
-                        if (jsonObject.productProviders[i].availableSizes !== null && jsonObject.productProviders[i].availableSizes !== undefined) {
-
-                            if (jsonObject.productProviders[i].availableSizes.length === 1) {
-
-                                if (jsonObject.productProviders[i].availableSizes[0] == null || jsonObject.productProviders[i].availableSizes[0] == "null") {
-                                    isAvailableSizes = true;
-                                    console.log("isAvailableSizes setTrue " + jsonObject.productProviders[i].availableColors[0]);
-                                }
-                            }
-
-                        } else {
-                            console.log("NO productProviders.availableSizes");
-                        }
-
-                        if (jsonObject.productProviders[i].availableAtZipCodes !== null && jsonObject.productProviders[i].availableAtZipCodes !== undefined) {
-
-                            if (jsonObject.productProviders[i].availableAtZipCodes.length === 1) {
-
-                                if (jsonObject.productProviders[i].availableAtZipCodes[0] == null || jsonObject.productProviders[i].availableAtZipCodes[0] == "null") {
-                                    isAvailableAtZipCodes = true;
-                                    console.log("isAvailableSizes setTrue " + jsonObject.productProviders[i].availableColors[0]);
-                                }
-                            }
-                        } else {
-                            console.log("NO productProviders.availableAtZipCodes");
-                        }
-                    }
-
-                } else {
-                    console.log("NO PRODUCT PROVIDERS");
-                }
-
-
-                var url = "https://vue-server-dev.appspot.com/api/productprovider/" + jsonObject.productProviders[0].id;
-                if (XMLHttpRequest) {
-                    providerUpdaterequest = new XMLHttpRequest();
-                    if ("withCredentials" in providerUpdaterequest) {
-                        // Firefox 3.5 and Safari 4
-                        providerUpdaterequest.open('PUT', url, true);
-                        providerUpdaterequest.setRequestHeader('Custom-Header', 'javascript-client');
-                        providerUpdaterequest.setRequestHeader('Content-Type', 'application/json');
-                        providerUpdaterequest.onreadystatechange = function providerHandler() {
-                            if (providerUpdaterequest.readyState != 4)
-                                return;
-
-                            if (providerUpdaterequest.status != 200 && providerUpdaterequest.status != 304) {
-
-                                console.log("provder updated failed");
-                                return;
-                            }
-                            if (providerUpdaterequest.status == 200)
-                            {
-
-                                console.log("provder updated successfully&&& " + providerUpdaterequest.responseText);
-
-                            }
-
-                        };
-
-                        console.log("provider color fields " + isColorArrayNull);
-                        console.log("provider isAvailableSizes field " + isAvailableSizes);
-                        console.log("provider isAvailableAtZipCodes field " + isAvailableAtZipCodes);
-                        if (isAvailableAtZipCodes) {
-                            jsonObject.productProviders[0].availableAtZipCodes = null;
-                            console.log("provider availableAtZipCodes fields 1");
-                        }
-                        if (isColorArrayNull) {
-                            jsonObject.productProviders[0].availableColors = null;
-                            console.log("provider availableColors fields 2");
-                        }
-                        if (isAvailableSizes) {
-                            jsonObject.productProviders[0].availableSizes = null;
-                            console.log("provider availableSizes fields 3 ");
-                        }
-
-                        if (isAvailableAtZipCodes || isColorArrayNull || isAvailableSizes) {
-                            providerUpdaterequest.send(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: jsonObject.productProviders[0].quantity, currencyCode: jsonObject.productProviders[0].currencyCode, store: jsonObject.productProviders[0].store, availability: jsonObject.productProviders[0].availability,
-                                price: jsonObject.productProviders[0].price, onSale: jsonObject.productProviders[0].onSale, salePrice: jsonObject.productProviders[0].salePrice, saleExpirtyDate: 0, availableColors: jsonObject.productProviders[0].availableColors, availableSizes: jsonObject.productProviders[0].availableSizes, availableAtZipCodes: jsonObject.productProviders[0].availableAtZipCodes}));
-                        }
-                    }
-                }
-
-
-                afterLoadingThePopup();
-            }, false);
-
-            function dataloader() {
-                var val = document.getElementById('divid');
-                val.innerHTML = datafromparent;
-                console.log(datafromparent);
-            }
-            function afterLoadingThePopup() {
-                // document.getElementById('currency_id').style.border="thick solid #0000FF";
-                // document.getElementById('price_id').style.border="thick solid #0000FF";
-                var jsonResponse = JSON.parse(datafromparent);
-                //document.getElementById('id_id').value = jsonResponse.id;
-                // document.getElementById('id_ownerAisleId').value = jsonResponse.ownerAisleId;
-                // document.getElementById('id_ownerProductListId').value = jsonResponse.ownerProductListId;
-                document.getElementById('id_title').value = jsonResponse.title;
-                document.getElementById('id_description').value = jsonResponse.description;
-                // document.getElementById('id_creatorID').value = jsonResponse.creatorId;
-                //document.getElementById('id_curatorID').value = jsonResponse.curatorId;
-                // document.getElementById('id_relatedProductIds').value = jsonResponse.relatedProductIds;
-                // document.getElementById('send_but_id').value = buttonValue;
-                //method to call to set current product state...
-                set_current_ProductState(jsonResponse.currentProductState);
-                // document.getElementById('single_select_1').value = jsonResponse.currentProductState;
-                
-                
-               
-               document.getElementById('currency_id').value = jsonObject.productProviders[0].currencyCode;
-               document.getElementById('price_id').value = jsonObject.productProviders[0].price;
-                document.getElementById('store_id').value = jsonObject.productProviders[0].store;
-                var offerEnable = jsonObject.productProviders[0].onSale;
-                var saleExpiryDate = document.getElementById('expiry_date_id');
-                var salePrice = document.getElementById('sale_price_id');
-                saleExpiryDate.value = jsonObject.productProviders[0].saleExpirtyDate;
-                salePrice.value = jsonObject.productProviders[0].salePrice;
-                if(offerEnable){
-                document.getElementById('onSale_selection_id').checked = true;
-                    } else {
-                     document.getElementById('onSale_selection_id').checked = false;
-                     salePrice.style.backgroundColor="gray";  
-                      saleExpiryDate.style.backgroundColor="gray"; 
-                      
-                      
-                      salePrice.readOnly = "true";
-                       saleExpiryDate.readOnly = "true";
-                      salePrice.value = "No Offers";
-                       saleExpiryDate.value = "No Offers";
-                }
-               document.getElementById('color_id').value = jsonObject.productProviders[0].availableColors;
-               document.getElementById('size_id').value = jsonObject.productProviders[0].availableSizes;
-
-                //document.getElementById('id_comments').value = jsonResponse.comments;  
-                //document.getElementById('id_ratings').value = jsonResponse.ratings;
-                // product tags..
-                var product_tags = jsonResponse.productTags;
-                for (var m = 0; m < product_tags.length; m++) {
-                    var tag_obj = product_tags[m];
-
-                    if (tag_obj === null || tag_obj === undefined) {
-                        continue;
-                    }
-
-                    var tag_cat = tag_obj.tagCategory;
-                    var tag_string = tag_obj.tagString;
-                    var tag_sub_cat = tag_obj.tagSubCategory;
-
-
-                    if (tag_cat.toLowerCase() === "Product Description".toLowerCase()) {
-                        productDescriptionTagCount = productDescriptionTagCount + 1;
-                    } else if (tag_cat.toLowerCase() === "Product Type".toLowerCase()) {
-                        productTypeTagCount = productTypeTagCount + 1;
-                    } else if (tag_cat.toLowerCase() === "Occasion".toLowerCase()) {
-                        occasionTagCount = occasionTagCount + 1;
-                    }
-                    cacheLocalTags.push(tag_string);
-                    createTagReqAndAddTable(tag_cat, tag_string, tag_sub_cat, 0)
-
-                }
-
-//                var images_array = jsonResponse.productImages;
-//                var tabl_div = document.getElementById('image_table_id');
-//                for (var i = 0; i < images_array.length; i++) {
-//
-//                    var br0 = document.createElement('br');
-//                    var br1 = document.createElement('br');
-//                    tabl_div.appendChild(br0);
-//                    tabl_div.appendChild(br1);
-//                    var table = document.createElement('table');
-//                    table.className = "altrowstable";
-//                    table.setAttribute('width', '600')
-//
-//                    var caption = document.createElement('caption');
-//                    caption.textContent = 'For The Image: ' + (i + 1);
-//                    table.appendChild(caption);
-//                    table.appendChild(getElemnt('id', images_array[i].id));
-//                    table.appendChild(getElemnt('ownerProductId', images_array[i].ownerProductId));
-//                    table.appendChild(getElemnt('externalURL', images_array[i].externalURL));
-//                    table.appendChild(getElemnt('internalURL', images_array[i].internalURL));
-//
-//
-//                    tabl_div.appendChild(table);
-//                }
-                var product_provider_div = document.getElementById('product_providers_div_id');
-                var providers_array = jsonResponse.productProviders;
-                for (var i = 0; i < providers_array.length; i++) {
-                    var br0 = document.createElement('br');
-                    var br1 = document.createElement('br');
-                    product_provider_div.appendChild(br0);
-                    product_provider_div.appendChild(br1);
-                    var table = document.createElement('table');
-                    table.className = "altrowstable";
-                    table.style.width = '400px';
-
-
-                    var caption = document.createElement('caption');
-                    caption.textContent = 'For The Provider: ' + (i + 1);
-                    table.appendChild(caption);
-                    table.appendChild(getElemnt('id', providers_array[i].id, 'id_' + i));
-                    table.appendChild(getElemnt('ownerProductId', providers_array[i].ownerProductId, 'ownerProductId_' + i));
-                    table.appendChild(getElemnt('externalURL', providers_array[i].externalURL, 'externalURL_' + i));
-                    if (providers_array[i].quantity == 0) {
-                        providers_array[i].quantity = 1;
-                    }
-                    table.appendChild(getElemnt('quantity', providers_array[i].quantity, 'quantity_' + i));
-                    table.appendChild(getElemnt('currencyCode', providers_array[i].currencyCode, 'currencyCode_' + i));
-                    table.appendChild(getElemnt('store', providers_array[i].store, 'store_' + i));
-                    var availability_1 = getAvailability('availability', providers_array[i].availability, 'availability_' + i);
-                    table.appendChild(availability_1);
-                    table.appendChild(getElemnt('price', providers_array[i].price, 'price_' + i));
-                    table.appendChild(add_Onsale_Boolean('onSale', providers_array[i].onSale, 'onSale_' + i));
-                    table.appendChild(getElemnt('salePrice', providers_array[i].salePrice, 'salePrice_' + i));
-                    table.appendChild(getElemnt('saleExpiryDate', providers_array[i].saleExpiryDate, 'saleExpiryDate_' + i));
-                    var available_clrs = getAvailableColors('availableColors', providers_array[i].availableColors, 'availableColors_' + i, i);
-                    table.appendChild(available_clrs);
-                    var available_sizes_1 = getAvailableSizes('availableSizes', providers_array[i].availableSizes, 'availableSizes_' + i, i);
-                    table.appendChild(available_sizes_1);
-                    table.appendChild(getElemnt('availableAtZipCodes', providers_array[i].availableAtZipCodes, 'availableAtZipCodes_' + i));
-                    product_provider_div.appendChild(table);
-                }
-
-
-                //Added Product Tags
-                //  add_Product_Tags();
-                add_Product_TagsNew();
-            }
-
-            function add_Onsale_Boolean(key, value, id) {
-                var key_name = 'on_sale_values';
-
-                var tr = document.createElement('tr');
-                var th_key = document.createElement('th');
-                th_key.textContent = key;
-                tr.appendChild(th_key);
-                var th = document.createElement('th');
-                var td = document.createElement('td');
-                td.style.width = 300;
-                // sel.value = value;
-
-                //    alert(value);
-                // alert(value);
-                var enums = ['true', 'false'];
-                for (var i = 0; i < enums.length; i++) {
-
-                    if (enums[i].indexOf(value) === 0) {
-                        var o1 = getRadioButton(key_name, enums[i], true);
-                        td.appendChild(o1);
-                    } else {
-                        var o1 = getRadioButton(key_name, enums[i], false);
-                        td.appendChild(o1);
-                    }
-
-                }
-                th.appendChild(td);
-                tr.appendChild(th);
-                return tr;
-                return tr;
-            }
-
-
-
-
-            function add_Product_TagsNew() {
-
-                var static_categoryNames = ["Product Type", "Occasion", "Product Description"]
-                //add provider tags
-                var tag_category_array = new Array();
-                var tag_string_array = new Array();
-                var tag_category_array_uniqueNames = [];
-                var tag_string_array_uniqueNames = [];
-                var tag_substring_array_uniqueNames = [];
-                for (var k = 0; k < tags.length; k++) {
-                    var vcat = tags[k].tagCategory;
-                    var vstr = tags[k].tagString;
-                    if (vcat !== null && vcat !== undefined && vcat !== '') {
-                        tag_category_array = tag_category_array.concat(vcat.split(','));
-                        var list_tagstring_array = tag_string_array[vcat];
-                        if (vstr !== null && vstr !== undefined && vstr !== '') {
-
-                            if (list_tagstring_array !== undefined) {
-                                list_tagstring_array.push(vstr);
-                            } else {
-                                list_tagstring_array = new Array();
-                                list_tagstring_array.push(vstr);
-                            }
-
-                        }
-                        // alert('ffffffirst:' + list_tagstring_array + "VVV:" + vcat);
-                        tag_string_array[vcat] = list_tagstring_array;
-                    }
-
-
-
-                }
-
-               
-                $.each(tag_category_array, function(i, el) {
-                    if ($.inArray(el, tag_category_array_uniqueNames) === -1)
-                        tag_category_array_uniqueNames.push(el);
-                });
-                for (k = 0; k < static_categoryNames.length; k++) {
-                    if (k === 0) {
-                        var tagcatelement = document.getElementById('select_tagCategory');
-                        var temp0 = tag_string_array[static_categoryNames[k]];
-                        // tagcatelement.options[tagcatelement.options.length] = new Option('', '', false, false);
-                        for (var i = 0; i < temp0.length; i++) {
-                            tagcatelement.options[tagcatelement.options.length] = new Option(temp0[i], temp0[i], false, false);
-                        }
-                    }
-                    if (k === 1) {
-                        var tagStringlement = document.getElementById('select_tagString');
-                        var temp1 = tag_string_array[static_categoryNames[k]];
-                        //tagStringlement.options[tagStringlement.options.length] = new Option('', '', false, false);
-                        for (var i = 0; i < temp1.length; i++) {
-                            tagStringlement.options[tagStringlement.options.length] = new Option(temp1[i], temp1[i], false, false);
-                        }
-                    }
-                    if (k === 2) {
-                        var tagSubCatelement = document.getElementById('select_tagSubCategory');
-                        var temp2 = tag_string_array[static_categoryNames[k]];
-                        //  tagSubCatelement.options[tagSubCatelement.options.length] = new Option('', '', false, false);
-                        for (var i = 0; i < temp2.length; i++) {
-                            tagSubCatelement.options[tagSubCatelement.options.length] = new Option(temp2[i], temp2[i], false, false);
-                        }
-                    }
-                }
-
-                //set default values from backend
-                $("select").multiselect({
-                    selectedList: 4}).multiselectfilter();
-            }
-
-            function getElemnt(key, value, id) {
-
-                var readonly = ['id', 'ownerProductId', 'originalHeight', 'originalWidth', 'modifiedHeight', 'modifiedWidth', 'modifiedWidth', 'modifiedHeight', 'internalURL', 'externalURL', 'availableAtZipCodes'];
-                var readstatus = false;
-                for (var s = 0; s < readonly.length; s++) {
-                    if (key === readonly[s]) {
-                        readstatus = true;
-
-                    }
-                }
-
-
-                var tr = document.createElement('tr');
-                var th_key = document.createElement('th');
-                th_key.textContent = key;
-                tr.appendChild(th_key);
-                var th_val = document.createElement('th');
-
-                var input = document.createElement('input');
-                input.value = value;
-                input.type = 'text';
-                input.id = id;
-
-                if (readstatus) {
-                    input.readOnly = true;
-                    input.style.backgroundColor = '#d4cbe8';
-
-                }
-
-
-
-                th_val.appendChild(input);
-                tr.appendChild(th_val);
-                return tr;
-            }
-
-
-
-            function getAvailability(key, value, id) {
-                var enums = ['IN_STOCK', 'OUT_OF_STOCK', 'EXCESS_INVENTORY', 'RUNNING_LOW', 'TEMPORARY_UNAVAILABLE', 'PERMANENTLY_UNAVAILABLE'];
-                var valAvail = 'provider_Availability';
-                var tr = document.createElement('tr');
-                var th_key = document.createElement('th');
-                th_key.textContent = key;
-                tr.appendChild(th_key);
-                var th = document.createElement('th');
-                var td = document.createElement('td');
-
-                var div = document.createElement('div');
-                div.style.width = '400px';
-
-
-                // sel.value = value;
-                for (var i = 0; i < enums.length; i++) {
-
-                    if (enums[i] === value) {
-                        //  var o1 = new Option(enums[i], enums[i], false, true);
-                        //  sel.options[sel.options.length] = o1;
-                        var rdbtn = getRadioButton(valAvail, enums[i], true);
-                        td.appendChild(rdbtn);
-                    } else {
-                        //    var o1 = new Option(enums[i], enums[i], false, false);
-                        //  sel.options[sel.options.length] = o1;
-                        var rdbtn = getRadioButton(valAvail, enums[i], false);
-                        td.appendChild(rdbtn);
-                    }
-
-                }
-                div.appendChild(td);
-                th.appendChild(div);
-                tr.appendChild(th);
-                return tr;
-            }
-
-
-            function getAvailableColors(key, value, id, i) {
-
-
-                var tr = document.createElement('tr');
-                var th_key = document.createElement('th');
-                th_key.textContent = key;
-                tr.appendChild(th_key);
-                var th_val = document.createElement('th');
-                var input = document.createElement('input');
-                input.value = value;
-                input.type = 'text';
-                input.id = id;
-                th_val.appendChild(input);
-                // tr.appendChild(th_val);
-                //  var th = document.createElement('th');
-                // th.style.width = '100px';
-                var sel = document.createElement('select');
-                sel.id = "color_selector_" + i;
-                sel.style.width = "75px";
-                sel.multiple = 'multiple';
-                sel.onchange = function() {
-                    var vl = $("#color_selector_" + i).val();
-
-                    var current_val = document.getElementById(id).value;
-                    // alert("111: "+vl.length);
-                    if (vl != null && vl != undefined) {
-
-                        if (current_val === '') {
-                            document.getElementById(id).value = vl.toString();
-                        }
-                        else {
-
-                            for (var k = 0; k < vl.length; k++) {
-                                //  alert("222: "+vl[k]+" *****: "+current_val.indexOf(vl[k]) );           
-                                if (current_val.indexOf(vl[k]) < 0) {
-                                    document.getElementById(id).value = current_val + "," + vl[k];
-                                }
-                            }
-                        }
-                    }
-                };
-                available_colors.forEach(function(entry) {
-                    var o1 = new Option(entry, entry, false, false);
-                    sel.options[sel.options.length] = o1;
-                });
-                th_val.appendChild(sel);
-                tr.appendChild(th_val);
-                return tr;
-            }
-
-            function getAvailableSizes(key, value, id, i) {
-
-
-                var tr = document.createElement('tr');
-                var th_key = document.createElement('th');
-                th_key.textContent = key;
-                tr.appendChild(th_key);
-                var th_val = document.createElement('th');
-                var input = document.createElement('input');
-                input.value = value;
-                input.type = 'text';
-                input.id = id;
-
-                th_val.appendChild(input);
-                //  tr.appendChild(th_val);
-                //var th = document.createElement('th');
-                var sel = document.createElement('select');
-                sel.id = "sizes_selector_" + i;
-                sel.style.width = "75px";
-                sel.multiple = 'multiple';
-                sel.onchange = function() {
-                    var vl = $("#sizes_selector_" + i).val();
-
-                    var current_val = document.getElementById(id).value;
-                    // alert("111: "+vl.length);
-                    if (vl != null && vl != undefined) {
-
-                        if (current_val === '') {
-                            document.getElementById(id).value = vl.toString();
-                        }
-                        else {
-
-                            for (var k = 0; k < vl.length; k++) {
-                                //  alert("222: "+vl[k]+" *****: "+current_val.indexOf(vl[k]) );           
-                                if (current_val.indexOf(vl[k]) < 0) {
-                                    document.getElementById(id).value = current_val + "," + vl[k];
-                                }
-                            }
-                        }
-                    }
-
-                };
-                available_sizes.forEach(function(entry) {
-                    var o1 = new Option(entry, entry, false, false);
-                    sel.options[sel.options.length] = o1;
-                });
-                th_val.appendChild(sel);
-                tr.appendChild(th_val);
-                return tr;
-            }
-
-            function  set_current_ProductState(value) {
-
-                var product_state_sel = document.getElementById('single_select_1');
-                if (jsonObject.currentProductState === 'CRAWLED') {
-                    var enums = ['CURATED'];
-                } else {
-                    var enums = ['CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
-                }
-                // var enums = ['CRAWLED', 'CURATED', 'CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
-                var td = document.createElement('td');
-                var name = "current_product_status";
-
-                for (var i = 0; i < enums.length; i++) {
-
-                    if ('CRAWLED' === value) {
-                        // alert('curated22: '+value);
-                        var v = getRadioButton(name, enums[i], true);
-                        td.appendChild(v);
-
-                    } else {
-                        var v = getRadioButton(name, enums[i], false);
-                        td.appendChild(v)
-                    }
-
-                }
-
-                product_state_sel.appendChild(td);
-
-            }
-
-            function getRadioButton(name, text, status) {
-
-                var label = document.createElement('label');
-                label.textContent = text;
-
-                var input = document.createElement('input');
-                input.type = 'radio';
-                input.name = name;
-                input.value = text;
-                input.textContent = text;
-                input.checked = status;
-                label.appendChild(input);
-
-
-                label.appendChild(input);
-
-                return label;
-            }
-
-            function getCuratedInfo() {
-                var title = document.getElementById("id_title").value;
-                var description = document.getElementById("id_description").value;
-                var checkedVal = document.querySelector('input[name="current_product_status"]:checked');
-                description = description.trim();
-                title = title.trim();
-                if (checkedVal == null) {
-                    alert("Please Check ProductState");
-                    return false;
-                }
-
-                if (title == undefined || title == " " || title.length < 2) {
-                    showAlert("Please fill the title");
-                    return false;
-                }
-                jsonObject.title = title;
-
-                if (description === undefined || description == " " || description.length < 2) {
-                    showAlert("Please fill the description");
-                    return false;
-                }
-
-                if (!description.match(/[a-z]/i)) {
-                    showAlert("Description contains only Numbers");
-                    return false;
-                }
-                if (!title.match(/[a-z]/i)) {
-                    showAlert("Title contains only Numbers");
-                    return false;
-                }
-
-                jsonObject.description = description;
-
-
-                if (localTags.length < 3 && !partialCurated) {
-                    showAlert("Error: Please create minimum 3 Tags.");
-                    return false;
-                }
-
-                if (productTypeTagCount < 1) {
-                    showAlert("Error: Please create atleast one ProductType Tag.");
-                    return false;
-                }
-                if (occasionTagCount < 1) {
-                    showAlert("Error: Please create atleast one Occasion Tag.");
-                    return false;
-                }
-
-                if (productDescriptionTagCount < 1 && !partialCurated) {
-                    showAlert("Error: Please create atleast one Product Description Tag.");
-                    return false;
-                }
-
-
-
-                return true;
-
-            }
-            function showAlert(message) {
-                alert(message);
-            }
-            function curateProduct() {
-                if (!getCuratedInfo()) {
-                    return;
-                }
-                var title = document.getElementById("id_title").value;
-                var description = document.getElementById("id_description").value;
-                jsonObject.currentProductState = document.querySelector('input[name="current_product_status"]:checked').value;
-                var url = "https://vue-server-dev.appspot.com/api/product/" + jsonObject.id;
-                if (XMLHttpRequest) {
-                    request = new XMLHttpRequest();
-                    if ("withCredentials" in request) {
-                        // Firefox 3.5 and Safari 4
-                        request.open('PUT', url, true);
-                        request.setRequestHeader('Custom-Header', 'javascript-client');
-                        request.setRequestHeader('Content-Type', 'application/json');
-                        request.onreadystatechange = update_handler;
-                        //product update request:
-                        request.send(JSON.stringify({id: jsonObject.id, ownerAisleId: jsonObject.ownerAisleId, ownerProductListId: jsonObject.ownerProductListId, creatorId: jsonObject.creatorId, curatorId: jsonObject.curatorId, title: title, description: description, currentProductState: jsonObject.currentProductState, relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
-                    }
-                }
-
-            }
-
-            function update_handler() {
-                if (request.readyState != 4)
-                    return;
-                if (request.status == 200)
-                {
-                    //updateProvider();
-                    if (curatorReview == "Curate Now") {
-                        alert('Info: Curated Successfully : ');
-                    } else {
-                        alert('Info: Reviewed Successfully :');
-                    }
-
-                    window.opener.close();
-                    close();
-                }
-                if (request.status != 200 && request.status != 304) {
-                    //alert('HTTP POST error ' + request.status + 'Response ' + request.responseText);
-                    return;
-                }
-            }
-            function getCuratedArray(myarra) {
-
-                var curatedArray = [];
-                for (var i = 0; i < myarra.length; i++) {
-                    var item = myarra[i];
-                    if (item !== null) {
-                        item = item.trim();
-                        if (item.length === 0 || item === "null") {
-
-                        } else {
-                            curatedArray.push(item);
-                        }
-                    }
-                }
-                if (curatedArray.length == 0) {
-                    curatedArray = null;
-                }
-                return curatedArray;
-            }
-            function updateProvider() {
-
-                var updated_id = document.getElementById('id_' + '0').value;
-                var updated_ownerProductId = document.getElementById('ownerProductId_' + '0').value;
-                var updated_externalURL = document.getElementById('externalURL_' + '0').value;
-                var updated_quantity = document.getElementById('quantity_' + '0').value;
-                var updated_currencyCode = document.getElementById('currencyCode_' + '0').value;
-                var updated_store = document.getElementById('store_' + '0').value;
-                var updated_price = document.getElementById('price_' + '0').value;
-                //   var updated_availability = document.getElementById('availability_'+'0');
-                // var updated_onSale = document.getElementById('onSale_' + '0').value;
-                //  var updated_onSale = $('#onSale_' + '0').val();
-                var updated_salePrice = document.getElementById('salePrice_' + '0').value;
-                var updated_onSale = document.querySelector('input[name="on_sale_values"]:checked').value
-
-
-                var updated_saleExpiryDate = document.getElementById('saleExpiryDate_' + '0').value;
-                var updated_availableColors = document.getElementById('availableColors_' + '0').value;
-                var updated_availableSizes = document.getElementById('availableSizes_' + '0').value;
-                var updated_availableAtZipCodes = document.getElementById('availableAtZipCodes_' + '0').value;
-                // var updated_availability = $("#availability_" + '0').val();
-                var updated_availability = document.querySelector('input[name="provider_Availability"]:checked').value
-
-                updated_availableSizes = toTitleCase(updated_availableSizes);
-                updated_availableColors = toTitleCase(updated_availableColors);
-                var colorArray = updated_availableColors.split(",");
-                var sizesArray = updated_availableSizes.split(",");
-                var zipcodeArray = updated_availableAtZipCodes.split(",");
-
-
-                colorArray = getCuratedArray(colorArray);
-                sizesArray = getCuratedArray(sizesArray);
-                zipcodeArray = getCuratedArray(zipcodeArray);
-
-                updated_price = updated_price.trim();
-                updated_salePrice = updated_salePrice.trim();
-                updated_store = updated_store.trim();
-
-                updated_price = parseFloat(updated_price.replace(',', ''));
-                updated_salePrice = parseFloat(updated_salePrice.replace(',', ''));
-
-
-                //  alert('price: ' + updated_price + " salep: " + updated_salePrice);
-
-                if (updated_price == undefined || updated_price == null || updated_price.length < 1 || updated_price == 0) {
-                    // alert("Please Fill Price");
-                    // return;
-                }
-
-                if (updated_store == undefined || updated_store == null || updated_store.length < 1) {
-                    //alert("Please Fill Store");
-                    // return;
-                }
-
-                if (updated_onSale && (updated_salePrice == undefined || updated_salePrice == null || updated_salePrice.length < 1 || updated_salePrice == 0)) {
-                    alert("Please Fill Sale Price");
-                    return;
-                }
-
-                if (colorArray === undefined || colorArray === null || colorArray.length < 1) {
-                    if (!partialCurated) {
-                        alert("Please Fill Available Colors");
-                        return;
-                    }
-                }
-
-                if (sizesArray === undefined || sizesArray === null || sizesArray.length < 1) {
-                    if (!partialCurated) {
-                        alert("Please Fill Available Sizes");
-                        return;
-                    }
-                }
-
-                if (updated_availability == undefined || updated_availability == null || updated_availability.length < 1) {
-                    alert("Please Fill Availability");
-                    return;
-                }
-
-                if (updated_currencyCode == undefined || updated_currencyCode == null || updated_currencyCode.length < 1) {
-                    alert("Please Fill Currency Code");
-                    return;
-                }
-
-                var url = "https://vue-server-dev.appspot.com/api/productprovider/" + jsonObject.productProviders[0].id;
-                if (XMLHttpRequest) {
-                    providerUpdaterequest = new XMLHttpRequest();
-                    if ("withCredentials" in providerUpdaterequest) {
-                        // Firefox 3.5 and Safari 4
-                        providerUpdaterequest.open('PUT', url, true);
-                        providerUpdaterequest.setRequestHeader('Custom-Header', 'javascript-client');
-                        providerUpdaterequest.setRequestHeader('Content-Type', 'application/json');
-                        providerUpdaterequest.onreadystatechange = function providerHandler() {
-                            if (providerUpdaterequest.readyState != 4)
-                                return;
-
-                            if (providerUpdaterequest.status != 200 && providerUpdaterequest.status != 304) {
-
-                                alert('HTTP POST error ' + providerUpdaterequest.status + 'Response ' + providerUpdaterequest.responseText);
-                                return;
-                            }
-                            if (providerUpdaterequest.status == 200)
-                            {
-
-                                curateProduct();
-
-                            }
-
-                        };
-                        providerUpdaterequest.send(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
-                            price: updated_price, onSale: updated_onSale, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: null}));
-                        //print logs in console        
-                        console.log("Provider: " + JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
-                            price: updated_price, onSale: updated_onSale, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: null}));
-                    }
-                }
-            }
-
-
-            function createTagRequest(category, string, subcat) {
-                console.log("createTagRequest fun:   CAT:" + category + " Tag String: " + string);
-                if (category.toLowerCase() == "Product Type".toLowerCase()) {
-                    productTypeTagCount = productTypeTagCount + 1;
-                } else if (category.toLowerCase() == "Occasion".toLowerCase()) {
-                    occasionTagCount = occasionTagCount + 1;
-                } else if (category.toLowerCase() == "Product description".toLowerCase()) {
-                    productDescriptionTagCount = productDescriptionTagCount + 1;
-                }
-
-                var url = "https://vue-server-dev.appspot.com/api/producttag";
-                if (XMLHttpRequest) {
-                    tagCreateRequest = new XMLHttpRequest();
-                    if ("withCredentials" in tagCreateRequest) {
-                        tagCreateRequest.open('POST', url, true);
-                        tagCreateRequest.setRequestHeader('Custom-Header', 'javascript-client');
-                        tagCreateRequest.setRequestHeader('Content-Type', 'application/json');
-                        tagCreateRequest.onreadystatechange = tagHandler;
-                        tagCreateRequest.send(JSON.stringify({tagCategory: category, tagString: string, tagSubCategory: subcat}));
-                    }
-                }
-            }
-            function tagHandler() {
-                if (tagCreateRequest.readyState != 4)
-                    return;
-                if (tagCreateRequest.status != 200 && tagCreateRequest.status != 304) {
-                    //ToDO: if tag is created already just append to product.  appendtagToProduct  
-                    if (appendtagToProduct != undefined) {
-                        tagAssociateWithProduct(appendtagToProduct, "tag");
-                    }
-                    return;
-                }
-                if (tagCreateRequest.status == 200)
-                {
-                    console.log("createTagRequest fun success:    ");
-                    var jsonTagObject = JSON.parse(tagCreateRequest.responseText);
-                    tagAssociateWithProduct(jsonTagObject.tagString, "tag");
-                }
-
-            }
-            var taging;
-            function tagAssociateWithProduct(tagString, tag) {
-                console.log("tagAssociateWithProduct fun success:    TAGString: " + tagString);
-                taging = tag;
-                if (tag == "untag") {
-                    var position = localTags.indexOf(tagString);
-                    if (position != -1) {
-                        localTags.splice(position, 1);
-                    }
-                }
-                var url = "https://vue-server-dev.appspot.com/api/product/" + tag + "/" + jsonObject.id + "/" + tagString;
-                if (XMLHttpRequest) {
-                    productTagAssociateReq = new XMLHttpRequest();
-                    if ("withCredentials" in productTagAssociateReq) {
-                        // Firefox 3.5 and Safari 4
-                        productTagAssociateReq.open('PUT', url, true);
-                        productTagAssociateReq.setRequestHeader('Custom-Header', 'javascript-client');
-                        productTagAssociateReq.setRequestHeader('Content-Type', 'application/json');
-                        productTagAssociateReq.onreadystatechange = tagAssociatHandler;
-                        productTagAssociateReq.send();
-                    }
-                }
-
-            }
-
-            function tagAssociatHandler() {
-                if (productTagAssociateReq.readyState != 4)
-                    return;
-                if (productTagAssociateReq.status != 200 && productTagAssociateReq.status != 304) {
-                    alert('HTTP POST error ' + productTagAssociateReq.status + 'Response ' + productTagAssociateReq.responseText);
-                    return;
-                }
-                if (productTagAssociateReq.status == 200)
-                {
-                    console.log("tagAssociatHandler fun success response:    " + productTagAssociateReq.responseText);
-                    console.log("tagAssociateWithProduct fun success:      ");
-
-                }
-
-            }
-
-
-            var taggingStarted = false;
-            function tagToProduct() {
-                taggingStarted = true;
-                var tagString = tagsArray.splice(0, 1);
-                if (tagString === undefined || tagString.length < 1) {
-                    taggingStarted = false;
-                    return;
-                }
-
-                var url = "https://vue-server-dev.appspot.com/api/product/tag/" + jsonObject.id + "/" + tagString;
-                if (XMLHttpRequest) {
-                    tagRequest = new XMLHttpRequest();
-                    if ("withCredentials" in tagRequest) {
-                        // Firefox 3.5 and Safari 4
-                        tagRequest.open('PUT', url, true);
-                        tagRequest.setRequestHeader('Custom-Header', 'javascript-client');
-                        tagRequest.setRequestHeader('Content-Type', 'application/json');
-                        tagRequest.onreadystatechange = tagToProductHandler;
-                        tagRequest.send();
-                    }
-                }
-
-            }
-
-            function tagToProductHandler() {
-                if (tagRequest.readyState !== 4)
-                    return;
-                if (tagRequest.status !== 200 && tagRequest.status !== 304) {
-                    // alert('HTTP POST error ' + tagRequest.status + 'Response ' + tagRequest.responseText);
-                    tagToProduct();
-                    return;
-                }
-                if (tagRequest.status === 200)
-                {
-                    if (tagsArray.length == 0) {
-                        // alert("Tags are attached to product");
-                    }
-                    tagToProduct();
-                }
-
-            }
-function handleOnSAleClick(cb) {
-  var saleExpiryDate = document.getElementById('expiry_date_id');
-  var salePrice = document.getElementById('sale_price_id'); 
-  if(cb.checked){
-        salePrice.style.backgroundColor="white";  
-        saleExpiryDate.style.backgroundColor="white"; 
-        salePrice.readOnly = "false";
-        saleExpiryDate.readOnly = "false";
-        salePrice.removeAttribute("readonly");
-        saleExpiryDate.removeAttribute("readonly");
-        salePrice.value = "";
-        saleExpiryDate.value = ""; 
-        saleExpiryDate.placeholder = "Please Enter Valid Date";
-        salePrice.placeholder = "Please Enter Sale Price";
-  }else {
-            salePrice.style.backgroundColor="gray";  
-            saleExpiryDate.style.backgroundColor="gray"; 
-            salePrice.readOnly = "true";
-            saleExpiryDate.readOnly = "true";
-            salePrice.value = "No Offers";
-            saleExpiryDate.value = "No Offers";
-  }
-}
-        </script>
-
-        <link rel="stylesheet" type="text/css" href="src/jquery.multiselect.css" />
-        <link rel="stylesheet" type="text/css" href="src/jquery.multiselect.filter.css" />
-        <link rel="stylesheet" type="text/css" href="assets/style.css" />
-        <link rel="stylesheet" type="text/css" href="assets/prettify.css" />
-        <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/ui-lightness/jquery-ui.css" />
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="src/jquery.multiselect.js"></script>
-        <script type="text/javascript" src="src/jquery.multiselect.filter.js"></script>
-        <script type="text/javascript" src="assets/prettify.js"></script>
-
-
-        <link rel="stylesheet" href="radio/style.css"/>
-        <style type="text/css">
-            label {margin-right:20px;}
-        </style>
-        <script type="text/javascript" src="radio/jspatch.js"></script>
-
-        <script type="text/javascript">
-
-            function addTagsToTableVaz() {
-
-                var valC = $("#select_tagCategory").val();
-                var valS = $("#select_tagString").val();
-                var valSC = $("#select_tagSubCategory").val();
-                //for Product Type
-                if (valC !== null && valC !== undefined && valC !== '') {
-                    var productType = valC;
-                    for (var p = 0; p < productType.length; p++) {
-
-
-                        for (var q = 0; q < tags.length; q++) {
-                            var cat = tags[q].tagCategory;
-                            var tagstr = tags[q].tagString;
-                            var tagSubStr = tags[q].tagSubCategory;
-                            if (cat !== null && cat !== undefined && cat.indexOf('Product Type') === 0 && tagstr.indexOf(productType[p]) === 0) {
-                                var index = cacheLocalTags.indexOf(tagstr);
-                                if (index == -1) {
-                                    cacheLocalTags.push(tagstr);
-                                    productTypeTagCount = productTypeTagCount + 1;
-                                    addElementToTable('Product Type', tagstr, tagSubStr);
-                                    tagsArray.push(tagstr);
-                                } else {
-                                    //alert("duplicate tag");
-                                }
-
-
-
-                            }
-                        }
-
-                    }
-                }
-
-
-                //for Occasion
-                if (valS !== null && valS !== undefined && valS !== '') {
-                    var productType = valS;
-                    for (var p = 0; p < productType.length; p++) {
-
-
-                        for (var q = 0; q < tags.length; q++) {
-
-                            var cat = tags[q].tagCategory;
-                            var tagstr = tags[q].tagString;
-                            var tagSubStr = tags[q].tagSubCategory;
-                            if (cat !== null && cat !== undefined && cat.indexOf('Occasion') === 0 && tagstr.indexOf(productType[p]) === 0) {
-                                var index = cacheLocalTags.indexOf(tagstr);
-                                if (index == -1) {
-                                    cacheLocalTags.push(tagstr);
-                                    occasionTagCount = occasionTagCount + 1;
-                                    addElementToTable('Occasion', tagstr, tagSubStr);
-                                    tagsArray.push(tagstr);
-                                } else {
-                                    //alert("duplicate tag");
-                                }
-
-                            }
-                        }
-
-                    }
-                }
-
-                //for Product description
-                if (valSC !== null && valSC !== undefined && valSC !== '') {
-                    var productType = valSC;
-                    for (var p = 0; p < productType.length; p++) {
-
-                        for (var q = 0; q < tags.length; q++) {
-                            var cat = tags[q].tagCategory;
-                            var tagstr = tags[q].tagString;
-                            var tagSubStr = tags[q].tagSubCategory;
-                            if (cat !== null && cat !== undefined && cat.indexOf('Product description') === 0 && tagstr.indexOf(productType[p]) === 0) {
-                                var index = cacheLocalTags.indexOf(tagstr);
-                                if (index == -1) {
-                                    cacheLocalTags.push(tagstr);
-                                    productDescriptionTagCount = productDescriptionTagCount + 1;
-                                    addElementToTable('Product description', tagstr, tagSubStr);
-                                    tagsArray.push(tagstr);
-                                } else {
-                                    //alert("duplicate tag");
-                                }
-                            }
-                        }
-
-                    }
-                }
-
-                //create TAG.
-                //   createTagRequest(valC, tagString, subCatString);
-                if (taggingStarted == false) {
-                    tagToProduct();
-                } else {
-
-                }
-
-            }
-
-            function addElementToTable(cat, str, substr) {
-
-                createTagReqAndAddTable(cat, str, substr, 0);
-
-            }
-
-            function createCustomTag() {
-                var valC, valS, valSC;
-                valC = document.getElementById("id_tag_cat").value;
-                valS = document.getElementById("id_tag_str").value;
-                valSC = document.getElementById("id_sub_str").value;
-                if (valS === null || valS.length < 1 || valS === undefined) {
-                    alert("Tag String must not empty");
-                    return;
-                }
-                if (valC === null || valC.length < 1 || valC === undefined) {
-                    alert("Tag Category must not empty");
-                    return;
-                }
-                var index = cacheLocalTags.indexOf(valS);
-                if (index === -1) {
-                    cacheLocalTags.push(valS);
-                    document.getElementById("id_tag_str").value = "";
-                    document.getElementById("id_tag_cat").value = '';
-                    console.log("CAT:" + valC + " Tag String: " + valS);
-                    valS = valS.trim();
-                    valS = toTitleCase(valS);
-                    createTagReqAndAddTable(valC, valS, valSC, 1);
-                } else {
-                    alert("duplicate tag");
-                }
-
-            }
-            function toTitleCase(str)
+            #navcontainer
             {
-                //make every starting letter capital.
-                return str.replace(/\w\S*/g, function(txt) {
-                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-                });
+                background: #f0e7d7;
+                margin: 0 auto;
+                padding: 1em 0 0 0;
+                font-family: georgia, serif;
+                text-transform: fullwidth;
             }
-            function createTagReqAndAddTable(valC, valS, valSC, addtableonly) {
-                var row = document.createElement('tr');
-                var thC = document.createElement('th');
-                thC.textContent = valC;
-                var thS = document.createElement('th');
-                thS.textContent = valS;
-                var thSC = document.createElement('th');
-                thSC.textContent = valSC;
-                var del = document.createElement('th')
-                var btn = document.createElement('Button');
-                btn.textContent = 'Untag';
-                btn.onclick = function() {
-                    document.getElementById('created_tags_table').removeChild(row);
-                    var index = cacheLocalTags.indexOf(valS);
-                    if (index !== -1) {
-                        var removedTag = cacheLocalTags.splice(index, 1);
+
+            /* to stretch the container div to contain floated list */
+            #navcontainer:after
+            {
+                content: ".";
+                display: block;
+                line-height: 1px;
+                font-size: 1px;
+                clear: both;
+            }
+
+            ul#navlist
+            {
+                list-style: lower-roman;
+                padding: 0;
+                margin: 10 auto;
+                width: 80%;
+                font-size: medium;
+
+            }
+
+            ul#navlist li
+            {
+                display: block;
+                float: left;
+                width: auto;
+                margin: 0;
+                padding: 0;
 
 
-                    }
-                    tagAssociateWithProduct(valS, "untag");
+            }
 
-                    if (valC.toLowerCase() == "Product Type".toLowerCase()) {
-                        productTypeTagCount = productTypeTagCount - 1;
-                    } else if (valC.toLowerCase() == "Occasion".toLowerCase()) {
-                        occasionTagCount = occasionTagCount - 1;
-                    } else if (valC.toLowerCase() == "Product Description".toLowerCase()) {
-                        productDescriptionTagCount = productDescriptionTagCount - 1;
-                    }
+            ul#navlist li a
+            {
+                display: block;
+                width: 100%;
+                padding: 0.5em;
+                border-width: 3px;
+                border-color: #ffe #aaab9c #ccc #fff;
+                border-style: solid;
+                color: #000000;
+                text-decoration-color:#f50fba;
+                background: #f7f2ea;
+
+            }
+
+            #navcontainer>ul#navlist li a { width: auto; }
+
+            ul#navlist li#active a
+            {
+                background: #f0e7d7;
+                color: #800000;
+                font-size: medium
+
+            }
+
+            ul#navlist li a:hover, ul#navlist li#active a:hover
+            {
+                color: #800000;
+                background: transparent;
+                border-color: #aaab9c #fff #fff #ccc;
+            }
+
+
+
+            .datagrid table { 
+
+                text-align: center;
+                width: 100%; 
+            } .datagrid {
+                font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; overflow: hidden;
+                border: 1px solid #006699; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; 
+            }.datagrid table td, .datagrid table th {
+                padding: 3px 10px; 
+
+            }.datagrid table thead th {
+                background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #006699), color-stop(1, #00557F) );
+                background:-moz-linear-gradient( center top, #006699 5%, #00557F 100% );
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#006699', endColorstr='#00557F');
+                background-color:#006699; color:#FFFFFF; font-size: 15px; font-weight: bold; border-left: 1px solid #0070A8;
+            } .datagrid table thead th:first-child { border: none;
+            }.datagrid table tbody td { 
+                color: #00557F; border-left: 1px solid #E1EEF4;font-size: 14px;font-weight: normal;
+            }.datagrid table tbody .alt td { background: #E1EEf4; color: #00557F; 
+            }.datagrid table tbody td:first-child { border-left: none; }.datagrid table tbody tr:last-child td { 
+                border-bottom: none; }
+            </style>
+            <script>
+
+                var cacheLocalTags = [];
+                var localTagsObject = {tagCategory: "", tagString: "", tagSubCategory: ""};
+                var initialValues = {Title: "", Description: "", ProductTags: null, CurrentProductState: "", PrductProviders: null};
+                var available_colors = ["Red", "Green", "Blue", "Cyan", "Orange", "Purple", "Black"];
+                var available_sizes = ["No Size", "XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+                //prototype for clear the array values.
+                Array.prototype.clear = function() {
+                    this.length = 0;
                 };
-                del.appendChild(btn);
-                row.appendChild(thC);
-                row.appendChild(thS);
-                row.appendChild(thSC);
-                row.appendChild(del);
-                document.getElementById('created_tags_table').appendChild(row);
+                var datafromparent;
+                var jsonObject;
+                var providerUpdaterequest;
+                var tagCreateRequest;
+                var tagCreationReqeustCount = 0;
+                var productTagAssociateReq;
+                var appendtagToProduct;
+                var tagObject = {tagCategory: "", tagString: "", tagSubCategory: ""};
+                var tagArray = [];
+                var tags;
+                var tagRequest;
+                var tagsArray = [];
+                var curatorId;
+                //for tags validation.
+                var localTags = [];
+                var curatorReview;
+                var buttonValue;
+                var productTypeTagCount = 0;
+                var occasionTagCount = 0;
+                var productDescriptionTagCount = 0;
 
-                appendtagToProduct = valS;
+                var partialCurated = false;
 
-                if (valSC === undefined)
-                    valSC === null;
-
-                //to attach local data
-
-                localTags.push(valS);
-                if (addtableonly === 1)
-                    createTagRequest(valC, valS, valSC)
-            }
+                var productTypeList, occasionList, productDescriptionList;
 
 
-            function  createGenderTag() {
+                window.addEventListener("message", function(event) {
 
-                var vl = document.querySelector('input[name="gender"]:checked').value;
-                var index = cacheLocalTags.indexOf(vl);
-                if (index == -1) {
-                    tagsArray.push(vl);
-                    cacheLocalTags.push(vl);
-                    createTagReqAndAddTable('Product Description', vl, '', 0);
-                    productDescriptionTagCount = productDescriptionTagCount + 1;
-                    if (taggingStarted == false) {
-                        tagToProduct();
+                    var strings = event.data.split("##");
+                    tags = JSON.parse(strings[0]);
+                    //for (var i = 0; i < tags.length; i++) {
+                    // console.log(tags[i].tagString);
+                    // }
+                    datafromparent = strings[1]
+
+                    curatorReview = strings[2];
+                    cacheLocalTags.clear();
+                    console.log(datafromparent);
+                    console.log(datafromparent);
+                    jsonObject = JSON.parse(datafromparent);
+                    //                for (var imgIndex = 0; imgIndex < jsonObject.productImages.length; imgIndex++) {
+                    //
+                    //                    var img = new Image();
+                    //                    img.onload = function() {
+                    //                        // alert(this.width + 'x' + this.height);
+                    //                        jsonObject.productImages[imgIndex].orignalWidth = this.width;
+                    //                        jsonObject.productImages[imgIndex].orignalHeight = this.height;
+                    //                    }
+                    //                    img.src = jsonObject.productImages[imgIndex].externalURL;
+                    //                }
+                    //                updateImage(jsonObject.productImages[0]);
+                    if (jsonObject.currentProductState == "CRAWLED") {
+                        buttonValue = "Curate And Finish";
+                        partialCurated = true;
                     } else {
+                        partialCurated = false;
+                        buttonValue = "Review And Finish";
+                    }
+
+                    tagCreationReqeustCount = 0;
+                    tagArray.clear();
+                    var isColorArrayNull = false;
+                    var isAvailableSizes = false;
+                    var isAvailableAtZipCodes = false;
+
+                    if (jsonObject.productProviders !== null) {
+                        for (var i = 0; i < jsonObject.productProviders.length; i++) {
+                            if (jsonObject.productProviders[i].availableColors !== null && jsonObject.productProviders[i].availableColors !== undefined) {
+                                if (jsonObject.productProviders[i].availableColors.length === 1) {
+
+                                    if (jsonObject.productProviders[i].availableColors[0] == null || jsonObject.productProviders[i].availableColors[0] == "null") {
+                                        isColorArrayNull = true;
+                                        console.log("isColorArrayNull setTrue " + jsonObject.productProviders[i].availableColors[0]);
+                                    }
+                                }
+                            } else {
+                                console.log("NO productProviders.availableColors");
+                            }
+                            if (jsonObject.productProviders[i].availableSizes !== null && jsonObject.productProviders[i].availableSizes !== undefined) {
+
+                                if (jsonObject.productProviders[i].availableSizes.length === 1) {
+
+                                    if (jsonObject.productProviders[i].availableSizes[0] == null || jsonObject.productProviders[i].availableSizes[0] == "null") {
+                                        isAvailableSizes = true;
+                                        console.log("isAvailableSizes setTrue " + jsonObject.productProviders[i].availableColors[0]);
+                                    }
+                                }
+
+                            } else {
+                                console.log("NO productProviders.availableSizes");
+                            }
+
+                            if (jsonObject.productProviders[i].availableAtZipCodes !== null && jsonObject.productProviders[i].availableAtZipCodes !== undefined) {
+
+                                if (jsonObject.productProviders[i].availableAtZipCodes.length === 1) {
+
+                                    if (jsonObject.productProviders[i].availableAtZipCodes[0] == null || jsonObject.productProviders[i].availableAtZipCodes[0] == "null") {
+                                        isAvailableAtZipCodes = true;
+                                        console.log("isAvailableSizes setTrue " + jsonObject.productProviders[i].availableColors[0]);
+                                    }
+                                }
+                            } else {
+                                console.log("NO productProviders.availableAtZipCodes");
+                            }
+                        }
+
+                    } else {
+                        console.log("NO PRODUCT PROVIDERS");
+                    }
+
+
+                    var url = "https://vue-server-dev.appspot.com/api/productprovider/" + jsonObject.productProviders[0].id;
+                    if (XMLHttpRequest) {
+                        providerUpdaterequest = new XMLHttpRequest();
+                        if ("withCredentials" in providerUpdaterequest) {
+                            // Firefox 3.5 and Safari 4
+                            providerUpdaterequest.open('PUT', url, true);
+                            providerUpdaterequest.setRequestHeader('Custom-Header', 'javascript-client');
+                            providerUpdaterequest.setRequestHeader('Content-Type', 'application/json');
+                            providerUpdaterequest.onreadystatechange = function providerHandler() {
+                                if (providerUpdaterequest.readyState != 4)
+                                    return;
+
+                                if (providerUpdaterequest.status != 200 && providerUpdaterequest.status != 304) {
+
+                                    console.log("provder updated failed");
+                                    return;
+                                }
+                                if (providerUpdaterequest.status == 200)
+                                {
+
+                                    console.log("provder updated successfully&&& " + providerUpdaterequest.responseText);
+
+                                }
+
+                            };
+
+                            console.log("provider color fields " + isColorArrayNull);
+                            console.log("provider isAvailableSizes field " + isAvailableSizes);
+                            console.log("provider isAvailableAtZipCodes field " + isAvailableAtZipCodes);
+                            if (isAvailableAtZipCodes) {
+                                jsonObject.productProviders[0].availableAtZipCodes = null;
+                                console.log("provider availableAtZipCodes fields 1");
+                            }
+                            if (isColorArrayNull) {
+                                jsonObject.productProviders[0].availableColors = null;
+                                console.log("provider availableColors fields 2");
+                            }
+                            if (isAvailableSizes) {
+                                jsonObject.productProviders[0].availableSizes = null;
+                                console.log("provider availableSizes fields 3 ");
+                            }
+
+                            if (isAvailableAtZipCodes || isColorArrayNull || isAvailableSizes) {
+                                providerUpdaterequest.send(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: jsonObject.productProviders[0].quantity, currencyCode: jsonObject.productProviders[0].currencyCode, store: jsonObject.productProviders[0].store, availability: jsonObject.productProviders[0].availability,
+                                    price: jsonObject.productProviders[0].price, onSale: jsonObject.productProviders[0].onSale, salePrice: jsonObject.productProviders[0].salePrice, saleExpirtyDate: 0, availableColors: jsonObject.productProviders[0].availableColors, availableSizes: jsonObject.productProviders[0].availableSizes, availableAtZipCodes: jsonObject.productProviders[0].availableAtZipCodes}));
+                            }
+                        }
+                    }
+
+
+                    afterLoadingThePopup();
+                }, false);
+
+                function dataloader() {
+                    var val = document.getElementById('divid');
+                    val.innerHTML = datafromparent;
+                    console.log(datafromparent);
+                }
+                function afterLoadingThePopup() {
+                    // document.getElementById('currency_id').style.border="thick solid #0000FF";
+                    // document.getElementById('price_id').style.border="thick solid #0000FF";
+                    var jsonResponse = JSON.parse(datafromparent);
+                    //document.getElementById('id_id').value = jsonResponse.id;
+                    // document.getElementById('id_ownerAisleId').value = jsonResponse.ownerAisleId;
+                    // document.getElementById('id_ownerProductListId').value = jsonResponse.ownerProductListId;
+                    document.getElementById('id_title').value = jsonResponse.title;
+                    document.getElementById('id_description').value = jsonResponse.description;
+                    // document.getElementById('id_creatorID').value = jsonResponse.creatorId;
+                    //document.getElementById('id_curatorID').value = jsonResponse.curatorId;
+                    // document.getElementById('id_relatedProductIds').value = jsonResponse.relatedProductIds;
+                    // document.getElementById('send_but_id').value = buttonValue;
+                    //method to call to set current product state...
+                    set_current_ProductState(jsonResponse.currentProductState);
+                    // document.getElementById('single_select_1').value = jsonResponse.currentProductState;
+
+
+
+                    document.getElementById('currency_id').value = jsonObject.productProviders[0].currencyCode;
+                    document.getElementById('price_id').value = jsonObject.productProviders[0].price;
+                    document.getElementById('store_id').value = jsonObject.productProviders[0].store;
+                    var offerEnable = jsonObject.productProviders[0].onSale;
+                    var saleExpiryDate = document.getElementById('expiry_date_id');
+                    var salePrice = document.getElementById('sale_price_id');
+                    saleExpiryDate.value = jsonObject.productProviders[0].saleExpirtyDate;
+                    salePrice.value = jsonObject.productProviders[0].salePrice;
+                    if (offerEnable) {
+                        document.getElementById('onSale_selection_id').checked = true;
+                    } else {
+                        document.getElementById('onSale_selection_id').checked = false;
+                        salePrice.style.backgroundColor = "gray";
+                        saleExpiryDate.style.backgroundColor = "gray";
+
+
+                        salePrice.readOnly = "true";
+                        saleExpiryDate.readOnly = "true";
+                        salePrice.value = "No Offers";
+                        saleExpiryDate.value = "No Offers";
+                    }
+                    document.getElementById('color_id').value = jsonObject.productProviders[0].availableColors;
+                    document.getElementById('size_id').value = jsonObject.productProviders[0].availableSizes;
+
+                    //document.getElementById('id_comments').value = jsonResponse.comments;  
+                    //document.getElementById('id_ratings').value = jsonResponse.ratings;
+                    // product tags..
+                    var product_tags = jsonResponse.productTags;
+                    for (var m = 0; m < product_tags.length; m++) {
+                        var tag_obj = product_tags[m];
+
+                        if (tag_obj === null || tag_obj === undefined) {
+                            continue;
+                        }
+
+                        var tag_cat = tag_obj.tagCategory;
+                        var tag_string = tag_obj.tagString;
+                        var tag_sub_cat = tag_obj.tagSubCategory;
+
+
+                        if (tag_cat.toLowerCase() === "Product Description".toLowerCase()) {
+                            productDescriptionTagCount = productDescriptionTagCount + 1;
+                        } else if (tag_cat.toLowerCase() === "Product Type".toLowerCase()) {
+                            productTypeTagCount = productTypeTagCount + 1;
+                        } else if (tag_cat.toLowerCase() === "Occasion".toLowerCase()) {
+                            occasionTagCount = occasionTagCount + 1;
+                        }
+                        cacheLocalTags.push(tag_string);
+                        createTagReqAndAddTable(tag_cat, tag_string, tag_sub_cat, 0)
 
                     }
-                } else {
-                    alert("Warning: Duplicate tag");
+
+                    //                var images_array = jsonResponse.productImages;
+                    //                var tabl_div = document.getElementById('image_table_id');
+                    //                for (var i = 0; i < images_array.length; i++) {
+                    //
+                    //                    var br0 = document.createElement('br');
+                    //                    var br1 = document.createElement('br');
+                    //                    tabl_div.appendChild(br0);
+                    //                    tabl_div.appendChild(br1);
+                    //                    var table = document.createElement('table');
+                    //                    table.className = "altrowstable";
+                    //                    table.setAttribute('width', '600')
+                    //
+                    //                    var caption = document.createElement('caption');
+                    //                    caption.textContent = 'For The Image: ' + (i + 1);
+                    //                    table.appendChild(caption);
+                    //                    table.appendChild(getElemnt('id', images_array[i].id));
+                    //                    table.appendChild(getElemnt('ownerProductId', images_array[i].ownerProductId));
+                    //                    table.appendChild(getElemnt('externalURL', images_array[i].externalURL));
+                    //                    table.appendChild(getElemnt('internalURL', images_array[i].internalURL));
+                    //
+                    //
+                    //                    tabl_div.appendChild(table);
+                    //                }
+                    //    var product_provider_div = document.getElementById('product_providers_div_id');
+                    var providers_array = jsonResponse.productProviders;
+                    for (var i = 0; i < providers_array.length; i++) {
+                        var br0 = document.createElement('br');
+                        var br1 = document.createElement('br');
+                        //  product_provider_div.appendChild(br0);
+                        //   product_provider_div.appendChild(br1);
+                        var table = document.createElement('table');
+                        table.className = "altrowstable";
+                        table.style.width = '400px';
+
+
+                        var caption = document.createElement('caption');
+                        caption.textContent = 'For The Provider: ' + (i + 1);
+                        table.appendChild(caption);
+                        table.appendChild(getElemnt('id', providers_array[i].id, 'id_' + i));
+                        table.appendChild(getElemnt('ownerProductId', providers_array[i].ownerProductId, 'ownerProductId_' + i));
+                        table.appendChild(getElemnt('externalURL', providers_array[i].externalURL, 'externalURL_' + i));
+                        if (providers_array[i].quantity == 0) {
+                            providers_array[i].quantity = 1;
+                        }
+                        table.appendChild(getElemnt('quantity', providers_array[i].quantity, 'quantity_' + i));
+                        table.appendChild(getElemnt('currencyCode', providers_array[i].currencyCode, 'currencyCode_' + i));
+                        table.appendChild(getElemnt('store', providers_array[i].store, 'store_' + i));
+                        var availability_1 = getAvailability('availability', providers_array[i].availability, 'availability_' + i);
+                        table.appendChild(availability_1);
+                        table.appendChild(getElemnt('price', providers_array[i].price, 'price_' + i));
+                        table.appendChild(add_Onsale_Boolean('onSale', providers_array[i].onSale, 'onSale_' + i));
+                        table.appendChild(getElemnt('salePrice', providers_array[i].salePrice, 'salePrice_' + i));
+                        table.appendChild(getElemnt('saleExpiryDate', providers_array[i].saleExpiryDate, 'saleExpiryDate_' + i));
+                        var available_clrs = getAvailableColors('availableColors', providers_array[i].availableColors, 'availableColors_' + i, i);
+                        table.appendChild(available_clrs);
+                        var available_sizes_1 = getAvailableSizes('availableSizes', providers_array[i].availableSizes, 'availableSizes_' + i, i);
+                        table.appendChild(available_sizes_1);
+                        table.appendChild(getElemnt('availableAtZipCodes', providers_array[i].availableAtZipCodes, 'availableAtZipCodes_' + i));
+                        // product_provider_div.appendChild(table);
+                    }
+
+
+                    //Added Product Tags
+                    //  add_Product_Tags();
+                    add_Product_TagsNew();
+                    excuteProductType();
                 }
-            }
-            function archieveProduct() {
 
-                var r = confirm("Do you want to Archive Product?");
-                if (r === true) {
+                function add_Onsale_Boolean(key, value, id) {
+                    var key_name = 'on_sale_values';
 
+                    var tr = document.createElement('tr');
+                    var th_key = document.createElement('th');
+                    th_key.textContent = key;
+                    tr.appendChild(th_key);
+                    var th = document.createElement('th');
+                    var td = document.createElement('td');
+                    td.style.width = 300;
+                    // sel.value = value;
+
+                    //    alert(value);
+                    // alert(value);
+                    var enums = ['true', 'false'];
+                    for (var i = 0; i < enums.length; i++) {
+
+                        if (enums[i].indexOf(value) === 0) {
+                            var o1 = getRadioButton(key_name, enums[i], true);
+                            td.appendChild(o1);
+                        } else {
+                            var o1 = getRadioButton(key_name, enums[i], false);
+                            td.appendChild(o1);
+                        }
+
+                    }
+                    th.appendChild(td);
+                    tr.appendChild(th);
+                    return tr;
+                    return tr;
+                }
+
+
+                function addTagsToTable(type) {
+                    var table = document.getElementById('tablewithtags_id');
+                    table.innerHTML = '';
+                    var tbdy = document.createElement('tbody');
+
+                    if (type === 0) {
+                        var tr = document.createElement('tr');
+
+                        for (var i = 0; i < productTypeList.length; i++) {
+                            if (i > 100) {
+                                continue;
+                            }
+
+                            var cells = tr.getElementsByTagName('td');
+                            var cellCount = cells.length;
+                            //alert(cellCount);
+                            if (cellCount <= 4) {
+                                var td = document.createElement('td');
+                                td.textContent = productTypeList[i];
+                                td.id = "nottoadd";
+                                tr.appendChild(td);
+
+                            } else {
+                                tbdy.appendChild(tr);
+                                tr == null;
+                                tr = document.createElement('tr');
+                            }
+
+                        }
+
+                        tbdy.appendChild(tr);
+                        table.appendChild(tbdy);
+
+
+                    } else if (type === 1) {
+                        var tr = document.createElement('tr');
+
+                        for (var i = 0; i < occasionList.length; i++) {
+                            if (i > 100) {
+                                continue;
+                            }
+
+                            var cells = tr.getElementsByTagName('td');
+                            var cellCount = cells.length;
+                            //alert(cellCount);
+                            if (cellCount <= 4) {
+                                var td = document.createElement('td');
+                                td.textContent = occasionList[i];
+                                td.id = "nottoadd";
+                                tr.appendChild(td);
+
+                            } else {
+                                tbdy.appendChild(tr);
+                                tr == null;
+                                tr = document.createElement('tr');
+                            }
+
+                        }
+
+                        tbdy.appendChild(tr);
+                        table.appendChild(tbdy);
+
+
+                    } else if (type === 2) {
+                        var tr = document.createElement('tr');
+
+                        for (var i = 0; i < productDescriptionList.length; i++) {
+                            if (i > 100) {
+                                continue;
+                            }
+
+                            var cells = tr.getElementsByTagName('td');
+                            var cellCount = cells.length;
+                            //alert(cellCount);
+                            if (cellCount <= 4) {
+                                var td = document.createElement('td');
+                                td.textContent = productDescriptionList[i];
+                                td.id = "nottoadd";
+                                tr.appendChild(td);
+
+                            } else {
+                                tbdy.appendChild(tr);
+                                tr == null;
+                                tr = document.createElement('tr');
+                            }
+
+                        }
+
+                        tbdy.appendChild(tr);
+                        table.appendChild(tbdy);
+
+
+                    }
+                    setCallTagsTable();
+                }
+
+
+
+                function add_Product_TagsNew() {
+                    var static_categoryNames = ["Product Type", "Occasion", "Product description"];
+                    //add provider tags
+                    var tag_category_array = new Array();
+                    var tag_string_array = new Array();
+                    var tag_category_array_uniqueNames = [];
+                    var tag_string_array_uniqueNames = [];
+                    var tag_substring_array_uniqueNames = [];
+                    for (var k = 0; k < tags.length; k++) {
+                        var vcat = tags[k].tagCategory;
+                        var vstr = tags[k].tagString;
+                        if (vcat !== null && vcat !== undefined && vcat !== '') {
+                            tag_category_array = tag_category_array.concat(vcat.split(','));
+                            var list_tagstring_array = tag_string_array[vcat];
+                            if (vstr !== null && vstr !== undefined && vstr !== '') {
+
+                                if (list_tagstring_array !== undefined) {
+                                    list_tagstring_array.push(vstr);
+                                } else {
+                                    list_tagstring_array = new Array();
+                                    list_tagstring_array.push(vstr);
+                                }
+
+                            }
+                            // alert('ffffffirst:' + list_tagstring_array + "VVV:" + vcat);
+                            tag_string_array[vcat] = list_tagstring_array;
+                        }
+
+
+
+                    }
+
+
+                    $.each(tag_category_array, function(i, el) {
+                        if ($.inArray(el, tag_category_array_uniqueNames) === -1)
+                            tag_category_array_uniqueNames.push(el);
+                    });
+                    for (k = 0; k < static_categoryNames.length; k++) {
+
+                        if (k === 0) {
+                            // var tagcatelement = document.getElementById('select_tagCategory');
+                            var temp0 = tag_string_array[static_categoryNames[k]];
+                            productTypeList = temp0;
+                            // tagcatelement.options[tagcatelement.options.length] = new Option('', '', false, false);
+//                            for (var i = 0; i < temp0.length; i++) {
+//                                tagcatelement.options[tagcatelement.options.length] = new Option(temp0[i], temp0[i], false, false);
+//                            }
+                        }
+                        if (k === 1) {
+                            // var tagStringlement = document.getElementById('select_tagString');
+                            var temp1 = tag_string_array[static_categoryNames[k]];
+                            occasionList = temp1;
+                            //tagStringlement.options[tagStringlement.options.length] = new Option('', '', false, false);
+//                            for (var i = 0; i < temp1.length; i++) {
+//                                tagStringlement.options[tagStringlement.options.length] = new Option(temp1[i], temp1[i], false, false);
+//                            }
+                        }
+                        if (k === 2) {
+                            //   var tagSubCatelement = document.getElementById('select_tagSubCategory');
+                            var temp2 = tag_string_array[static_categoryNames[k]];
+                            productDescriptionList = temp2;
+
+                            //  tagSubCatelement.options[tagSubCatelement.options.length] = new Option('', '', false, false);
+//                            try {
+//                                for (var i = 0; i < temp2.length; i++) {
+//                                    tagSubCatelement.options[tagSubCatelement.options.length] = new Option(temp2[i], temp2[i], false, false);
+//                                }
+//                            } catch (e) {
+//
+//                            }
+                        }
+                    }
+
+                    //set default values from backend
+                    $("select").multiselect({
+                        selectedList: 4}).multiselectfilter();
+                }
+
+                function getElemnt(key, value, id) {
+
+                    var readonly = ['id', 'ownerProductId', 'originalHeight', 'originalWidth', 'modifiedHeight', 'modifiedWidth', 'modifiedWidth', 'modifiedHeight', 'internalURL', 'externalURL', 'availableAtZipCodes'];
+                    var readstatus = false;
+                    for (var s = 0; s < readonly.length; s++) {
+                        if (key === readonly[s]) {
+                            readstatus = true;
+
+                        }
+                    }
+
+
+                    var tr = document.createElement('tr');
+                    var th_key = document.createElement('th');
+                    th_key.textContent = key;
+                    tr.appendChild(th_key);
+                    var th_val = document.createElement('th');
+
+                    var input = document.createElement('input');
+                    input.value = value;
+                    input.type = 'text';
+                    input.id = id;
+
+                    if (readstatus) {
+                        input.readOnly = true;
+                        input.style.backgroundColor = '#d4cbe8';
+
+                    }
+
+
+
+                    th_val.appendChild(input);
+                    tr.appendChild(th_val);
+                    return tr;
+                }
+
+
+
+                function getAvailability(key, value, id) {
+                    var enums = ['IN_STOCK', 'OUT_OF_STOCK', 'EXCESS_INVENTORY', 'RUNNING_LOW', 'TEMPORARY_UNAVAILABLE', 'PERMANENTLY_UNAVAILABLE'];
+                    var valAvail = 'provider_Availability';
+                    var tr = document.createElement('tr');
+                    var th_key = document.createElement('th');
+                    th_key.textContent = key;
+                    tr.appendChild(th_key);
+                    var th = document.createElement('th');
+                    var td = document.createElement('td');
+
+                    var div = document.createElement('div');
+                    div.style.width = '400px';
+
+
+                    // sel.value = value;
+                    for (var i = 0; i < enums.length; i++) {
+
+                        if (enums[i] === value) {
+                            //  var o1 = new Option(enums[i], enums[i], false, true);
+                            //  sel.options[sel.options.length] = o1;
+                            var rdbtn = getRadioButton(valAvail, enums[i], true);
+                            td.appendChild(rdbtn);
+                        } else {
+                            //    var o1 = new Option(enums[i], enums[i], false, false);
+                            //  sel.options[sel.options.length] = o1;
+                            var rdbtn = getRadioButton(valAvail, enums[i], false);
+                            td.appendChild(rdbtn);
+                        }
+
+                    }
+                    div.appendChild(td);
+                    th.appendChild(div);
+                    tr.appendChild(th);
+                    return tr;
+                }
+
+
+                function getAvailableColors(key, value, id, i) {
+
+
+                    var tr = document.createElement('tr');
+                    var th_key = document.createElement('th');
+                    th_key.textContent = key;
+                    tr.appendChild(th_key);
+                    var th_val = document.createElement('th');
+                    var input = document.createElement('input');
+                    input.value = value;
+                    input.type = 'text';
+                    input.id = id;
+                    th_val.appendChild(input);
+                    // tr.appendChild(th_val);
+                    //  var th = document.createElement('th');
+                    // th.style.width = '100px';
+                    var sel = document.createElement('select');
+                    sel.id = "color_selector_" + i;
+                    sel.style.width = "75px";
+                    sel.multiple = 'multiple';
+                    sel.onchange = function() {
+                        var vl = $("#color_selector_" + i).val();
+
+                        var current_val = document.getElementById(id).value;
+                        // alert("111: "+vl.length);
+                        if (vl != null && vl != undefined) {
+
+                            if (current_val === '') {
+                                document.getElementById(id).value = vl.toString();
+                            }
+                            else {
+
+                                for (var k = 0; k < vl.length; k++) {
+                                    //  alert("222: "+vl[k]+" *****: "+current_val.indexOf(vl[k]) );           
+                                    if (current_val.indexOf(vl[k]) < 0) {
+                                        document.getElementById(id).value = current_val + "," + vl[k];
+                                    }
+                                }
+                            }
+                        }
+                    };
+                    available_colors.forEach(function(entry) {
+                        var o1 = new Option(entry, entry, false, false);
+                        sel.options[sel.options.length] = o1;
+                    });
+                    th_val.appendChild(sel);
+                    tr.appendChild(th_val);
+                    return tr;
+                }
+
+                function getAvailableSizes(key, value, id, i) {
+
+
+                    var tr = document.createElement('tr');
+                    var th_key = document.createElement('th');
+                    th_key.textContent = key;
+                    tr.appendChild(th_key);
+                    var th_val = document.createElement('th');
+                    var input = document.createElement('input');
+                    input.value = value;
+                    input.type = 'text';
+                    input.id = id;
+
+                    th_val.appendChild(input);
+                    //  tr.appendChild(th_val);
+                    //var th = document.createElement('th');
+                    var sel = document.createElement('select');
+                    sel.id = "sizes_selector_" + i;
+                    sel.style.width = "75px";
+                    sel.multiple = 'multiple';
+                    sel.onchange = function() {
+                        var vl = $("#sizes_selector_" + i).val();
+
+                        var current_val = document.getElementById(id).value;
+                        // alert("111: "+vl.length);
+                        if (vl != null && vl != undefined) {
+
+                            if (current_val === '') {
+                                document.getElementById(id).value = vl.toString();
+                            }
+                            else {
+
+                                for (var k = 0; k < vl.length; k++) {
+                                    //  alert("222: "+vl[k]+" *****: "+current_val.indexOf(vl[k]) );           
+                                    if (current_val.indexOf(vl[k]) < 0) {
+                                        document.getElementById(id).value = current_val + "," + vl[k];
+                                    }
+                                }
+                            }
+                        }
+
+                    };
+                    available_sizes.forEach(function(entry) {
+                        var o1 = new Option(entry, entry, false, false);
+                        sel.options[sel.options.length] = o1;
+                    });
+                    th_val.appendChild(sel);
+                    tr.appendChild(th_val);
+                    return tr;
+                }
+
+                function  set_current_ProductState(value) {
+
+                    var product_state_sel = document.getElementById('single_select_1');
+                    if (jsonObject.currentProductState === 'CRAWLED') {
+                        var enums = ['CURATED'];
+                    } else {
+                        var enums = ['CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
+                    }
+                    // var enums = ['CRAWLED', 'CURATED', 'CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
+                    var td = document.createElement('td');
+                    var name = "current_product_status";
+
+                    for (var i = 0; i < enums.length; i++) {
+
+                        if ('CRAWLED' === value) {
+                            // alert('curated22: '+value);
+                            var v = getRadioButton(name, enums[i], true);
+                            td.appendChild(v);
+
+                        } else {
+                            var v = getRadioButton(name, enums[i], false);
+                            td.appendChild(v)
+                        }
+
+                    }
+
+                    product_state_sel.appendChild(td);
+
+                }
+
+                function getRadioButton(name, text, status) {
+
+                    var label = document.createElement('label');
+                    label.textContent = text;
+
+                    var input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = name;
+                    input.value = text;
+                    input.textContent = text;
+                    input.checked = status;
+                    label.appendChild(input);
+
+
+                    label.appendChild(input);
+
+                    return label;
+                }
+
+                function getCuratedInfo() {
+                    var title = document.getElementById("id_title").value;
+                    var description = document.getElementById("id_description").value;
+                    var checkedVal = document.querySelector('input[name="current_product_status"]:checked');
+                    description = description.trim();
+                    title = title.trim();
+                    if (checkedVal == null) {
+                        alert("Please Check ProductState");
+                        return false;
+                    }
+
+                    if (title == undefined || title == " " || title.length < 2) {
+                        showAlert("Please fill the title");
+                        return false;
+                    }
+                    jsonObject.title = title;
+
+                    if (description === undefined || description == " " || description.length < 2) {
+                        showAlert("Please fill the description");
+                        return false;
+                    }
+
+                    if (!description.match(/[a-z]/i)) {
+                        showAlert("Description contains only Numbers");
+                        return false;
+                    }
+                    if (!title.match(/[a-z]/i)) {
+                        showAlert("Title contains only Numbers");
+                        return false;
+                    }
+
+                    jsonObject.description = description;
+
+
+                    if (localTags.length < 3 && !partialCurated) {
+                        showAlert("Error: Please create minimum 3 Tags.");
+                        return false;
+                    }
+
+                    if (productTypeTagCount < 1) {
+                        showAlert("Error: Please create atleast one ProductType Tag.");
+                        return false;
+                    }
+                    if (occasionTagCount < 1) {
+                        showAlert("Error: Please create atleast one Occasion Tag.");
+                        return false;
+                    }
+
+                    if (productDescriptionTagCount < 1 && !partialCurated) {
+                        showAlert("Error: Please create atleast one Product Description Tag.");
+                        return false;
+                    }
+
+
+
+                    return true;
+
+                }
+                function showAlert(message) {
+                    alert(message);
+                }
+                function curateProduct() {
+                    if (!getCuratedInfo()) {
+                        return;
+                    }
+                    var title = document.getElementById("id_title").value;
+                    var description = document.getElementById("id_description").value;
+                    jsonObject.currentProductState = document.querySelector('input[name="current_product_status"]:checked').value;
                     var url = "https://vue-server-dev.appspot.com/api/product/" + jsonObject.id;
                     if (XMLHttpRequest) {
                         request = new XMLHttpRequest();
@@ -1483,33 +1137,730 @@ function handleOnSAleClick(cb) {
                             request.open('PUT', url, true);
                             request.setRequestHeader('Custom-Header', 'javascript-client');
                             request.setRequestHeader('Content-Type', 'application/json');
-                            request.onreadystatechange = function() {
-
-                                if (request.readyState !== 4)
-                                    return;
-                                if (request.status !== 200 && request.status !== 304) {
-                                    // alert('HTTP POST error ' + tagRequest.status + 'Response ' + tagRequest.responseText);
-
-                                    return;
-                                }
-                                if (request.status === 200)
-                                {
-                                    window.opener.close();
-                                    close();
-
-                                }
-                            };
+                            request.onreadystatechange = update_handler;
                             //product update request:
-                            request.send(JSON.stringify({id: jsonObject.id, ownerAisleId: jsonObject.ownerAisleId, ownerProductListId: jsonObject.ownerProductListId, creatorId: jsonObject.creatorId, curatorId: jsonObject.curatorId, title: jsonObject.title, description: jsonObject.description, currentProductState: "ARCHIVED", relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
+                            request.send(JSON.stringify({id: jsonObject.id, ownerAisleId: jsonObject.ownerAisleId, ownerProductListId: jsonObject.ownerProductListId, creatorId: jsonObject.creatorId, curatorId: jsonObject.curatorId, title: title, description: description, currentProductState: jsonObject.currentProductState, relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
                         }
                     }
-                } else {
+
+                }
+
+                function update_handler() {
+                    if (request.readyState != 4)
+                        return;
+                    if (request.status == 200)
+                    {
+                        //updateProvider();
+                        if (curatorReview == "Curate Now") {
+                            alert('Info: Curated Successfully : ');
+                        } else {
+                            alert('Info: Reviewed Successfully :');
+                        }
+
+                        window.opener.close();
+                        close();
+                    }
+                    if (request.status != 200 && request.status != 304) {
+                        //alert('HTTP POST error ' + request.status + 'Response ' + request.responseText);
+                        return;
+                    }
+                }
+                function getCuratedArray(myarra) {
+
+                    var curatedArray = [];
+                    for (var i = 0; i < myarra.length; i++) {
+                        var item = myarra[i];
+                        if (item !== null) {
+                            item = item.trim();
+                            if (item.length === 0 || item === "null") {
+
+                            } else {
+                                curatedArray.push(item);
+                            }
+                        }
+                    }
+                    if (curatedArray.length == 0) {
+                        curatedArray = null;
+                    }
+                    return curatedArray;
+                }
+                function updateProvider() {
+
+                    var updated_id = document.getElementById('id_' + '0').value;
+                    var updated_ownerProductId = document.getElementById('ownerProductId_' + '0').value;
+                    var updated_externalURL = document.getElementById('externalURL_' + '0').value;
+                    var updated_quantity = document.getElementById('quantity_' + '0').value;
+                    var updated_currencyCode = document.getElementById('currencyCode_' + '0').value;
+                    var updated_store = document.getElementById('store_' + '0').value;
+                    var updated_price = document.getElementById('price_' + '0').value;
+                    //   var updated_availability = document.getElementById('availability_'+'0');
+                    // var updated_onSale = document.getElementById('onSale_' + '0').value;
+                    //  var updated_onSale = $('#onSale_' + '0').val();
+                    var updated_salePrice = document.getElementById('salePrice_' + '0').value;
+                    var updated_onSale = document.querySelector('input[name="on_sale_values"]:checked').value
+
+
+                    var updated_saleExpiryDate = document.getElementById('saleExpiryDate_' + '0').value;
+                    var updated_availableColors = document.getElementById('availableColors_' + '0').value;
+                    var updated_availableSizes = document.getElementById('availableSizes_' + '0').value;
+                    var updated_availableAtZipCodes = document.getElementById('availableAtZipCodes_' + '0').value;
+                    // var updated_availability = $("#availability_" + '0').val();
+                    var updated_availability = document.querySelector('input[name="provider_Availability"]:checked').value
+
+                    updated_availableSizes = toTitleCase(updated_availableSizes);
+                    updated_availableColors = toTitleCase(updated_availableColors);
+                    var colorArray = updated_availableColors.split(",");
+                    var sizesArray = updated_availableSizes.split(",");
+                    var zipcodeArray = updated_availableAtZipCodes.split(",");
+
+
+                    colorArray = getCuratedArray(colorArray);
+                    sizesArray = getCuratedArray(sizesArray);
+                    zipcodeArray = getCuratedArray(zipcodeArray);
+
+                    updated_price = updated_price.trim();
+                    updated_salePrice = updated_salePrice.trim();
+                    updated_store = updated_store.trim();
+
+                    updated_price = parseFloat(updated_price.replace(',', ''));
+                    updated_salePrice = parseFloat(updated_salePrice.replace(',', ''));
+
+
+                    //  alert('price: ' + updated_price + " salep: " + updated_salePrice);
+
+                    if (updated_price == undefined || updated_price == null || updated_price.length < 1 || updated_price == 0) {
+                        // alert("Please Fill Price");
+                        // return;
+                    }
+
+                    if (updated_store == undefined || updated_store == null || updated_store.length < 1) {
+                        //alert("Please Fill Store");
+                        // return;
+                    }
+
+                    if (updated_onSale && (updated_salePrice == undefined || updated_salePrice == null || updated_salePrice.length < 1 || updated_salePrice == 0)) {
+                        alert("Please Fill Sale Price");
+                        return;
+                    }
+
+                    if (colorArray === undefined || colorArray === null || colorArray.length < 1) {
+                        if (!partialCurated) {
+                            alert("Please Fill Available Colors");
+                            return;
+                        }
+                    }
+
+                    if (sizesArray === undefined || sizesArray === null || sizesArray.length < 1) {
+                        if (!partialCurated) {
+                            alert("Please Fill Available Sizes");
+                            return;
+                        }
+                    }
+
+                    if (updated_availability == undefined || updated_availability == null || updated_availability.length < 1) {
+                        alert("Please Fill Availability");
+                        return;
+                    }
+
+                    if (updated_currencyCode == undefined || updated_currencyCode == null || updated_currencyCode.length < 1) {
+                        alert("Please Fill Currency Code");
+                        return;
+                    }
+
+                    var url = "https://vue-server-dev.appspot.com/api/productprovider/" + jsonObject.productProviders[0].id;
+                    if (XMLHttpRequest) {
+                        providerUpdaterequest = new XMLHttpRequest();
+                        if ("withCredentials" in providerUpdaterequest) {
+                            // Firefox 3.5 and Safari 4
+                            providerUpdaterequest.open('PUT', url, true);
+                            providerUpdaterequest.setRequestHeader('Custom-Header', 'javascript-client');
+                            providerUpdaterequest.setRequestHeader('Content-Type', 'application/json');
+                            providerUpdaterequest.onreadystatechange = function providerHandler() {
+                                if (providerUpdaterequest.readyState != 4)
+                                    return;
+
+                                if (providerUpdaterequest.status != 200 && providerUpdaterequest.status != 304) {
+
+                                    alert('HTTP POST error ' + providerUpdaterequest.status + 'Response ' + providerUpdaterequest.responseText);
+                                    return;
+                                }
+                                if (providerUpdaterequest.status == 200)
+                                {
+
+                                    curateProduct();
+
+                                }
+
+                            };
+                            providerUpdaterequest.send(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
+                                price: updated_price, onSale: updated_onSale, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: null}));
+                            //print logs in console        
+                            console.log("Provider: " + JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
+                                price: updated_price, onSale: updated_onSale, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: null}));
+                        }
+                    }
+                }
+
+
+                function createTagRequest(category, string, subcat) {
+                    console.log("createTagRequest fun:   CAT:" + category + " Tag String: " + string);
+                    if (category.toLowerCase() == "Product Type".toLowerCase()) {
+                        productTypeTagCount = productTypeTagCount + 1;
+                    } else if (category.toLowerCase() == "Occasion".toLowerCase()) {
+                        occasionTagCount = occasionTagCount + 1;
+                    } else if (category.toLowerCase() == "Product description".toLowerCase()) {
+                        productDescriptionTagCount = productDescriptionTagCount + 1;
+                    }
+
+                    var url = "https://vue-server-dev.appspot.com/api/producttag";
+                    if (XMLHttpRequest) {
+                        tagCreateRequest = new XMLHttpRequest();
+                        if ("withCredentials" in tagCreateRequest) {
+                            tagCreateRequest.open('POST', url, true);
+                            tagCreateRequest.setRequestHeader('Custom-Header', 'javascript-client');
+                            tagCreateRequest.setRequestHeader('Content-Type', 'application/json');
+                            tagCreateRequest.onreadystatechange = tagHandler;
+                            tagCreateRequest.send(JSON.stringify({tagCategory: category, tagString: string, tagSubCategory: subcat}));
+                        }
+                    }
+                }
+                function tagHandler() {
+                    if (tagCreateRequest.readyState != 4)
+                        return;
+                    if (tagCreateRequest.status != 200 && tagCreateRequest.status != 304) {
+                        //ToDO: if tag is created already just append to product.  appendtagToProduct  
+                        if (appendtagToProduct != undefined) {
+                            tagAssociateWithProduct(appendtagToProduct, "tag");
+                        }
+                        return;
+                    }
+                    if (tagCreateRequest.status == 200)
+                    {
+                        console.log("createTagRequest fun success:    ");
+                        var jsonTagObject = JSON.parse(tagCreateRequest.responseText);
+                        tagAssociateWithProduct(jsonTagObject.tagString, "tag");
+                    }
+
+                }
+                var taging;
+                function tagAssociateWithProduct(tagString, tag) {
+                    console.log("tagAssociateWithProduct fun success:    TAGString: " + tagString);
+                    taging = tag;
+                    if (tag == "untag") {
+                        var position = localTags.indexOf(tagString);
+                        if (position != -1) {
+                            localTags.splice(position, 1);
+                        }
+                    }
+                    var url = "https://vue-server-dev.appspot.com/api/product/" + tag + "/" + jsonObject.id + "/" + tagString;
+                    if (XMLHttpRequest) {
+                        productTagAssociateReq = new XMLHttpRequest();
+                        if ("withCredentials" in productTagAssociateReq) {
+                            // Firefox 3.5 and Safari 4
+                            productTagAssociateReq.open('PUT', url, true);
+                            productTagAssociateReq.setRequestHeader('Custom-Header', 'javascript-client');
+                            productTagAssociateReq.setRequestHeader('Content-Type', 'application/json');
+                            productTagAssociateReq.onreadystatechange = tagAssociatHandler;
+                            productTagAssociateReq.send();
+                        }
+                    }
+
+                }
+
+                function tagAssociatHandler() {
+                    if (productTagAssociateReq.readyState != 4)
+                        return;
+                    if (productTagAssociateReq.status != 200 && productTagAssociateReq.status != 304) {
+                        alert('HTTP POST error ' + productTagAssociateReq.status + 'Response ' + productTagAssociateReq.responseText);
+                        return;
+                    }
+                    if (productTagAssociateReq.status == 200)
+                    {
+                        console.log("tagAssociatHandler fun success response:    " + productTagAssociateReq.responseText);
+                        console.log("tagAssociateWithProduct fun success:      ");
+
+                    }
+
+                }
+
+
+                var taggingStarted = false;
+                function tagToProduct() {
+                    taggingStarted = true;
+                    var tagString = tagsArray.splice(0, 1);
+                    if (tagString === undefined || tagString.length < 1) {
+                        taggingStarted = false;
+                        return;
+                    }
+
+                    var url = "https://vue-server-dev.appspot.com/api/product/tag/" + jsonObject.id + "/" + tagString;
+                    if (XMLHttpRequest) {
+                        tagRequest = new XMLHttpRequest();
+                        if ("withCredentials" in tagRequest) {
+                            // Firefox 3.5 and Safari 4
+                            tagRequest.open('PUT', url, true);
+                            tagRequest.setRequestHeader('Custom-Header', 'javascript-client');
+                            tagRequest.setRequestHeader('Content-Type', 'application/json');
+                            tagRequest.onreadystatechange = tagToProductHandler;
+                            tagRequest.send();
+                        }
+                    }
+
+                }
+
+                function tagToProductHandler() {
+                    if (tagRequest.readyState !== 4)
+                        return;
+                    if (tagRequest.status !== 200 && tagRequest.status !== 304) {
+                        // alert('HTTP POST error ' + tagRequest.status + 'Response ' + tagRequest.responseText);
+                        tagToProduct();
+                        return;
+                    }
+                    if (tagRequest.status === 200)
+                    {
+                        if (tagsArray.length == 0) {
+                            // alert("Tags are attached to product");
+                        }
+                        tagToProduct();
+                    }
+
+                }
+                function handleOnSAleClick(cb) {
+                    var saleExpiryDate = document.getElementById('expiry_date_id');
+                    var salePrice = document.getElementById('sale_price_id');
+                    if (cb.checked) {
+                        salePrice.style.backgroundColor = "white";
+                        saleExpiryDate.style.backgroundColor = "white";
+                        salePrice.readOnly = "false";
+                        saleExpiryDate.readOnly = "false";
+                        salePrice.removeAttribute("readonly");
+                        saleExpiryDate.removeAttribute("readonly");
+                        salePrice.value = "";
+                        saleExpiryDate.value = "";
+                        saleExpiryDate.placeholder = "Please Enter Valid Date";
+                        salePrice.placeholder = "Please Enter Sale Price";
+                    } else {
+                        salePrice.style.backgroundColor = "gray";
+                        saleExpiryDate.style.backgroundColor = "gray";
+                        salePrice.readOnly = "true";
+                        saleExpiryDate.readOnly = "true";
+                        salePrice.value = "No Offers";
+                        saleExpiryDate.value = "No Offers";
+                    }
+                }
+            </script>
+
+            <link rel="stylesheet" type="text/css" href="src/jquery.multiselect.css" />
+            <link rel="stylesheet" type="text/css" href="src/jquery.multiselect.filter.css" />
+            <link rel="stylesheet" type="text/css" href="assets/style.css" />
+            <link rel="stylesheet" type="text/css" href="assets/prettify.css" />
+            <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/ui-lightness/jquery-ui.css" />
+            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+            <script type="text/javascript" src="src/jquery.multiselect.js"></script>
+            <script type="text/javascript" src="src/jquery.multiselect.filter.js"></script>
+            <script type="text/javascript" src="assets/prettify.js"></script>
+
+
+            <link rel="stylesheet" href="radio/style.css"/>
+            <style type="text/css">
+            label {margin-right:20px;}
+        </style>
+        <script type="text/javascript" src="radio/jspatch.js"></script>
+
+        <script type="text/javascript">
+
+                function addTagsToTableVaz() {
+                    var tagtype;
+                    $("a[name^='ok']").each(function() {
+                        tagtype = this.textContent;
+                    });
+
+
+
+                    var elements = [];
+
+                    $("td[id^='toadd']").each(function() {
+                        var val = this.textContent;
+                        
+                        elements.push(val);
+                        if(val!=undefined && this.textContent!=''&& this.textContent!=null){
+                          //  tagsArray.push(val);
+                             //  addElementToTable(tagtype, val, '');
+                        }
+                        
+                    });
+                    
+                        var stringOfTagss = elements.toString();
+                    
+                                  //for Occasion
+                    if (tagtype !== null && tagtype !== undefined && tagtype !== '') {
+                        var productType = tagtype;
+                        for (var p = 0; p < elements.length; p++) {
+
+
+                            for (var q = 0; q < tags.length; q++) {
+
+                                var cat = tags[q].tagCategory;
+                                var tagstr = tags[q].tagString;
+                                var tagSubStr = tags[q].tagSubCategory;
+                                if (cat !== null && cat !== undefined && cat.indexOf(tagtype) === 0 && tagstr.indexOf(elements[p]) === 0) {
+                                    var index = cacheLocalTags.indexOf(tagstr);
+                                    if (index == -1) {
+                                        cacheLocalTags.push(tagstr);
+                                       
+                                       if(tagtype==='Occasion')
+                                        occasionTagCount = occasionTagCount + 1;
+                                    
+                                       if(tagtype==='Product Type')
+                                         productTypeTagCount = productTypeTagCount + 1;
+                                     
+                                        if(tagtype==='Product description')
+                                          productDescriptionTagCount = productDescriptionTagCount + 1;
+                                          
+                                        addElementToTable(tagtype, tagstr, tagSubStr);
+                                        tagsArray.push(tagstr);
+                                    } else {
+                                        //alert("duplicate tag");
+                                    }
+
+                                }
+                            }
+
+                        }
+                    }
+
+                
+//                    alert("Type: " + tagtype + " List:" + stringOfElementIDs);
+                 
+                                        
+//                                        
+//                    var valC = $("#select_tagCategory").val();
+//                    var valS = $("#select_tagString").val();
+//                    var valSC = $("#select_tagSubCategory").val();
+//                    //for Product Type
+//                    if (valC !== null && valC !== undefined && valC !== '') {
+//                        var productType = valC;
+//                        for (var p = 0; p < productType.length; p++) {
+//
+//
+//                            for (var q = 0; q < tags.length; q++) {
+//                                var cat = tags[q].tagCategory;
+//                                var tagstr = tags[q].tagString;
+//                                var tagSubStr = tags[q].tagSubCategory;
+//                                if (cat !== null && cat !== undefined && cat.indexOf('Product Type') === 0 && tagstr.indexOf(productType[p]) === 0) {
+//                                    var index = cacheLocalTags.indexOf(tagstr);
+//                                    if (index == -1) {
+//                                        cacheLocalTags.push(tagstr);
+//                                        productTypeTagCount = productTypeTagCount + 1;
+//                                        addElementToTable('Product Type', tagstr, tagSubStr);
+//                                        tagsArray.push(tagstr);
+//                                    } else {
+//                                        //alert("duplicate tag");
+//                                    }
+//
+//
+//
+//                                }
+//                            }
+//
+//                        }
+//                    }
+
+
+//                    //for Occasion
+//                    if (valS !== null && valS !== undefined && valS !== '') {
+//                        var productType = valS;
+//                        for (var p = 0; p < productType.length; p++) {
+//
+//
+//                            for (var q = 0; q < tags.length; q++) {
+//
+//                                var cat = tags[q].tagCategory;
+//                                var tagstr = tags[q].tagString;
+//                                var tagSubStr = tags[q].tagSubCategory;
+//                                if (cat !== null && cat !== undefined && cat.indexOf('Occasion') === 0 && tagstr.indexOf(productType[p]) === 0) {
+//                                    var index = cacheLocalTags.indexOf(tagstr);
+//                                    if (index == -1) {
+//                                        cacheLocalTags.push(tagstr);
+//                                        occasionTagCount = occasionTagCount + 1;
+//                                        addElementToTable('Occasion', tagstr, tagSubStr);
+//                                        tagsArray.push(tagstr);
+//                                    } else {
+//                                        //alert("duplicate tag");
+//                                    }
+//
+//                                }
+//                            }
+//
+//                        }
+//                    }
+
+//                    //for Product description
+//                    if (valSC !== null && valSC !== undefined && valSC !== '') {
+//                        var productType = valSC;
+//                        for (var p = 0; p < productType.length; p++) {
+//
+//                            for (var q = 0; q < tags.length; q++) {
+//                                var cat = tags[q].tagCategory;
+//                                var tagstr = tags[q].tagString;
+//                                var tagSubStr = tags[q].tagSubCategory;
+//                                if (cat !== null && cat !== undefined && cat.indexOf('Product description') === 0 && tagstr.indexOf(productType[p]) === 0) {
+//                                    var index = cacheLocalTags.indexOf(tagstr);
+//                                    if (index == -1) {
+//                                        cacheLocalTags.push(tagstr);
+//                                        productDescriptionTagCount = productDescriptionTagCount + 1;
+//                                        addElementToTable('Product description', tagstr, tagSubStr);
+//                                        tagsArray.push(tagstr);
+//                                    } else {
+//                                        //alert("duplicate tag");
+//                                    }
+//                                }
+//                            }
+//
+//                        }
+//                    }
+
+                    //create TAG.
+                    //   createTagRequest(valC, tagString, subCatString);
+                    if (taggingStarted == false) {
+                        tagToProduct();
+                    } else {
+
+                    }
+
+                }
+
+                function addElementToTable(cat, str, substr) {
+
+                    createTagReqAndAddTable(cat, str, substr, 0);
+
+                }
+
+                function createCustomTag() {
+                    var valC, valS, valSC;
+                    valC = document.getElementById("id_tag_cat").value;
+                    valS = document.getElementById("id_tag_str").value;
+                    valSC = document.getElementById("id_sub_str").value;
+                    if (valS === null || valS.length < 1 || valS === undefined) {
+                        alert("Tag String must not empty");
+                        return;
+                    }
+                    if (valC === null || valC.length < 1 || valC === undefined) {
+                        alert("Tag Category must not empty");
+                        return;
+                    }
+                    var index = cacheLocalTags.indexOf(valS);
+                    if (index === -1) {
+                        cacheLocalTags.push(valS);
+                        document.getElementById("id_tag_str").value = "";
+                        document.getElementById("id_tag_cat").value = '';
+                        console.log("CAT:" + valC + " Tag String: " + valS);
+                        valS = valS.trim();
+                        valS = toTitleCase(valS);
+                        createTagReqAndAddTable(valC, valS, valSC, 1);
+                    } else {
+                        alert("duplicate tag");
+                    }
+
+                }
+                function toTitleCase(str)
+                {
+                    //make every starting letter capital.
+                    return str.replace(/\w\S*/g, function(txt) {
+                        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                    });
+                }
+                function createTagReqAndAddTable(valC, valS, valSC, addtableonly) {
+                    var row = document.createElement('tr');
+                    var thC = document.createElement('th');
+                    thC.textContent = valC;
+                    var thS = document.createElement('th');
+                    thS.textContent = valS;
+                    var thSC = document.createElement('th');
+                    thSC.textContent = valSC;
+                    var del = document.createElement('th')
+                    var btn = document.createElement('Button');
+                    btn.textContent = 'Untag';
+                    btn.onclick = function() {
+                        document.getElementById('created_tags_table').removeChild(row);
+                        var index = cacheLocalTags.indexOf(valS);
+                        if (index !== -1) {
+                            var removedTag = cacheLocalTags.splice(index, 1);
+
+
+                        }
+                        tagAssociateWithProduct(valS, "untag");
+
+                        if (valC.toLowerCase() == "Product Type".toLowerCase()) {
+                            productTypeTagCount = productTypeTagCount - 1;
+                        } else if (valC.toLowerCase() == "Occasion".toLowerCase()) {
+                            occasionTagCount = occasionTagCount - 1;
+                        } else if (valC.toLowerCase() == "Product Description".toLowerCase()) {
+                            productDescriptionTagCount = productDescriptionTagCount - 1;
+                        }
+                    };
+                    del.appendChild(btn);
+                    row.appendChild(thC);
+                    row.appendChild(thS);
+                    row.appendChild(thSC);
+                    row.appendChild(del);
+                    document.getElementById('created_tags_table').appendChild(row);
+
+                    appendtagToProduct = valS;
+
+                    if (valSC === undefined)
+                        valSC === null;
+
+                    //to attach local data
+
+                    localTags.push(valS);
+                    if (addtableonly === 1)
+                        createTagRequest(valC, valS, valSC)
+                }
+
+
+                function  createGenderTag() {
+
+                    var vl = document.querySelector('input[name="gender"]:checked').value;
+                    var index = cacheLocalTags.indexOf(vl);
+                    if (index == -1) {
+                        tagsArray.push(vl);
+                        cacheLocalTags.push(vl);
+                        createTagReqAndAddTable('Product Description', vl, '', 0);
+                        productDescriptionTagCount = productDescriptionTagCount + 1;
+                        if (taggingStarted == false) {
+                            tagToProduct();
+                        } else {
+
+                        }
+                    } else {
+                        alert("Warning: Duplicate tag");
+                    }
+                }
+                function archieveProduct() {
+
+                    var r = confirm("Do you want to Archive Product?");
+                    if (r === true) {
+
+                        var url = "https://vue-server-dev.appspot.com/api/product/" + jsonObject.id;
+                        if (XMLHttpRequest) {
+                            request = new XMLHttpRequest();
+                            if ("withCredentials" in request) {
+                                // Firefox 3.5 and Safari 4
+                                request.open('PUT', url, true);
+                                request.setRequestHeader('Custom-Header', 'javascript-client');
+                                request.setRequestHeader('Content-Type', 'application/json');
+                                request.onreadystatechange = function() {
+
+                                    if (request.readyState !== 4)
+                                        return;
+                                    if (request.status !== 200 && request.status !== 304) {
+                                        // alert('HTTP POST error ' + tagRequest.status + 'Response ' + tagRequest.responseText);
+
+                                        return;
+                                    }
+                                    if (request.status === 200)
+                                    {
+                                        window.opener.close();
+                                        close();
+
+                                    }
+                                };
+                                //product update request:
+                                request.send(JSON.stringify({id: jsonObject.id, ownerAisleId: jsonObject.ownerAisleId, ownerProductListId: jsonObject.ownerProductListId, creatorId: jsonObject.creatorId, curatorId: jsonObject.curatorId, title: jsonObject.title, description: jsonObject.description, currentProductState: "ARCHIVED", relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
+                            }
+                        }
+                    } else {
+
+                    }
+
+
 
                 }
 
 
 
-            }
+                function setCallTagsTable() {
+                    $("#tablewithtags_id td").click(function() {
+                        rowClick(this);
+                    });
+                }
+
+                function  excuteOccasion() {
+                    var eleoccasion = document.getElementById('occasion_id');
+                    eleoccasion.style.backgroundColor = "#e59b7f";
+                    eleoccasion.name = "ok";
+
+                    var eleproductType = document.getElementById('product_type_id');
+                    eleproductType.style.backgroundColor = "#7fc9e5";
+                    eleproductType.name = "no";
+
+                    var eleProductDes = document.getElementById('product_des_id');
+                    eleProductDes.style.backgroundColor = "#7fc9e5";
+                    eleProductDes.name = "no";
+
+                    addTagsToTable(1);
+                }
+
+                function  excuteProductType() {
+                    var eleoccasion = document.getElementById('occasion_id');
+                    eleoccasion.style.backgroundColor = "#7fc9e5";
+                    eleoccasion.name = "no";
+
+                    var eleproductType = document.getElementById('product_type_id');
+                    eleproductType.style.backgroundColor = "#e59b7f";
+                    eleproductType.name = "ok";
+
+                    var eleProductDes = document.getElementById('product_des_id');
+                    eleProductDes.style.backgroundColor = "#7fc9e5";
+                    eleProductDes.name = "no";
+                    addTagsToTable(0);
+                }
+                function excuteProductDescription() {
+                    var eleoccasion = document.getElementById('occasion_id');
+                    eleoccasion.style.backgroundColor = "#7fc9e5";
+                    eleoccasion.name = "no";
+
+                    var eleproductType = document.getElementById('product_type_id');
+                    eleproductType.style.backgroundColor = "#7fc9e5";
+                    eleproductType.name = "no";
+
+                    var eleProductDes = document.getElementById('product_des_id');
+                    eleProductDes.style.backgroundColor = "#e59b7f";
+                    eleProductDes.name = "ok";
+                    addTagsToTable(2);
+                }
+                function rowClick(vl) {
+
+                    var color = '#ffffff'
+                    try {
+                        color = rgb2hex(vl.style.backgroundColor);
+                    } catch (e) {
+
+                    }
+
+
+                    if (color === '#e59b7f') {
+                        vl.style.backgroundColor = "#ffffff";
+                        vl.id = "nottoadd"
+                    } else {
+                        vl.style.backgroundColor = "#e59b7f";
+                        vl.id = "toadd"
+                    }
+                }
+                var hexDigits = new Array
+                        ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f");
+
+                //Function to convert hex format to a rgb color
+                function rgb2hex(rgb) {
+                    rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+                    return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+                }
+
+                function hex(x) {
+                    return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
+                }
         </script>
         <script type="text/javascript">
             //auto expand textarea
@@ -1569,7 +1920,7 @@ function handleOnSAleClick(cb) {
             <li>
                 <label>Create Tags</label>
                 <br>
-                <table class="altrowstable" id="alternatecolor"  width="600">
+<!--                <table class="altrowstable" id="alternatecolor"  width="600">
 
                     <tr>
                         <th><strong>Product Type:</strong>
@@ -1600,7 +1951,30 @@ function handleOnSAleClick(cb) {
 
                         </tr>
 
-                </table>
+
+
+                </table>-->
+
+
+
+                <div id="navcontainer" >
+                    <ul id="navlist">
+                        <li  style="background-color: #7fc9e5"><a onclick="excuteProductType()" id="product_type_id">Product Type</a></li>
+                        <li  style="background-color: #7fc9e5"><a onclick="excuteOccasion()" id="occasion_id" >Occasion</a></li>
+                        <li  style="background-color: #7fc9e5"><a onclick="excuteProductDescription()" id="product_des_id" >Product description</a></li>
+
+                    </ul>
+                </div>
+                <div class="datagrid"  ><table id="tablewithtags_id" border="1">
+                        <!--                        <thead><tr><th>header</th><th>header</th><th>header</th><th>header</th></tr></thead>-->
+
+                        <!--                        <tbody><tr><td >data</td><td >data</td><td >data</td><td>data</td></tr>
+                                                    <tr ><td>data</td><td>data</td><td>data</td><td>data</td></tr>
+                                                    <tr><td>data</td><td>data</td><td>data</td><td>data</td></tr>
+                                                    <tr ><td>data</td><td>data</td><td>data</td><td>data</td></tr>
+                                                    <tr><td>data</td><td>data</td><td>data</td><td>data</td></tr>
+                                                </tbody>-->
+                    </table></div>
 
                 <input type="button" class="button" value="Tag to product" onclick="addTagsToTableVaz()" />
 
@@ -1826,13 +2200,13 @@ function handleOnSAleClick(cb) {
                 $(this).autocomplete('search');
             });
         });
-          $(function() {
-                    $('table').on('click', 'td', function() {
-                       // $(this).parent().children().removeClass('active');
-                        $(this).addClass('active');
-                    });
-                });  
-    
+        $(function() {
+            $('table').on('click', 'td', function() {
+                // $(this).parent().children().removeClass('active');
+                $(this).addClass('active');
+            });
+        });
+
     </script>
 
 </label>
