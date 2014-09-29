@@ -438,37 +438,37 @@
                 add_Product_TagsNew();
             }
 
-            function add_Onsale_Boolean(key, value, id) {
-                var key_name = 'on_sale_values';
-
-                var tr = document.createElement('tr');
-                var th_key = document.createElement('th');
-                th_key.textContent = key;
-                tr.appendChild(th_key);
-                var th = document.createElement('th');
-                var td = document.createElement('td');
-                td.style.width = 300;
-                // sel.value = value;
-
-                //    alert(value);
-                // alert(value);
-                var enums = ['true', 'false'];
-                for (var i = 0; i < enums.length; i++) {
-
-                    if (enums[i].indexOf(value) === 0) {
-                        var o1 = getRadioButton(key_name, enums[i], true);
-                        td.appendChild(o1);
-                    } else {
-                        var o1 = getRadioButton(key_name, enums[i], false);
-                        td.appendChild(o1);
-                    }
-
-                }
-                th.appendChild(td);
-                tr.appendChild(th);
-                return tr;
-                return tr;
-            }
+//            function add_Onsale_Boolean(key, value, id) {
+//                var key_name = 'on_sale_values';
+//
+//                var tr = document.createElement('tr');
+//                var th_key = document.createElement('th');
+//                th_key.textContent = key;
+//                tr.appendChild(th_key);
+//                var th = document.createElement('th');
+//                var td = document.createElement('td');
+//                td.style.width = 300;
+//                // sel.value = value;
+//
+//                //    alert(value);
+//                // alert(value);
+//                var enums = ['true', 'false'];
+//                for (var i = 0; i < enums.length; i++) {
+//
+//                    if (enums[i].indexOf(value) === 0) {
+//                        var o1 = getRadioButton(key_name, enums[i], true);
+//                        td.appendChild(o1);
+//                    } else {
+//                        var o1 = getRadioButton(key_name, enums[i], false);
+//                        td.appendChild(o1);
+//                    }
+//
+//                }
+//                th.appendChild(td);
+//                tr.appendChild(th);
+//                return tr;
+//                return tr;
+//            }
 
 
 
@@ -543,181 +543,181 @@
                     selectedList: 4}).multiselectfilter();
             }
 
-            function getElemnt(key, value, id) {
-
-                var readonly = ['id', 'ownerProductId', 'originalHeight', 'originalWidth', 'modifiedHeight', 'modifiedWidth', 'modifiedWidth', 'modifiedHeight', 'internalURL', 'externalURL', 'availableAtZipCodes'];
-                var readstatus = false;
-                for (var s = 0; s < readonly.length; s++) {
-                    if (key === readonly[s]) {
-                        readstatus = true;
-
-                    }
-                }
-
-
-                var tr = document.createElement('tr');
-                var th_key = document.createElement('th');
-                th_key.textContent = key;
-                tr.appendChild(th_key);
-                var th_val = document.createElement('th');
-
-                var input = document.createElement('input');
-                input.value = value;
-                input.type = 'text';
-                input.id = id;
-
-                if (readstatus) {
-                    input.readOnly = true;
-                    input.style.backgroundColor = '#d4cbe8';
-
-                }
-
-
-
-                th_val.appendChild(input);
-                tr.appendChild(th_val);
-                return tr;
-            }
-
-
-
-            function getAvailability(key, value, id) {
-                var enums = ['IN_STOCK', 'OUT_OF_STOCK', 'EXCESS_INVENTORY', 'RUNNING_LOW', 'TEMPORARY_UNAVAILABLE', 'PERMANENTLY_UNAVAILABLE'];
-                var valAvail = 'provider_Availability';
-                var tr = document.createElement('tr');
-                var th_key = document.createElement('th');
-                th_key.textContent = key;
-                tr.appendChild(th_key);
-                var th = document.createElement('th');
-                var td = document.createElement('td');
-
-                var div = document.createElement('div');
-                div.style.width = '400px';
+//            function getElemnt(key, value, id) {
+//
+//                var readonly = ['id', 'ownerProductId', 'originalHeight', 'originalWidth', 'modifiedHeight', 'modifiedWidth', 'modifiedWidth', 'modifiedHeight', 'internalURL', 'externalURL', 'availableAtZipCodes'];
+//                var readstatus = false;
+//                for (var s = 0; s < readonly.length; s++) {
+//                    if (key === readonly[s]) {
+//                        readstatus = true;
+//
+//                    }
+//                }
+//
+//
+//                var tr = document.createElement('tr');
+//                var th_key = document.createElement('th');
+//                th_key.textContent = key;
+//                tr.appendChild(th_key);
+//                var th_val = document.createElement('th');
+//
+//                var input = document.createElement('input');
+//                input.value = value;
+//                input.type = 'text';
+//                input.id = id;
+//
+//                if (readstatus) {
+//                    input.readOnly = true;
+//                    input.style.backgroundColor = '#d4cbe8';
+//
+//                }
+//
+//
+//
+//                th_val.appendChild(input);
+//                tr.appendChild(th_val);
+//                return tr;
+//            }
 
 
-                // sel.value = value;
-                for (var i = 0; i < enums.length; i++) {
 
-                    if (enums[i] === value) {
-                        //  var o1 = new Option(enums[i], enums[i], false, true);
-                        //  sel.options[sel.options.length] = o1;
-                        var rdbtn = getRadioButton(valAvail, enums[i], true);
-                        td.appendChild(rdbtn);
-                    } else {
-                        //    var o1 = new Option(enums[i], enums[i], false, false);
-                        //  sel.options[sel.options.length] = o1;
-                        var rdbtn = getRadioButton(valAvail, enums[i], false);
-                        td.appendChild(rdbtn);
-                    }
-
-                }
-                div.appendChild(td);
-                th.appendChild(div);
-                tr.appendChild(th);
-                return tr;
-            }
-
-
-            function getAvailableColors(key, value, id, i) {
-
-
-                var tr = document.createElement('tr');
-                var th_key = document.createElement('th');
-                th_key.textContent = key;
-                tr.appendChild(th_key);
-                var th_val = document.createElement('th');
-                var input = document.createElement('input');
-                input.value = value;
-                input.type = 'text';
-                input.id = id;
-                th_val.appendChild(input);
-                // tr.appendChild(th_val);
-                //  var th = document.createElement('th');
-                // th.style.width = '100px';
-                var sel = document.createElement('select');
-                sel.id = "color_selector_" + i;
-                sel.style.width = "75px";
-                sel.multiple = 'multiple';
-                sel.onchange = function() {
-                    var vl = $("#color_selector_" + i).val();
-
-                    var current_val = document.getElementById(id).value;
-                    // alert("111: "+vl.length);
-                    if (vl != null && vl != undefined) {
-
-                        if (current_val === '') {
-                            document.getElementById(id).value = vl.toString();
-                        }
-                        else {
-
-                            for (var k = 0; k < vl.length; k++) {
-                                //  alert("222: "+vl[k]+" *****: "+current_val.indexOf(vl[k]) );           
-                                if (current_val.indexOf(vl[k]) < 0) {
-                                    document.getElementById(id).value = current_val + "," + vl[k];
-                                }
-                            }
-                        }
-                    }
-                };
-                available_colors.forEach(function(entry) {
-                    var o1 = new Option(entry, entry, false, false);
-                    sel.options[sel.options.length] = o1;
-                });
-                th_val.appendChild(sel);
-                tr.appendChild(th_val);
-                return tr;
-            }
-
-            function getAvailableSizes(key, value, id, i) {
+//            function getAvailability(key, value, id) {
+//                var enums = ['IN_STOCK', 'OUT_OF_STOCK', 'EXCESS_INVENTORY', 'RUNNING_LOW', 'TEMPORARY_UNAVAILABLE', 'PERMANENTLY_UNAVAILABLE'];
+//                var valAvail = 'provider_Availability';
+//                var tr = document.createElement('tr');
+//                var th_key = document.createElement('th');
+//                th_key.textContent = key;
+//                tr.appendChild(th_key);
+//                var th = document.createElement('th');
+//                var td = document.createElement('td');
+//
+//                var div = document.createElement('div');
+//                div.style.width = '400px';
+//
+//
+//                // sel.value = value;
+//                for (var i = 0; i < enums.length; i++) {
+//
+//                    if (enums[i] === value) {
+//                        //  var o1 = new Option(enums[i], enums[i], false, true);
+//                        //  sel.options[sel.options.length] = o1;
+//                        var rdbtn = getRadioButton(valAvail, enums[i], true);
+//                        td.appendChild(rdbtn);
+//                    } else {
+//                        //    var o1 = new Option(enums[i], enums[i], false, false);
+//                        //  sel.options[sel.options.length] = o1;
+//                        var rdbtn = getRadioButton(valAvail, enums[i], false);
+//                        td.appendChild(rdbtn);
+//                    }
+//
+//                }
+//                div.appendChild(td);
+//                th.appendChild(div);
+//                tr.appendChild(th);
+//                return tr;
+//            }
 
 
-                var tr = document.createElement('tr');
-                var th_key = document.createElement('th');
-                th_key.textContent = key;
-                tr.appendChild(th_key);
-                var th_val = document.createElement('th');
-                var input = document.createElement('input');
-                input.value = value;
-                input.type = 'text';
-                input.id = id;
+//            function getAvailableColors(key, value, id, i) {
+//
+//
+//                var tr = document.createElement('tr');
+//                var th_key = document.createElement('th');
+//                th_key.textContent = key;
+//                tr.appendChild(th_key);
+//                var th_val = document.createElement('th');
+//                var input = document.createElement('input');
+//                input.value = value;
+//                input.type = 'text';
+//                input.id = id;
+//                th_val.appendChild(input);
+//                // tr.appendChild(th_val);
+//                //  var th = document.createElement('th');
+//                // th.style.width = '100px';
+//                var sel = document.createElement('select');
+//                sel.id = "color_selector_" + i;
+//                sel.style.width = "75px";
+//                sel.multiple = 'multiple';
+//                sel.onchange = function() {
+//                    var vl = $("#color_selector_" + i).val();
+//
+//                    var current_val = document.getElementById(id).value;
+//                    // alert("111: "+vl.length);
+//                    if (vl != null && vl != undefined) {
+//
+//                        if (current_val === '') {
+//                            document.getElementById(id).value = vl.toString();
+//                        }
+//                        else {
+//
+//                            for (var k = 0; k < vl.length; k++) {
+//                                //  alert("222: "+vl[k]+" *****: "+current_val.indexOf(vl[k]) );           
+//                                if (current_val.indexOf(vl[k]) < 0) {
+//                                    document.getElementById(id).value = current_val + "," + vl[k];
+//                                }
+//                            }
+//                        }
+//                    }
+//                };
+//                available_colors.forEach(function(entry) {
+//                    var o1 = new Option(entry, entry, false, false);
+//                    sel.options[sel.options.length] = o1;
+//                });
+//                th_val.appendChild(sel);
+//                tr.appendChild(th_val);
+//                return tr;
+//            }
 
-                th_val.appendChild(input);
-                //  tr.appendChild(th_val);
-                //var th = document.createElement('th');
-                var sel = document.createElement('select');
-                sel.id = "sizes_selector_" + i;
-                sel.style.width = "75px";
-                sel.multiple = 'multiple';
-                sel.onchange = function() {
-                    var vl = $("#sizes_selector_" + i).val();
-
-                    var current_val = document.getElementById(id).value;
-                    // alert("111: "+vl.length);
-                    if (vl != null && vl != undefined) {
-
-                        if (current_val === '') {
-                            document.getElementById(id).value = vl.toString();
-                        }
-                        else {
-
-                            for (var k = 0; k < vl.length; k++) {
-                                //  alert("222: "+vl[k]+" *****: "+current_val.indexOf(vl[k]) );           
-                                if (current_val.indexOf(vl[k]) < 0) {
-                                    document.getElementById(id).value = current_val + "," + vl[k];
-                                }
-                            }
-                        }
-                    }
-
-                };
-                available_sizes.forEach(function(entry) {
-                    var o1 = new Option(entry, entry, false, false);
-                    sel.options[sel.options.length] = o1;
-                });
-                th_val.appendChild(sel);
-                tr.appendChild(th_val);
-                return tr;
-            }
+//            function getAvailableSizes(key, value, id, i) {
+//
+//
+//                var tr = document.createElement('tr');
+//                var th_key = document.createElement('th');
+//                th_key.textContent = key;
+//                tr.appendChild(th_key);
+//                var th_val = document.createElement('th');
+//                var input = document.createElement('input');
+//                input.value = value;
+//                input.type = 'text';
+//                input.id = id;
+//
+//                th_val.appendChild(input);
+//                //  tr.appendChild(th_val);
+//                //var th = document.createElement('th');
+//                var sel = document.createElement('select');
+//                sel.id = "sizes_selector_" + i;
+//                sel.style.width = "75px";
+//                sel.multiple = 'multiple';
+//                sel.onchange = function() {
+//                    var vl = $("#sizes_selector_" + i).val();
+//
+//                    var current_val = document.getElementById(id).value;
+//                    // alert("111: "+vl.length);
+//                    if (vl != null && vl != undefined) {
+//
+//                        if (current_val === '') {
+//                            document.getElementById(id).value = vl.toString();
+//                        }
+//                        else {
+//
+//                            for (var k = 0; k < vl.length; k++) {
+//                                //  alert("222: "+vl[k]+" *****: "+current_val.indexOf(vl[k]) );           
+//                                if (current_val.indexOf(vl[k]) < 0) {
+//                                    document.getElementById(id).value = current_val + "," + vl[k];
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                };
+//                available_sizes.forEach(function(entry) {
+//                    var o1 = new Option(entry, entry, false, false);
+//                    sel.options[sel.options.length] = o1;
+//                });
+//                th_val.appendChild(sel);
+//                tr.appendChild(th_val);
+//                return tr;
+//            }
 
             function  set_current_ProductState(value) {
 
@@ -740,10 +740,10 @@
 
                     } else {
                         var stateVal = false;
-                        if (i == 0) {
+                        if (i === 0) {
                             stateVal = true;
                         } else {
-                            stateVal = false
+                            stateVal = false;
                         }
                         var v = getRadioButton(name, enums[i], stateVal);
                         td.appendChild(v)
@@ -1543,7 +1543,7 @@
                 <input type="radio" name="gender" value="Unisex" id="r3">Unisex
                 <input type="radio" name="gender" value="Boys" id="r4">Boys
                 <input type="radio" name="gender" value="Girls" id="r5">Girls<br>
-                <input type="button" class="button" value="Create Gender Tag" onclick="createGenderTag()"  />
+                <input type="button" class="button" value="Add Gender Tag" onclick="createGenderTag()"  />
                 <span>Select One and Create Gender Tag</span>
             </li>
 
