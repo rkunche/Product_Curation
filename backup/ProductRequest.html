@@ -1,0 +1,455 @@
+<html>
+
+    <body onLoad = "readParams()">
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+        <script>
+        var searchString = "CRAWLED";
+        var request;
+        var products = [];
+        var otherWindow;
+        var myVar;
+        var clcickedProductId;
+        //get tags from server.
+        var tagString;
+        var tagsrequest;
+        var curateProductRequest;
+        //for user authentication
+        var users = [];
+        var curatorID;
+        var otherWindowObserver;
+        var buttonText;
+        //prototype for clear the array values.
+        Array.prototype.clear = function() {
+            this.length = 0;
+        };
+        function getSelectedValue() {
+            var index = document.getElementById('select').selectedIndex;
+            // alert("value="+document.getElementById('select').value);  
+// alert("text="+document.getElementById('select').options[index].text);  
+            searchString = document.getElementById('select').value;
+        }
+
+        function sendMessage(productString) {
+            productString = tagString + "##" + productString + "##" + buttonText;
+            otherWindow.postMessage(productString, "*");
+            clearInterval(myVar)
+            otherWindowObserver = setInterval(function() {
+                if (otherWindow.closed) {
+
+                    getCurateProduct();
+                    clearInterval(otherWindowObserver);
+                } else {
+
+                }
+
+            }, 2000)
+        }
+
+        function readParams() {
+            //ONLY ALLOWED STATIC USER
+            //raju ID
+            users.push(5505177142427648);
+            users.push(6419807607980032);
+            //sangeeth ID
+            users.push(5769457217568768);
+            //Neem 
+            users.push(5169874951208960);
+            users.push(5649648836411392); //lakshminath's id
+            users.push(5638203017003008); //vidya's id
+
+            var srchString = unescape(location.search.substring(1, location.search.length));
+            var name = srchString.split("=");
+            curatorID = name[1];
+            getTags();
+            searchString = "CRAWLED";
+        }
+
+
+        function openOther(productString) {
+            otherWindow = window.open("source.html", "_blank");
+            myVar = setInterval(function() {
+                sendMessage(productString)
+            }, 1000);
+        }
+
+        function getCrawledProducts() {
+            var boolval = false;
+            for (var i = 0; i < users.length; i++) {
+                if (curatorID == users[i])
+                    boolval = true;
+            }
+            if (!boolval) {
+
+                alert("user does not exist");
+                return;
+            }
+            //var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=CRAWLED&limit=50";
+            var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=" + searchString + "&limit=50";
+            if (XMLHttpRequest)
+            {
+                request = new XMLHttpRequest();
+                if ("withCredentials" in request)
+                {
+                    // Firefox 3.5 and Safari 4
+                    request.open('GET', url, true);
+                    request.onreadystatechange = getHandler;
+                    request.send();
+                }
+            }
+        }
+        //get result handler
+        function getHandler() {
+            if (request.readyState != 4)
+                return;
+            if (request.status == 200)
+            {
+
+                var jsonResponse = JSON.parse(request.responseText);
+                //clear the old data in array and populate with new product data.
+                if (products.length > 0) {
+                    document.getElementById("productTableId").innerHTML = "";
+                    //return;
+                }
+                products.clear();
+                for (var i = 0; i < jsonResponse.length; i++) {
+                    var jsonTempObject = jsonResponse[i];
+                    var productObject = {id: jsonTempObject.id, ownerAisleId: jsonTempObject.ownerAisleId, ownerProductListId: jsonTempObject.ownerProductListId,
+                        creatorId: jsonTempObject.creatorId, curatorId: jsonTempObject.curatorId, title: jsonTempObject.title, description: jsonTempObject.description,
+                        currentProductState: jsonTempObject.currentProductState, relatedProductIds: jsonTempObject.relatedProductIds, productImages: jsonTempObject.productImages,
+                        productProviders: jsonTempObject.productProviders, comments: jsonTempObject.comments, productTags: jsonTempObject.productTags, ratings: jsonTempObject.ratings};
+                    products.push(productObject);
+                }
+                prepareTable();
+            }
+            if (request.status != 200 && request.status != 304) {
+                alert('HTTP GET error ' + request.status);
+                return;
+            }
+        }
+
+        //prepare table with received products
+        function prepareTable() {
+            var table = document.getElementById("productTableId");
+            for (var i = 0; i < products.length; i++) {
+                if (i % 5 == 0) {
+                    var tr = document.createElement("tr");
+                    table.appendChild(tr);
+                }
+
+                var imag = document.createElement("img");
+                try {
+                    imag.src = products[i].productImages[0].externalURL;
+                } catch (e) {
+                    continue;
+                }
+                var td = document.createElement("td");
+                td.id = products[i].id;
+                tr.appendChild(td);
+                var divImage = document.createElement("div");
+                divImage.appendChild(imag);
+                //var div = document.createElement("div");
+                //div.className = "content";
+                //div.appendChild(imag);
+                //td.appendChild(div);
+                var title = document.createTextNode("Title : " + products[i].title);
+                var state = document.createTextNode("State : " + products[i].currentProductState);
+                var divTitle = document.createElement("div");
+                divTitle.appendChild(title);
+                var divState = document.createElement("div");
+                divState.appendChild(state);
+                td.appendChild(divTitle);
+                td.appendChild(divState);
+                td.appendChild(divImage);
+                td.style.border = "thin dotted red";
+                createButton(td, curatethis_product, products[i]);
+            }
+        }
+        //create button function
+        http://stackoverflow.com/questions/9810035/how-to-get-element-and-html-from-window-open-js-function-with-jquery
+                function createButton(td, curatethis_product, product) {
+                    var button = document.createElement("input");
+                    button.type = "button";
+                    var archivebutton = document.createElement("input");
+                    archivebutton.type = "button";
+                    archivebutton.value = "Archive";
+                    archivebutton.style.backgroundColor = "Orange";
+                    if (product.currentProductState == "CRAWLED") {
+                        button.value = "Curate Now";
+                        button.style.backgroundColor = "#9C3325";
+                    } else if (product.currentProductState == "NEEDS_RECURATION") {
+                        button.value = "Recurate Now";
+                        button.style.backgroundColor = "#9C3325";
+                        product.currentProductState = "CRAWLED";
+                    } else if (product.currentProductState == "CURATED_AND_VERIFIED") {
+                        button.style.backgroundColor = "#059E24";
+                        button.value = "Verified";
+                    } else if (product.currentProductState === "ARCHIVED") {
+                        button.style.backgroundColor = "Orange";
+                        button.value = "Archived";
+                    } else {
+                        button.value = "Review Now";
+                        button.style.backgroundColor = "#059E24";
+                    }
+                    obj = {
+                        handleEvent: function() {
+
+                            clcickedProductId = product.id;
+                            for (var i = 0; i < products.length; i++) {
+                                if (clcickedProductId === products[i].id) {
+                                    product = products[i];
+                                    if (curatorID == null || curatorID == undefined || curatorID.length < 1) {
+                                        product.curatorId = "6419807607980032";
+                                    } else {
+                                        product.curatorId = curatorID;
+                                    }
+                                    break;
+                                }
+
+                            }
+
+                            buttonText = button.value;
+                            if (product.currentProductState == "CURATED_AND_VERIFIED") {
+                                // alert("already verifed");
+                                var productString = JSON.stringify(product)
+                                openOther(productString);
+                            } else {
+                                var productString = JSON.stringify(product)
+                                openOther(productString);
+                            }
+
+                        },
+                        dude: product.title
+                    };
+                    archiveObj = {
+                        handleEvent: function() {
+                            var r = confirm("Do you want to ARCHIVE Product?");
+                            if (r === true) {
+
+                                clcickedProductId = product.id;
+                                var url = "https://vue-server-dev.appspot.com/api/product/" + product.id;
+                                if (XMLHttpRequest) {
+                                    curateProductRequest = new XMLHttpRequest();
+                                    if ("withCredentials" in curateProductRequest) {
+                                        // Firefox 3.5 and Safari 4
+                                        curateProductRequest.open('PUT', url, true);
+                                        curateProductRequest.setRequestHeader('Custom-Header', 'javascript-client');
+                                        curateProductRequest.setRequestHeader('Content-Type', 'application/json');
+                                        curateProductRequest.onreadystatechange = curateProductHandler;
+
+//                                //product update request:
+                                        curateProductRequest.send(JSON.stringify({id: product.id, ownerAisleId: product.ownerAisleId, ownerProductListId: product.ownerProductListId, creatorId: product.creatorId, curatorId: product.curatorId, title: product.title, description: product.description, currentProductState: "ARCHIVED", relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
+                                    } else {
+
+                                    }
+                                }
+                            }
+
+                        },
+                        dude: product.title
+                    }
+                    button.addEventListener("click", obj, false);
+                    archivebutton.addEventListener("click", archiveObj, false);
+                    td.appendChild(button);
+                    if (product.currentProductState !== "ARCHIVED") {
+                        td.appendChild(archivebutton);
+                    }
+                }
+        //on curate button click function
+        function curatethis_product() {
+            alert("curate product called " + this.name);
+        }
+        function getTags() {
+
+            var url = "https://vue-server-dev.appspot.com/api/producttags/all";
+            if (XMLHttpRequest)
+            {
+                tagsrequest = new XMLHttpRequest();
+                if ("withCredentials" in tagsrequest)
+                {
+                    // Firefox 3.5 and Safari 4
+                    tagsrequest.open('GET', url, true);
+                    tagsrequest.onreadystatechange = tagRespnseHandler;
+                    tagsrequest.send();
+                }
+            }
+        }
+        function tagRespnseHandler() {
+            if (tagsrequest.readyState !== 4)
+                return;
+            if (tagsrequest.status === 200)
+            {
+                tagString = tagsrequest.responseText;
+                var jsonResponse = JSON.parse(tagString);
+                var blocked = [];
+                for (var k = 0; k < jsonResponse.length; k++) {
+                    var tagObject = jsonResponse[k];
+                    if (tagObject.tagString.charAt(0) === tagObject.tagString.charAt(0).toLowerCase()) {
+                        console.log(tagObject.tagString + " length : " + tagObject.tagString.length);
+                        blocked.push(tagObject);
+                    }
+                }
+                for (var i = 0; i < blocked.length; i++) {
+                    console.log("Blocked list " + blocked[i].tagString);
+                    var t = jsonResponse.indexOf(blocked[i]);
+                    if (t !== -1) {
+                        jsonResponse.splice(t, 1);
+                    }
+                }
+                tagString = JSON.stringify(jsonResponse);
+            }
+            if (tagsrequest.status !== 200 && tagsrequest.status !== 304) {
+                alert('HTTP GET error ' + tagsrequest.status);
+                return;
+            }
+        }
+        function getCurateProduct() {
+            var url = "https://vue-server-dev.appspot.com/api/product/" + clcickedProductId;
+            if (XMLHttpRequest)
+            {
+                curateProductRequest = new XMLHttpRequest();
+                if ("withCredentials" in curateProductRequest)
+                {
+                    // Firefox 3.5 and Safari 4
+                    curateProductRequest.open('GET', url, true);
+                    curateProductRequest.onreadystatechange = curateProductHandler;
+                    curateProductRequest.send();
+                }
+            }
+
+        }
+        function curateProductHandler() {
+            if (curateProductRequest.readyState != 4)
+                return;
+            if (curateProductRequest.status == 200)
+            {
+
+                var curatedProduct = JSON.parse(curateProductRequest.responseText);
+                for (var i = 0; i < products.length; i++) {
+                    if (clcickedProductId === products[i].id) {
+
+                        products[i] = curatedProduct;
+                        getAllCellValues();
+                        break;
+                    }
+                }
+
+            }
+            if (curateProductRequest.status !== 200 && curateProductRequest.status !== 304) {
+                return;
+            }
+
+        }
+//to refresh the selected product after curation.
+
+        function getAllCellValues() {
+            var table = document.getElementById("productTableId");
+            var cells = Array.prototype.slice.call(document.getElementById("productTableId").getElementsByTagName("td"));
+            var cell;
+            for (var i in cells) {
+                if (clcickedProductId == cells[i].id) {
+                    cell = cells[i];
+                    var values = cell.getElementsByTagName("div");
+                    var titleVal;
+                    var stateVal;
+                    for (var k = 0; k < products.length; k++) {
+                        if (clcickedProductId === products[k].id) {
+                            titleVal = products[k].title;
+                            stateVal = products[k].currentProductState;
+                            var button = cell.getElementsByTagName("input");
+                            if (stateVal === "CRAWLED") {
+                                button[0].style.backgroundColor = "#9C3325";
+                            } else if (stateVal === "NEEDS_RECURATION") {
+                                button[0].value = "Recurate Now";
+                                button[0].style.backgroundColor = "#9C3325";
+                                products[k].currentProductState = "CRAWLED";
+                            } else if (stateVal === "CURATED_AND_VERIFIED") {
+                                button[0].style.backgroundColor = "#059E24";
+                                button[0].value = "Verified";
+                            } else if (stateVal === "ARCHIVED") {
+                                button[0].style.backgroundColor = "Orange";
+                                button[0].value = "Archived";
+                            } else {
+                                button[0].style.backgroundColor = "#059E24";
+                                button[0].value = "Review Now";
+                            }
+                            break;
+                        }
+                    }
+                    if (titleVal != undefined && stateVal != undefined) {
+                        values[0].innerHTML = "Title : " + titleVal;
+                        values[1].innerHTML = "State :  " + stateVal;
+                    }
+
+                    break;
+                }
+
+            }
+
+        }
+        </script>
+        <div id="container">
+
+            <Button onclick="getCrawledProducts();
+                    "  >GetProducts</Button>
+            <select id="select" name="" style="width:150;" onchange="getSelectedValue();">
+                <option value="CRAWLED" title=" ">CRAWLED</option>
+                <option value="CURATED" title=" ">CURATED</option>
+                <option value="CURATED_AND_VERIFIED" title=" ">CURATED_AND_VERIFIED</option>
+                <option value="NEEDS_RECURATION" title=" ">NEEDS_RECURATION</option>
+                <option value="ARCHIVED" title=" ">ARCHIVED</option>
+            </select>
+
+        </div>
+
+        <table id="productTableId"></table>
+
+    </body>
+</html>
+<style>
+    .myButtonRED {
+        -moz-box-shadow: inset 0px 39px 0px -24px #e67a73;
+        -webkit-box-shadow: inset 0px 39px 0px -24px #e67a73;
+        box-shadow: inset 0px 39px 0px -24px #e67a73;
+        background-color: #e4685d;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        border-radius: 4px;
+        border: 1px solid #ffffff;
+        display: inline-block;
+        cursor: pointer;
+        color: #ffffff;
+        font-family: arial;
+        font-size: 15px;
+        padding: 6px 15px;
+        text-decoration: none;
+        text-shadow: 0px 1px 0px #b23e35;
+    }
+    #container
+    {
+        position: relative;
+    }
+
+    #input
+    {
+        position: absolute;
+        top: 0;
+        left: 10%;
+        z-index: 999;
+        padding: 0;
+        margin: 0;
+    }
+
+    #select
+    {
+        position: absolute;
+        top: 3%;
+        left: 10%;
+        padding: 0;
+        margin: 0;
+    }
+    argin-top:5px;
+    }
+</style>
+
