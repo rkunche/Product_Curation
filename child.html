@@ -69,7 +69,7 @@
             .inline-radio {
                 display: inline-block;
             }
-
+            p { display: inline-block; }
         </style>
 
         <style type="text/css">
@@ -259,17 +259,6 @@
                 console.log(datafromparent);
                 console.log(datafromparent);
                 jsonObject = JSON.parse(datafromparent);
-//                for (var imgIndex = 0; imgIndex < jsonObject.productImages.length; imgIndex++) {
-//
-//                    var img = new Image();
-//                    img.onload = function() {
-//                        // alert(this.width + 'x' + this.height);
-//                        jsonObject.productImages[imgIndex].orignalWidth = this.width;
-//                        jsonObject.productImages[imgIndex].orignalHeight = this.height;
-//                    }
-//                    img.src = jsonObject.productImages[imgIndex].externalURL;
-//                }
-//                updateImage(jsonObject.productImages[0]);
                 if (jsonObject.currentProductState == "CRAWLED") {
                     buttonValue = "Curate And Finish";
                     partialCurated = true;
@@ -389,50 +378,38 @@
                 console.log(datafromparent);
             }
             function afterLoadingThePopup() {
-                // document.getElementById('currency_id').style.border="thick solid #0000FF";
-                // document.getElementById('price_id').style.border="thick solid #0000FF";
                 var jsonResponse = JSON.parse(datafromparent);
-                //document.getElementById('id_id').value = jsonResponse.id;
-                // document.getElementById('id_ownerAisleId').value = jsonResponse.ownerAisleId;
-                // document.getElementById('id_ownerProductListId').value = jsonResponse.ownerProductListId;
                 document.getElementById('id_title').value = jsonResponse.title;
-                document.getElementById('id_description').value = jsonResponse.description;
-                // document.getElementById('id_creatorID').value = jsonResponse.creatorId;
-                //document.getElementById('id_curatorID').value = jsonResponse.curatorId;
-                // document.getElementById('id_relatedProductIds').value = jsonResponse.relatedProductIds;
-                // document.getElementById('send_but_id').value = buttonValue;
+                document.getElementById('id_description').value = "";
                 //method to call to set current product state...
                 set_current_ProductState(jsonResponse.currentProductState);
                 // document.getElementById('single_select_1').value = jsonResponse.currentProductState;
-                
-                
-               
-               document.getElementById('currency_id').value = jsonObject.productProviders[0].currencyCode;
-               document.getElementById('price_id').value = jsonObject.productProviders[0].price;
+
+
+
+                document.getElementById('currency_id').value = jsonObject.productProviders[0].currencyCode;
+                document.getElementById('price_id').value = jsonObject.productProviders[0].price;
                 document.getElementById('store_id').value = jsonObject.productProviders[0].store;
                 var offerEnable = jsonObject.productProviders[0].onSale;
                 var saleExpiryDate = document.getElementById('expiry_date_id');
                 var salePrice = document.getElementById('sale_price_id');
                 saleExpiryDate.value = jsonObject.productProviders[0].saleExpirtyDate;
                 salePrice.value = jsonObject.productProviders[0].salePrice;
-                if(offerEnable){
-                document.getElementById('onSale_selection_id').checked = true;
-                    } else {
-                     document.getElementById('onSale_selection_id').checked = false;
-                     salePrice.style.backgroundColor="gray";  
-                      saleExpiryDate.style.backgroundColor="gray"; 
-                      
-                      
-                      salePrice.readOnly = "true";
-                       saleExpiryDate.readOnly = "true";
-                      salePrice.value = "No Offers";
-                       saleExpiryDate.value = "No Offers";
-                }
-               document.getElementById('color_id').value = jsonObject.productProviders[0].availableColors;
-               document.getElementById('size_id').value = jsonObject.productProviders[0].availableSizes;
+                if (offerEnable) {
+                    document.getElementById('onSale_selection_id').checked = true;
+                } else {
+                    document.getElementById('onSale_selection_id').checked = false;
+                    salePrice.style.backgroundColor = "gray";
+                    saleExpiryDate.style.backgroundColor = "gray";
 
-                //document.getElementById('id_comments').value = jsonResponse.comments;  
-                //document.getElementById('id_ratings').value = jsonResponse.ratings;
+
+                    salePrice.readOnly = "true";
+                    saleExpiryDate.readOnly = "true";
+                    salePrice.value = "No Offers";
+                    saleExpiryDate.value = "No Offers";
+                }
+                document.getElementById('color_id').value = jsonObject.productProviders[0].availableColors;
+                document.getElementById('size_id').value = jsonObject.productProviders[0].availableSizes;
                 // product tags..
                 var product_tags = jsonResponse.productTags;
                 for (var m = 0; m < product_tags.length; m++) {
@@ -458,69 +435,6 @@
                     createTagReqAndAddTable(tag_cat, tag_string, tag_sub_cat, 0)
 
                 }
-
-//                var images_array = jsonResponse.productImages;
-//                var tabl_div = document.getElementById('image_table_id');
-//                for (var i = 0; i < images_array.length; i++) {
-//
-//                    var br0 = document.createElement('br');
-//                    var br1 = document.createElement('br');
-//                    tabl_div.appendChild(br0);
-//                    tabl_div.appendChild(br1);
-//                    var table = document.createElement('table');
-//                    table.className = "altrowstable";
-//                    table.setAttribute('width', '600')
-//
-//                    var caption = document.createElement('caption');
-//                    caption.textContent = 'For The Image: ' + (i + 1);
-//                    table.appendChild(caption);
-//                    table.appendChild(getElemnt('id', images_array[i].id));
-//                    table.appendChild(getElemnt('ownerProductId', images_array[i].ownerProductId));
-//                    table.appendChild(getElemnt('externalURL', images_array[i].externalURL));
-//                    table.appendChild(getElemnt('internalURL', images_array[i].internalURL));
-//
-//
-//                    tabl_div.appendChild(table);
-//                }
-                var product_provider_div = document.getElementById('product_providers_div_id');
-                var providers_array = jsonResponse.productProviders;
-                for (var i = 0; i < providers_array.length; i++) {
-                    var br0 = document.createElement('br');
-                    var br1 = document.createElement('br');
-                    product_provider_div.appendChild(br0);
-                    product_provider_div.appendChild(br1);
-                    var table = document.createElement('table');
-                    table.className = "altrowstable";
-                    table.style.width = '400px';
-
-
-                    var caption = document.createElement('caption');
-                    caption.textContent = 'For The Provider: ' + (i + 1);
-                    table.appendChild(caption);
-                    table.appendChild(getElemnt('id', providers_array[i].id, 'id_' + i));
-                    table.appendChild(getElemnt('ownerProductId', providers_array[i].ownerProductId, 'ownerProductId_' + i));
-                    table.appendChild(getElemnt('externalURL', providers_array[i].externalURL, 'externalURL_' + i));
-                    if (providers_array[i].quantity == 0) {
-                        providers_array[i].quantity = 1;
-                    }
-                    table.appendChild(getElemnt('quantity', providers_array[i].quantity, 'quantity_' + i));
-                    table.appendChild(getElemnt('currencyCode', providers_array[i].currencyCode, 'currencyCode_' + i));
-                    table.appendChild(getElemnt('store', providers_array[i].store, 'store_' + i));
-                    var availability_1 = getAvailability('availability', providers_array[i].availability, 'availability_' + i);
-                    table.appendChild(availability_1);
-                    table.appendChild(getElemnt('price', providers_array[i].price, 'price_' + i));
-                    table.appendChild(add_Onsale_Boolean('onSale', providers_array[i].onSale, 'onSale_' + i));
-                    table.appendChild(getElemnt('salePrice', providers_array[i].salePrice, 'salePrice_' + i));
-                    table.appendChild(getElemnt('saleExpiryDate', providers_array[i].saleExpiryDate, 'saleExpiryDate_' + i));
-                    var available_clrs = getAvailableColors('availableColors', providers_array[i].availableColors, 'availableColors_' + i, i);
-                    table.appendChild(available_clrs);
-                    var available_sizes_1 = getAvailableSizes('availableSizes', providers_array[i].availableSizes, 'availableSizes_' + i, i);
-                    table.appendChild(available_sizes_1);
-                    table.appendChild(getElemnt('availableAtZipCodes', providers_array[i].availableAtZipCodes, 'availableAtZipCodes_' + i));
-                    product_provider_div.appendChild(table);
-                }
-
-
                 //Added Product Tags
                 //  add_Product_Tags();
                 add_Product_TagsNew();
@@ -594,7 +508,7 @@
 
                 }
 
-               
+
                 $.each(tag_category_array, function(i, el) {
                     if ($.inArray(el, tag_category_array_uniqueNames) === -1)
                         tag_category_array_uniqueNames.push(el);
@@ -827,7 +741,13 @@
                         td.appendChild(v);
 
                     } else {
-                        var v = getRadioButton(name, enums[i], false);
+                        var stateVal = false;
+                        if (i == 0) {
+                            stateVal = true;
+                        } else {
+                            stateVal = false
+                        }
+                        var v = getRadioButton(name, enums[i], stateVal);
                         td.appendChild(v)
                     }
 
@@ -862,28 +782,53 @@
                 var checkedVal = document.querySelector('input[name="current_product_status"]:checked');
                 description = description.trim();
                 title = title.trim();
-                if (checkedVal == null) {
+
+                var titleNode = document.getElementById('title_node_id');
+                if (checkedVal === null) {
+
                     alert("Please Check ProductState");
                     return false;
                 }
 
-                if (title == undefined || title == " " || title.length < 2) {
+
+                if (title === undefined || title === " " || title.length < 2) {
+                     document.getElementById('title_node_id').scrollIntoView();
+                    titleNode.innerHTML = "*Please Fill Descripiton";
+                    titleNode.style.color = "#ff0000";
                     showAlert("Please fill the title");
                     return false;
+                } else {
+                    titleNode.innerHTML = " ";
+                    titleNode.style.color = "#ff0000";
                 }
                 jsonObject.title = title;
 
-                if (description === undefined || description == " " || description.length < 2) {
-                    showAlert("Please fill the description");
+                var discripitonNode = document.getElementById('description_node_id');
+
+                if (description === undefined || description === " " || description.length < 2) {
+                    discripitonNode.innerHTML = "*Please Fill Descripiton";
+                    discripitonNode.style.color = "#ff0000";
+                    document.getElementById('description_node_id').scrollIntoView();
+                    document.getElementById('id_description').focus();
+                    //showAlert("Please fill the description");
                     return false;
+                } else {
+                    discripitonNode.innerHTML = " ";
+                    discripitonNode.style.color = "#ff0000";
                 }
 
                 if (!description.match(/[a-z]/i)) {
-                    showAlert("Description contains only Numbers");
+                   //showAlert("Description contains only Numbers");
+                    discripitonNode.innerHTML = "*Description contains only Numbers";
+                    discripitonNode.style.color = "#ff0000";
+                    document.getElementById('description_node_id').scrollIntoView();
                     return false;
                 }
                 if (!title.match(/[a-z]/i)) {
-                    showAlert("Title contains only Numbers");
+                    //showAlert("Title contains only Numbers");
+                       document.getElementById('title_node_id').scrollIntoView();
+                    titleNode.innerHTML = "*Title contains only Numbers";
+                    titleNode.style.color = "#ff0000";
                     return false;
                 }
 
@@ -947,13 +892,13 @@
                 {
                     //updateProvider();
                     if (curatorReview == "Curate Now") {
-                        alert('Info: Curated Successfully : ');
+                        alert('Info: Curated Successfully : ' + request.responseText);
                     } else {
-                        alert('Info: Reviewed Successfully :');
+                        alert('Info: Reviewed Successfully :' + request.responseText);
                     }
 
-                    window.opener.close();
-                    close();
+                    //window.opener.close();
+                    //close();
                 }
                 if (request.status != 200 && request.status != 304) {
                     //alert('HTTP POST error ' + request.status + 'Response ' + request.responseText);
@@ -980,87 +925,127 @@
                 return curatedArray;
             }
             function updateProvider() {
+                var provider_node_text = document.getElementById('provider_node_id');
+                var colorWarningText = document.getElementById('color_node_id');
+                var sizeWarningText = document.getElementById('size_node_id');
 
-                var updated_id = document.getElementById('id_' + '0').value;
-                var updated_ownerProductId = document.getElementById('ownerProductId_' + '0').value;
-                var updated_externalURL = document.getElementById('externalURL_' + '0').value;
-                var updated_quantity = document.getElementById('quantity_' + '0').value;
-                var updated_currencyCode = document.getElementById('currencyCode_' + '0').value;
-                var updated_store = document.getElementById('store_' + '0').value;
-                var updated_price = document.getElementById('price_' + '0').value;
-                //   var updated_availability = document.getElementById('availability_'+'0');
-                // var updated_onSale = document.getElementById('onSale_' + '0').value;
-                //  var updated_onSale = $('#onSale_' + '0').val();
-                var updated_salePrice = document.getElementById('salePrice_' + '0').value;
-                var updated_onSale = document.querySelector('input[name="on_sale_values"]:checked').value
+                colorWarningText.innerHTML = "";
+                provider_node_text.innerHTML = "";
+                sizeWarningText.innerHTML = "";
 
-
-                var updated_saleExpiryDate = document.getElementById('saleExpiryDate_' + '0').value;
-                var updated_availableColors = document.getElementById('availableColors_' + '0').value;
-                var updated_availableSizes = document.getElementById('availableSizes_' + '0').value;
-                var updated_availableAtZipCodes = document.getElementById('availableAtZipCodes_' + '0').value;
-                // var updated_availability = $("#availability_" + '0').val();
-                var updated_availability = document.querySelector('input[name="provider_Availability"]:checked').value
-
-                updated_availableSizes = toTitleCase(updated_availableSizes);
-                updated_availableColors = toTitleCase(updated_availableColors);
-                var colorArray = updated_availableColors.split(",");
-                var sizesArray = updated_availableSizes.split(",");
-                var zipcodeArray = updated_availableAtZipCodes.split(",");
-
-
+                //get colors
+                var colors = document.getElementById('color_id').value;
+                colors = toTitleCase(colors);
+                var colorArray = colors.split(",");
                 colorArray = getCuratedArray(colorArray);
+
+                //get Sizes
+                var sizes = document.getElementById('size_id').value;
+                sizes = toTitleCase(sizes);
+                var sizesArray = sizes.split(",");
                 sizesArray = getCuratedArray(sizesArray);
-                zipcodeArray = getCuratedArray(zipcodeArray);
 
-                updated_price = updated_price.trim();
-                updated_salePrice = updated_salePrice.trim();
-                updated_store = updated_store.trim();
+                //get offer price
+                var onSaleValue = document.getElementById('onSale_selection_id').checked;
+                var saleExpiryDate = 0;
+                var salePrice = 0
+                if (onSaleValue) {
+                    saleExpiryDate = document.getElementById('expiry_date_id').value;
+                    salePrice = document.getElementById('sale_price_id').value;
+                    if (salePrice === undefined || salePrice === null || salePrice.length < 1 || salePrice === 0) {
+                        provider_node_text.innerHTML = "*Please Fill Offer Price";
+                        provider_node_text.style.color = "#ff0000";
+                        document.getElementById('provider_node_id').scrollIntoView();
+                        // alert("Please Fill salePrice");
+                        return;
+                    }
+                    provider_node_text.innerHTML = "";
+                    salePrice = salePrice.trim();
+                    salePrice = parseFloat(salePrice.replace(',', ''));
+                    if (saleExpiryDate === undefined || saleExpiryDate === null || saleExpiryDate.length < 1 || saleExpiryDate === 0) {
+                        saleExpiryDate = 0;
+                    }
 
-                updated_price = parseFloat(updated_price.replace(',', ''));
-                updated_salePrice = parseFloat(updated_salePrice.replace(',', ''));
+                } else {
 
-
-                //  alert('price: ' + updated_price + " salep: " + updated_salePrice);
-
-                if (updated_price == undefined || updated_price == null || updated_price.length < 1 || updated_price == 0) {
-                    // alert("Please Fill Price");
-                    // return;
                 }
 
-                if (updated_store == undefined || updated_store == null || updated_store.length < 1) {
-                    //alert("Please Fill Store");
-                    // return;
-                }
+                //get currency
+                var currency = document.getElementById('currency_id').value;
 
-                if (updated_onSale && (updated_salePrice == undefined || updated_salePrice == null || updated_salePrice.length < 1 || updated_salePrice == 0)) {
-                    alert("Please Fill Sale Price");
+                //get price
+                var price = document.getElementById('price_id').value;
+
+                //get store
+                var store = document.getElementById('store_id').value;
+
+
+
+                store = store.trim();
+                price = price.trim();
+
+                price = parseFloat(price.replace(',', ''));
+
+
+                var availability = document.querySelector('input[name="group1"]:checked').value;
+
+
+
+                if (currency === undefined || currency === null || currency.length < 1 || currency === 0) {
+
+                    provider_node_text.innerHTML = "*Please Fill Currency";
+                    provider_node_text.style.color = "#ff0000";
+                    document.getElementById('currency_id').scrollIntoView();
+                    // alert("Please Fill Currency");
                     return;
                 }
 
+                if (price === undefined || price === null || price.length < 1 || price === 0 || isNaN(price)) {
+                    provider_node_text.innerHTML = "*Please Fill Price";
+                    provider_node_text.style.color = "#ff0000";
+                    document.getElementById('currency_id').scrollIntoView();
+                    //alert("Please Fill Price");
+                    return;
+                }
+                if (store === undefined || store === null || store.length < 1 || store === 0) {
+                    provider_node_text.innerHTML = "*Please Fill Store";
+                    provider_node_text.style.color = "#ff0000";
+                    document.getElementById('currency_id').scrollIntoView();
+                    // alert("Please Fill Store");
+                    return;
+                }
+                provider_node_text.innerHTML = "";
+                provider_node_text.style.color = "#ff0000";
                 if (colorArray === undefined || colorArray === null || colorArray.length < 1) {
                     if (!partialCurated) {
-                        alert("Please Fill Available Colors");
+                        // alert("Please Fill Available Colors");
+                        document.getElementById('color_node_id').scrollIntoView();
+
+                        colorWarningText.innerHTML = "*Please file the Colors";
+                        colorWarningText.style.color = "#ff0000";
                         return;
                     }
+                } else {
+
+                    colorWarningText.innerHTML = "";
                 }
 
                 if (sizesArray === undefined || sizesArray === null || sizesArray.length < 1) {
+
+
+
                     if (!partialCurated) {
-                        alert("Please Fill Available Sizes");
+                        document.getElementById('size_node_id').scrollIntoView();
+                        // alert("Please Fill Available Sizes");
+                        sizeWarningText.innerHTML = "*Please file the Sizes";
+                        sizeWarningText.style.color = "#ff0000";
                         return;
                     }
+                } else {
+
+                    sizeWarningText.innerHTML = "";
                 }
 
-                if (updated_availability == undefined || updated_availability == null || updated_availability.length < 1) {
-                    alert("Please Fill Availability");
-                    return;
-                }
-
-                if (updated_currencyCode == undefined || updated_currencyCode == null || updated_currencyCode.length < 1) {
-                    alert("Please Fill Currency Code");
-                    return;
-                }
 
                 var url = "https://vue-server-dev.appspot.com/api/productprovider/" + jsonObject.productProviders[0].id;
                 if (XMLHttpRequest) {
@@ -1087,11 +1072,11 @@
                             }
 
                         };
-                        providerUpdaterequest.send(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
-                            price: updated_price, onSale: updated_onSale, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: null}));
+                        providerUpdaterequest.send(JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: jsonObject.productProviders[0].quantity, currencyCode: currency, store: store, availability: availability,
+                            price: price, onSale: onSaleValue, salePrice: salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: null}));
                         //print logs in console        
-                        console.log("Provider: " + JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: updated_quantity, currencyCode: updated_currencyCode, store: updated_store, availability: updated_availability,
-                            price: updated_price, onSale: updated_onSale, salePrice: updated_salePrice, saleExpirtyDate: 0, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: null}));
+                        console.log("Provider: " + JSON.stringify({id: jsonObject.productProviders[0].id, ownerProductId: jsonObject.id, externalURL: jsonObject.productProviders[0].externalURL, quantity: jsonObject.productProviders[0].quantity, currencyCode: currency, store: store, availability: availability,
+                            price: price, onSale: onSaleValue, salePrice: salePrice, saleExpirtyDate: saleExpiryDate, availableColors: colorArray, availableSizes: sizesArray, availableAtZipCodes: null}));
                     }
                 }
             }
@@ -1220,29 +1205,29 @@
                 }
 
             }
-function handleOnSAleClick(cb) {
-  var saleExpiryDate = document.getElementById('expiry_date_id');
-  var salePrice = document.getElementById('sale_price_id'); 
-  if(cb.checked){
-        salePrice.style.backgroundColor="white";  
-        saleExpiryDate.style.backgroundColor="white"; 
-        salePrice.readOnly = "false";
-        saleExpiryDate.readOnly = "false";
-        salePrice.removeAttribute("readonly");
-        saleExpiryDate.removeAttribute("readonly");
-        salePrice.value = "";
-        saleExpiryDate.value = ""; 
-        saleExpiryDate.placeholder = "Please Enter Valid Date";
-        salePrice.placeholder = "Please Enter Sale Price";
-  }else {
-            salePrice.style.backgroundColor="gray";  
-            saleExpiryDate.style.backgroundColor="gray"; 
-            salePrice.readOnly = "true";
-            saleExpiryDate.readOnly = "true";
-            salePrice.value = "No Offers";
-            saleExpiryDate.value = "No Offers";
-  }
-}
+            function handleOnSAleClick(cb) {
+                var saleExpiryDate = document.getElementById('expiry_date_id');
+                var salePrice = document.getElementById('sale_price_id');
+                if (cb.checked) {
+                    salePrice.style.backgroundColor = "white";
+                    saleExpiryDate.style.backgroundColor = "white";
+                    salePrice.readOnly = "false";
+                    saleExpiryDate.readOnly = "false";
+                    salePrice.removeAttribute("readonly");
+                    saleExpiryDate.removeAttribute("readonly");
+                    salePrice.value = "";
+                    saleExpiryDate.value = "";
+                    saleExpiryDate.placeholder = "Please Enter Valid Date";
+                    salePrice.placeholder = "Please Enter Sale Price";
+                } else {
+                    salePrice.style.backgroundColor = "gray";
+                    saleExpiryDate.style.backgroundColor = "gray";
+                    salePrice.readOnly = "true";
+                    saleExpiryDate.readOnly = "true";
+                    salePrice.value = "No Offers";
+                    saleExpiryDate.value = "No Offers";
+                }
+            }
         </script>
 
         <link rel="stylesheet" type="text/css" href="src/jquery.multiselect.css" />
@@ -1538,15 +1523,16 @@ function handleOnSAleClick(cb) {
     <form action="" method="post" class="form-style-7">
 
         <ul>
+            <p  id="title_node_id"></p>
             <li>
                 <label for="id_title">Product Title or Name</label>
                 <input id="id_title" type="text" name="id_title">
                 <span>Review the title for completeness; ensure that there are no junk characters. Copy-Paste from the original website to fix errors.</span>
             </li>
-
+            <p  id="description_node_id"></p>
             <li>
                 <label for="id_description">Product Description</label>
-                <textarea id="id_description" name="id_description" onclick="adjust_textarea(this)">
+                <textarea id="id_description" name="id_description" placeholder="Copy Past Descriptio Here" style="width: 640px; height: 150px;" rows="5" cols="200">
                 </textarea>
                 <span>Review description for completeness and any mixed up words. Copy-Paste all relevant text from Product Description.</span>
             </li>
@@ -1664,14 +1650,14 @@ function handleOnSAleClick(cb) {
                 <span>Set Product State (Advanced Users only)</span>
 
             </li>
-
+            <p  id="provider_node_id"></p>
             <li>
                 <label>Provider Info</label>
                 <table boarder = "1">
                     <tr>
-                        <td> <div>Currency <br> <input type="text" width="200" id="currency_id" style="border:1px solid #6B9FFF"/></div></td>
-                        <td boarder ="1"> <div>Price <br> <input type="text" width="200" id="price_id" style="border:1px solid #6B9FFF"/></div></td>
-                        <td boarder ="1"> <div>Store <br> <input type="text" width="200" id="store_id" style="border:1px solid #6B9FFF"/></div></td>
+                        <td> <div>Currency <br> <input type="text" width="200" placeholder="Enter Currency" id="currency_id" style="border:1px solid #6B9FFF"/></div></td>
+                        <td boarder ="1"> <div>Price <br> <input type="text" width="200" placeholder="Enter Price" id="price_id" style="border:1px solid #6B9FFF"/></div></td>
+                        <td boarder ="1"> <div>Store <br> <input type="text" width="200" placeholder="Enter Store" id="store_id" style="border:1px solid #6B9FFF"/></div></td>
                     </tr>
                     <tr>
 
@@ -1682,12 +1668,12 @@ function handleOnSAleClick(cb) {
                     <tr>
                         <td style="border:1px solid #6B9FFF"><div> Availability <br>
                                 <div align="center"><br>
-                                    <input type="radio" name="group1" class="inline-radio" value="IN_STOCK" checked="true"> IN_STOCK<br>
-                                    <input type="radio" name="group1" class="inline-radio" value="OUT_OF_STOCK"> OUT_OF_STOCK<br>
-                                    <input type="radio" name="group1" class="inline-radio"value="RUNNING_LOW"> RUNNING_LOW<br>
-                                    <input type="radio" name="group1" class="inline-radio" value="EXCESS_INVENTORY"> EXCESS_INVENTORY<br>
-                                    <input type="radio" name="group1" class="inline-radio" value="TEMPORARY_UNAVAILABLE"> TEMPORARY_UNAVAILABLE<br>
-                                    <input type="radio" name="group1" class="inline-radio" value="PERMANENTLY_UNAVAILABLE"> PERMANENTLY_UNAVAILABLE<br>
+                                    <input type="radio" id="availability_id" name="group1" class="inline-radio" value="IN_STOCK" checked="true"> IN_STOCK<br>
+                                    <input type="radio" id="availability_id" name="group1" class="inline-radio" value="OUT_OF_STOCK"> OUT_OF_STOCK<br>
+                                    <input type="radio" id="availability_id" name="group1" class="inline-radio"value="RUNNING_LOW"> RUNNING_LOW<br>
+                                    <input type="radio" id="availability_id" name="group1" class="inline-radio" value="EXCESS_INVENTORY"> EXCESS_INVENTORY<br>
+                                    <input type="radio" id="availability_id" name="group1" class="inline-radio" value="TEMPORARY_UNAVAILABLE"> TEMPORARY_UNAVAILABLE<br>
+                                    <input type="radio" id="availability_id" name="group1" class="inline-radio" value="PERMANENTLY_UNAVAILABLE"> PERMANENTLY_UNAVAILABLE<br>
 
                                 </div>
 
@@ -1696,7 +1682,7 @@ function handleOnSAleClick(cb) {
                 </table>
                 <span>Must fill  provider info</span>
             </li>
-
+            <p  id="color_node_id"></p>
             <li>
                 <label>Colors</label>
                 <table class="altrowstable"  ><tr><td align="center"    width="600"><input type="text" name="name"   placeholder="Enter Color" id="color_id"></td></tr></table>
@@ -1704,7 +1690,7 @@ function handleOnSAleClick(cb) {
                 <span>Enter comma separated Colors</span>
 
             </li>
-
+            <p  id="size_node_id"></p>
             <li>
                 <label>Sizes</label>
                 <table> 
@@ -1826,13 +1812,13 @@ function handleOnSAleClick(cb) {
                 $(this).autocomplete('search');
             });
         });
-          $(function() {
-                    $('table').on('click', 'td', function() {
-                       // $(this).parent().children().removeClass('active');
-                        $(this).addClass('active');
-                    });
-                });  
-    
+        $(function() {
+            $('table').on('click', 'td', function() {
+                // $(this).parent().children().removeClass('active');
+                $(this).addClass('active');
+            });
+        });
+
     </script>
 
 </label>
