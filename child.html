@@ -65,12 +65,9 @@
                 color:#ffffff;
                 background-color:#000099;
             }
-
-            .inline-radio {
-                display: inline-block;
-            }
-            p { display: inline-block; }
  
+            p { display: inline-block; }
+
         </style>
 
         <style type="text/css">
@@ -793,7 +790,7 @@
 
 
                 if (title === undefined || title === " " || title.length < 2) {
-                     document.getElementById('title_node_id').scrollIntoView();
+                    document.getElementById('title_node_id').scrollIntoView();
                     titleNode.innerHTML = "*Please Fill Descripiton";
                     titleNode.style.color = "#ff0000";
                     showAlert("Please fill the title");
@@ -819,7 +816,7 @@
                 }
 
                 if (!description.match(/[a-z]/i)) {
-                   //showAlert("Description contains only Numbers");
+                    //showAlert("Description contains only Numbers");
                     discripitonNode.innerHTML = "*Description contains only Numbers";
                     discripitonNode.style.color = "#ff0000";
                     document.getElementById('description_node_id').scrollIntoView();
@@ -827,7 +824,7 @@
                 }
                 if (!title.match(/[a-z]/i)) {
                     //showAlert("Title contains only Numbers");
-                       document.getElementById('title_node_id').scrollIntoView();
+                    document.getElementById('title_node_id').scrollIntoView();
                     titleNode.innerHTML = "*Title contains only Numbers";
                     titleNode.style.color = "#ff0000";
                     return false;
@@ -1596,37 +1593,37 @@
                 <br>
                 <table    class="altrowstable" id="create_custom_tag"   width="600">
                     <tr>
-                        
+
                         <td>
                             <div>
                                 Tag Category <br><br>
                                 <input id="id_tag_cat" type="text" width="200" name="name"  placeholder="Enter Tag Category" style="border:1px solid #6B9FFF"/>
-                                
+
                             </div>
- 
+
                         </td>
-                             <td>
+                        <td>
                             <div>
                                 Tag String <br><br>
                                 <input id="id_tag_str" type="text" width="200" name="name" autocomplete="off"   placeholder="Enter Tag String" style="border:1px solid #6B9FFF"/>
-                                
+
                             </div>
- 
+
                         </td>
-                         <td boarder ="1">
+                        <td boarder ="1">
                             <div>
                                 Tag Sub Category <br> <br>
                                 <input  type="text" width="200"  name="name"  placeholder="Enter Tag SubCat" id="id_sub_str" style="border:1px solid #6B9FFF"/>
-                                
+
                             </div>
- 
+
                         </td> 
                     </tr>
-                    
-                    
+
+
                 </table>
-                  <input type="button" class="button" value="Create&Attach Custom Tag" onclick="createCustomTag()"  /> 
-<span>Enter new tags with out typing mistakes</span>
+                <input type="button" class="button" value="Create&Attach Custom Tag" onclick="createCustomTag()"  /> 
+                <span>Enter new tags with out typing mistakes</span>
             </li>
 
 
@@ -1673,13 +1670,13 @@
                     </tr>
                     <tr>
                         <td style="border:1px solid #6B9FFF"><div> Availability <br>
-                                <div align="center"><br>
-                                    <input type="radio" id="availability_id" name="group1" class="inline-radio" value="IN_STOCK" checked="true"> IN_STOCK<br>
-                                    <input type="radio" id="availability_id" name="group1" class="inline-radio" value="OUT_OF_STOCK"> OUT_OF_STOCK<br>
-                                    <input type="radio" id="availability_id" name="group1" class="inline-radio" value="RUNNING_LOW"> RUNNING_LOW<br>
-                                    <input type="radio" id="availability_id" name="group1" class="inline-radio" value="EXCESS_INVENTORY"> EXCESS_INVENTORY<br>
-                                    <input type="radio" id="availability_id" name="group1" class="inline-radio" value="TEMPORARY_UNAVAILABLE"> TEMPORARY_UNAVAILABLE<br>
-                                    <input type="radio" id="availability_id" name="group1" class="inline-radio" value="PERMANENTLY_UNAVAILABLE"> PERMANENTLY_UNAVAILABLE<br>
+                                <div align="left"><br>
+                                    <input type="radio" id="availability_id" name="group1"   value="IN_STOCK" checked="true"> IN_STOCK<br>
+                                    <input type="radio" id="availability_id" name="group1"  value="OUT_OF_STOCK"> OUT_OF_STOCK<br>
+                                    <input type="radio" id="availability_id" name="group1"  value="RUNNING_LOW"> RUNNING_LOW<br>
+                                    <input type="radio" id="availability_id" name="group1"   value="EXCESS_INVENTORY"> EXCESS_INVENTORY<br>
+                                    <input type="radio" id="availability_id" name="group1"   value="TEMPORARY_UNAVAILABLE"> TEMPORARY_UNAVAILABLE<br>
+                                    <input type="radio" id="availability_id" name="group1"   value="PERMANENTLY_UNAVAILABLE"> PERMANENTLY_UNAVAILABLE<br>
 
                                 </div>
 
@@ -1825,23 +1822,23 @@
             });
         });
 
-  
 
-                        $(function() {
-                            var availableTags = [
-                                "Product Type",
-                                "Occasion",
-                                "Product Description",
-                            ];
-                            $("#id_tag_cat").autocomplete({
-                                source: availableTags,
-                                minLength: 0,
-                            }).focus(function() {
-                                //Use the below line instead of triggering keydown
-                                $(this).autocomplete('search');
-                            });
-                        });
-                    
+
+        $(function() {
+            var availableTags = [
+                "Product Type",
+                "Occasion",
+                "Product Description",
+            ];
+            $("#id_tag_cat").autocomplete({
+                source: availableTags,
+                minLength: 0,
+            }).focus(function() {
+                //Use the below line instead of triggering keydown
+                $(this).autocomplete('search');
+            });
+        });
+
     </script>
 
 </label>
