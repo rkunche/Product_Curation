@@ -207,6 +207,9 @@
             {
                 background-color: #7DAFFF;
             }
+
+
+
             /* to stretch the container div to contain floated list */
             #navcontainer:after
             {
@@ -275,9 +278,17 @@
 
                 text-align: center;
                 width: 100%; 
+
             } .datagrid {
-                font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; overflow: hidden;
-                border: 1px solid #006699; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; 
+                height: 600px;
+                overflow-y: auto;
+                font: normal 12px/150% Arial, Helvetica, sans-serif; 
+                background: #fff;
+
+                border: 1px solid #006699;
+                -webkit-border-radius: 3px;
+                -moz-border-radius: 3px; 
+                border-radius: 3px; 
             }.datagrid table td, .datagrid table th {
                 padding: 3px 10px; 
 
@@ -293,7 +304,9 @@
             }.datagrid table tbody td:first-child { border-left: none; }.datagrid table tbody tr:last-child td { 
                 border-bottom: none; }
             </style>
+            
             <script>
+                
                 var productTypeList, occasionList, productDescriptionList;
                 var cacheLocalTags = [];
                 var localTagsObject = {tagCategory: "", tagString: "", tagSubCategory: ""};
@@ -528,82 +541,73 @@
                     table.innerHTML = '';
                     var tbdy = document.createElement('tbody');
                     if (type === 0) {
-                        var tr = document.createElement('tr');
-                        for (var i = 0; i < productTypeList.length; i++) {
-                            if (i > 100) {
-                                continue;
-                            }
-                            var cells = tr.getElementsByTagName('td');
-                            var cellCount = cells.length;
-                            //alert(cellCount);
-                            if (cellCount <= 4) {
-                                var td = document.createElement('td');
-                                td.textContent = productTypeList[i];
-                                td.id = "nottoadd";
-                                tr.appendChild(td);
-                            } else {
-                                tbdy.appendChild(tr);
-                                tr == null;
-                                tr = document.createElement('tr');
-                            }
-
-                        }
-
-                        tbdy.appendChild(tr);
-                        table.appendChild(tbdy);
+                        addingtagsToParticularTable(table, tbdy, productTypeList);
                     } else if (type === 1) {
-                        var tr = document.createElement('tr');
-                        for (var i = 0; i < occasionList.length; i++) {
-                            if (i > 100) {
-                                continue;
-                            }
-
-                            var cells = tr.getElementsByTagName('td');
-                            var cellCount = cells.length;
-                            //alert(cellCount);
-                            if (cellCount <= 4) {
-                                var td = document.createElement('td');
-                                td.textContent = occasionList[i];
-                                td.id = "nottoadd";
-                                tr.appendChild(td);
-                            } else {
-                                tbdy.appendChild(tr);
-                                tr == null;
-                                tr = document.createElement('tr');
-                            }
-
-                        }
-
-                        tbdy.appendChild(tr);
-                        table.appendChild(tbdy);
+                        addingtagsToParticularTable(table, tbdy, occasionList);
                     } else if (type === 2) {
-                        var tr = document.createElement('tr');
-                        for (var i = 0; i < productDescriptionList.length; i++) {
-                            if (i > 100) {
-                                continue;
-                            }
-
-                            var cells = tr.getElementsByTagName('td');
-                            var cellCount = cells.length;
-                            //alert(cellCount);
-                            if (cellCount <= 4) {
-                                var td = document.createElement('td');
-                                td.textContent = productDescriptionList[i];
-                                td.id = "nottoadd";
-                                tr.appendChild(td);
-                            } else {
-                                tbdy.appendChild(tr);
-                                tr == null;
-                                tr = document.createElement('tr');
-                            }
-                        }
-                        tbdy.appendChild(tr);
-                        table.appendChild(tbdy);
+                        addingtagsToParticularTable(table, tbdy, productDescriptionList);
                     }
                     setCallTagsTable();
                 }
 
+                function addingtagsToParticularTable(table, tbodytag, listofwords) {
+                    var tr = document.createElement('tr');
+                    var currentChar = '';
+                    for (var i = 0; i < listofwords.length; i++) {
 
+
+                        var cells = tr.getElementsByTagName('td');
+                        var cellsth = tr.getElementsByTagName('th');
+                        var cellCount = cells.length + cellsth.length;
+                        //alert(cellCount);
+
+                        if (currentChar === '' || currentChar !== listofwords[i].charAt(0)) {
+
+                            if (cellCount >= 5) {
+                                tbodytag.appendChild(tr);
+                                tr == null;
+                                tr = document.createElement('tr');
+                            }
+                            var th = document.createElement('th');
+
+
+                            var txtContent = document.createElement("h1");
+
+                            txtContent.textContent = listofwords[i].charAt(0);
+                            // txtContent.style.textShadow = "5px 5px 1px #ff0000,10px 10px 1px #0000ff";
+//                            txtContent.style.backgroundColor = '#45aa67'
+                            txtContent.style.textAlign="center";
+                            txtContent.id = "tempid";
+                            th.appendChild(txtContent);
+
+                            tr.appendChild(th);
+                            currentChar = listofwords[i].charAt(0);
+
+                        }
+
+                        cells = tr.getElementsByTagName('td');
+                        cellsth = tr.getElementsByTagName('th');
+                        cellCount = cells.length + cellsth.length;
+
+                        if (cellCount < 5) {
+                            var td = document.createElement('td');
+                            td.textContent = listofwords[i];
+                            td.id = "nottoadd";
+                            tr.appendChild(td);
+                        } else {
+                            tbodytag.appendChild(tr);
+                            tr == null;
+                            tr = document.createElement('tr');
+                            var td = document.createElement('td');
+                            td.textContent = listofwords[i];
+                            td.id = "nottoadd";
+                            tr.appendChild(td);
+                        }
+                    }
+
+                    tbodytag.appendChild(tr);
+                    table.appendChild(tbodytag);
+                }
 
                 function add_Product_TagsNew() {
 
@@ -1765,9 +1769,9 @@
 
     </form>
     <script>
-function clickedValuey(v){
-    
-}
+        function clickedValuey(v) {
+
+        }
 
         function  getSelectedOnes() {
 
