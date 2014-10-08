@@ -304,9 +304,9 @@
             }.datagrid table tbody td:first-child { border-left: none; }.datagrid table tbody tr:last-child td { 
                 border-bottom: none; }
             </style>
-            
+
             <script>
-                
+
                 var productTypeList, occasionList, productDescriptionList;
                 var cacheLocalTags = [];
                 var localTagsObject = {tagCategory: "", tagString: "", tagSubCategory: ""};
@@ -550,7 +550,9 @@
                     setCallTagsTable();
                 }
 
+                var listofcolors = ['#81d8d0', '#ffb6c1','#aa98a9','#e39e54','#6b6daf','#843284'];
                 function addingtagsToParticularTable(table, tbodytag, listofwords) {
+                    var capscount = 0;
                     var tr = document.createElement('tr');
                     var currentChar = '';
                     for (var i = 0; i < listofwords.length; i++) {
@@ -571,17 +573,20 @@
                             var th = document.createElement('th');
 
 
-                            var txtContent = document.createElement("h1");
+                            var txtContent = document.createElement("p");
 
                             txtContent.textContent = listofwords[i].charAt(0);
-                            // txtContent.style.textShadow = "5px 5px 1px #ff0000,10px 10px 1px #0000ff";
-//                            txtContent.style.backgroundColor = '#45aa67'
-                            txtContent.style.textAlign="center";
+                            txtContent.style.fontSize = "32px";
+                            var v = capscount%6;
+                            console.log('test test: '+v+' color:'+listofcolors[v]);
+                            txtContent.style.color = listofcolors[v];
+                            txtContent.style.textAlign = "center";
                             txtContent.id = "tempid";
                             th.appendChild(txtContent);
 
                             tr.appendChild(th);
                             currentChar = listofwords[i].charAt(0);
+                            capscount = capscount+1;
 
                         }
 
