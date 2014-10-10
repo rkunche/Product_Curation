@@ -127,6 +127,7 @@
 
         }
         function curateProducts() {
+            prepareLink();
             if (active_id === '') {
                 alert('select the user');
                 return;
@@ -137,6 +138,7 @@
             //  alert(requestProduct);
         }
         function cuarteAsiles() {
+            prepareLink();
             if (active_id === '') {
                 alert('select the user');
                 return;
@@ -163,7 +165,7 @@
                 </div>-->
         <div id="content">
             <p style="size: 40">
-                Product State:
+                Curator Name:
                 <select id="userlist"  style="width:150;" onchange="prepareLink()">
                     <option value="">Select user:</option>
                     <option value="5505177142427648" >Raju</option>

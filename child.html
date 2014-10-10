@@ -68,6 +68,9 @@
 
             p { display: inline-block; }
 
+
+
+
         </style>
 
         <style type="text/css">
@@ -304,7 +307,86 @@
             }.datagrid table tbody td:first-child { border-left: none; }.datagrid table tbody tr:last-child td { 
                 border-bottom: none; }
             </style>
+            <script>
+                (function(i, s, o, g, r, a, m) {
+                    i['GoogleAnalyticsObject'] = r;
+                    i[r] = i[r] || function() {
+                        (i[r].q = i[r].q || []).push(arguments)
+                    }, i[r].l = 1 * new Date();
+                    a = s.createElement(o),
+                            m = s.getElementsByTagName(o)[0];
+                    a.async = 1;
+                    a.src = g;
+                    m.parentNode.insertBefore(a, m)
+                })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
+                ga('create', 'UA-55582645-2', 'auto');
+                ga('send', 'pageview');
+
+            </script>
+            <script>
+                (function(document) {
+                    'use strict';
+
+                    var LightTableFilter = (function(Arr) {
+
+                        var _input;
+
+                        function _onInputEvent(e) {
+                            _input = e.target;
+                            var tables = document.getElementsByClassName(_input.getAttribute('data-table'));
+                            Arr.forEach.call(tables, function(table) {
+                                Arr.forEach.call(table.tBodies, function(tbody) {
+                                    Arr.forEach.call(tbody.rows, _filter);
+                                });
+                            });
+                        }
+
+                        function _filter(row) {
+                            var text = row.textContent.toLowerCase(), val = _input.value.toLowerCase();
+                            row.style.display = text.indexOf(val) === -1 ? 'none' : 'table-row';
+
+                            if (text.indexOf(val) >= 0) {
+                                var list = row.getElementsByTagName('td');
+                                for (var i = 0; i < list.length; i++) {
+                                    var text = list[i].textContent.toLowerCase(), val = _input.value.toLowerCase();
+                                    if (text.indexOf(val) >= 0 && val !== '') {
+                                        //  console.log('test test search: ' + text);
+                                        // var result = text.fontcolor("green");
+
+                                        list[i].style.color = "#b85eb4";
+                                    } else {
+                                        list[i].style.color = "#000000";
+                                    }
+
+                                }
+                            } else {
+                                var list = row.getElementsByTagName('td');
+                                for (var i = 0; i < list.length; i++) {
+
+                                    list[i].style.color = "#000000";
+                                }
+                            }
+                        }
+
+                        return {
+                            init: function() {
+                                var inputs = document.getElementsByClassName('light-table-filter');
+                                Arr.forEach.call(inputs, function(input) {
+                                    input.oninput = _onInputEvent;
+                                });
+                            }
+                        };
+                    })(Array.prototype);
+
+                    document.addEventListener('readystatechange', function() {
+                        if (document.readyState === 'complete') {
+                            LightTableFilter.init();
+                        }
+                    });
+
+                })(document);
+            </script>
             <script>
 
                 var productTypeList, occasionList, productDescriptionList;
@@ -550,7 +632,7 @@
                     setCallTagsTable();
                 }
 
-                var listofcolors = ['#81d8d0', '#ffb6c1','#aa98a9','#e39e54','#6b6daf','#843284'];
+                var listofcolors = ['#81d8d0', '#ffb6c1', '#aa98a9', '#e39e54', '#6b6daf', '#843284'];
                 function addingtagsToParticularTable(table, tbodytag, listofwords) {
                     var capscount = 0;
                     var tr = document.createElement('tr');
@@ -577,8 +659,8 @@
 
                             txtContent.textContent = listofwords[i].charAt(0);
                             txtContent.style.fontSize = "32px";
-                            var v = capscount%6;
-                            console.log('test test: '+v+' color:'+listofcolors[v]);
+                            var v = capscount % 6;
+                            //  console.log('test test: '+v+' color:'+listofcolors[v]);
                             txtContent.style.color = listofcolors[v];
                             txtContent.style.textAlign = "center";
                             txtContent.id = "tempid";
@@ -586,7 +668,7 @@
 
                             tr.appendChild(th);
                             currentChar = listofwords[i].charAt(0);
-                            capscount = capscount+1;
+                            capscount = capscount + 1;
 
                         }
 
@@ -598,6 +680,7 @@
                             var td = document.createElement('td');
                             td.textContent = listofwords[i];
                             td.id = "nottoadd";
+                            td.style.color = '#000000';
                             tr.appendChild(td);
                         } else {
                             tbodytag.appendChild(tr);
@@ -605,6 +688,7 @@
                             tr = document.createElement('tr');
                             var td = document.createElement('td');
                             td.textContent = listofwords[i];
+                            td.style.color = '#000000';
                             td.id = "nottoadd";
                             tr.appendChild(td);
                         }
@@ -1224,6 +1308,7 @@
                         }
 
                     });
+
                     var stringOfTagss = elements.toString();
                     //for Occasion
                     if (tagtype !== null && tagtype !== undefined && tagtype !== '') {
@@ -1236,7 +1321,8 @@
                                 var cat = tags[q].tagCategory;
                                 var tagstr = tags[q].tagString;
                                 var tagSubStr = tags[q].tagSubCategory;
-                                if (cat !== null && cat !== undefined && cat.indexOf(tagtype) === 0 && tagstr.indexOf(elements[p]) === 0) {
+                                if (cat !== null && cat !== undefined && cat.indexOf(tagtype) === 0 && tagstr.localeCompare(elements[p]) === 0) {
+                                    console.log('child testing for multipe tags: ' + tagstr);
                                     var index = cacheLocalTags.indexOf(tagstr);
                                     if (index == -1) {
                                         cacheLocalTags.push(tagstr);
@@ -1425,6 +1511,9 @@
                         //   alert(this.textContent)
                         clickedValue(this);
                     });
+
+
+
                 }
 
                 function  excuteOccasion() {
@@ -1550,111 +1639,6 @@
 
 
 
-            <li>
-                <label>Create Tags</label>
-                <br>
-                <!--                <table class="altrowstable" id="alternatecolor"  width="600">
-                
-                                    <tr>
-                                        <th><strong>Product Type:</strong>
-                                    <div style="padding:20px">
-                                        <select id="select_tagCategory" name="selection" multiple="multiple"  style="width: 150px">
-                
-                                        </select>
-                                        </th>
-                
-                                        <th><strong>Occasion:</strong>
-                                        <div style="padding:20px">
-                                            <select id="select_tagString" name="selection"  multiple="multiple"  style="width: 150px" data-native-menu="false">
-                
-                                            </select>
-                                        </div>
-                
-                                        </th>
-                
-                                        <th><strong>Product Description:</strong>
-                                        <div style="padding:20px">
-                                            <select id="select_tagSubCategory" name="selection" multiple="multiple"   style="width: 150px" data-native-menu="false">
-                
-                
-                                            </select>
-                                        </div>
-                
-                                        </th>
-                
-                                        </tr>
-                
-                                </table>-->
-
-                <div id="navcontainer" >
-                    <ul id="navlist">
-                        <li  style="background-color: #7fc9e5"><a onclick="excuteProductType()" id="product_type_id">Product Type</a></li>
-                        <li  style="background-color: #7fc9e5"><a onclick="excuteOccasion()" id="occasion_id" >Occasion</a></li>
-                        <li  style="background-color: #7fc9e5"><a onclick="excuteProductDescription()" id="product_des_id" >Product description</a></li>
-
-                    </ul>
-                </div>
-                <div class="datagrid"  ><table id="tablewithtags_id" border="1">
-
-                    </table></div>
-
-                <input type="button" class="button" value="Tag to product" onclick="addTagsToTableVaz()" />
-
-            </li>
-            <li> <label>Create Custom Tag</label>
-                <br>
-                <table    class="altrowstable" id="create_custom_tag"   width="600">
-                    <tr>
-
-                        <td>
-                            <div>
-                                Tag Category <br><br>
-                                <input id="id_tag_cat" type="text" width="200" name="name"  placeholder="Enter Tag Category" style="border:1px solid #6B9FFF"/>
-
-                            </div>
-
-                        </td>
-                        <td>
-                            <div>
-                                Tag String <br><br>
-                                <input id="id_tag_str" type="text" width="200" name="name" autocomplete="off"   placeholder="Enter Tag String" style="border:1px solid #6B9FFF"/>
-
-                            </div>
-
-                        </td>
-                        <td boarder ="1">
-                            <div>
-                                Tag Sub Category <br> <br>
-                                <input  type="text" width="200"  name="name" autocomplete="off"  placeholder="Enter Tag SubCat" id="id_sub_str" style="border:1px solid #6B9FFF"/>
-
-                            </div>
-
-                        </td> 
-                    </tr>
-
-
-                </table>
-                <input type="button" class="button" value="Create&Attach Custom Tag" onclick="createCustomTag()"  /> 
-                <span>Enter new tags with out typing mistakes</span>
-            </li>
-
-
-            <li>
-                <label>Product Tags</label>
-                <br>
-                <table class="altrowstable" id="created_tags_table" width="600">
-                    <tr>
-                        <th>Tag Category</th>
-                        <th>Tag String</th>
-                        <th>Tag Sub Category</th>
-                        <th>Delete Tag?</th>
-                    </tr>
-                </table>
-                <br>
-                <span>Tags show up here as you create them; you may correct errors by clicking on Untag</span>
-
-
-            </li>
 
 
 
@@ -1760,7 +1744,122 @@
                 </table>
                 <table class="altrowstable"  ><tr><td align="center"    width="600"><input type="text" name="name" autocomplete="off"  placeholder="Select or enter sizes" id="size_id"></td></tr></table>
                 <span>Select Size or Enter</span>
-            </li>   
+            </li> 
+
+            <li>
+                <label>Create Tags</label>
+                <br>
+                <!--                <table class="altrowstable" id="alternatecolor"  width="600">
+                
+                                    <tr>
+                                        <th><strong>Product Type:</strong>
+                                    <div style="padding:20px">
+                                        <select id="select_tagCategory" name="selection" multiple="multiple"  style="width: 150px">
+                
+                                        </select>
+                                        </th>
+                
+                                        <th><strong>Occasion:</strong>
+                                        <div style="padding:20px">
+                                            <select id="select_tagString" name="selection"  multiple="multiple"  style="width: 150px" data-native-menu="false">
+                
+                                            </select>
+                                        </div>
+                
+                                        </th>
+                
+                                        <th><strong>Product Description:</strong>
+                                        <div style="padding:20px">
+                                            <select id="select_tagSubCategory" name="selection" multiple="multiple"   style="width: 150px" data-native-menu="false">
+                
+                
+                                            </select>
+                                        </div>
+                
+                                        </th>
+                
+                                        </tr>
+                
+                                </table>-->
+
+                <div id="navcontainer" >
+                    <ul id="navlist">
+                        <li  style="background-color: #7fc9e5"><a onclick="excuteProductType()" id="product_type_id">Product Type</a></li>
+                        <li  style="background-color: #7fc9e5"><a onclick="excuteOccasion()" id="occasion_id" >Occasion</a></li>
+                        <li  style="background-color: #7fc9e5"><a onclick="excuteProductDescription()" id="product_des_id" >Product description</a></li>
+
+                    </ul>
+                    <!--                    <input type="search" class="light-table-filter" data-table="order-table" placeholder="Filter">-->
+
+
+                    <input type="search"  class="light-table-filter" data-table="order-table" placeholder="Filter" id='mysearch'>
+
+
+                </div>
+
+
+                <div class="datagrid"  ><table id='tablewithtags_id' border="1" class="order-table table">
+
+                    </table></div>
+
+                <input type="button" class="button" value="Tag to product" onclick="addTagsToTableVaz()" />
+
+            </li>
+            <li> <label>Create Custom Tag</label>
+                <br>
+                <table    class="altrowstable" id="create_custom_tag"   width="600">
+                    <tr>
+
+                        <td>
+                            <div>
+                                Tag Category <br><br>
+                                <input id="id_tag_cat" type="text" width="200" name="name" autocomplete="off"value="Product description" placeholder="Product description" style="border:1px solid #6B9FFF"  disabled/>
+
+                            </div>
+
+                        </td>
+                        <td>
+                            <div>
+                                Tag String <br><br>
+                                <input id="id_tag_str" type="text" width="200" name="name" autocomplete="off"   placeholder="Enter Tag String" style="border:1px solid #6B9FFF"/>
+
+                            </div>
+
+                        </td>
+                        <td boarder ="1">
+                            <div>
+                                Tag Sub Category <br> <br>
+                                <input  type="text" width="200"  name="name" autocomplete="off"  placeholder="Enter Tag SubCat" id="id_sub_str" style="border:1px solid #6B9FFF"/>
+
+                            </div>
+
+                        </td> 
+                    </tr>
+
+
+                </table>
+                <input type="button" class="button" value="Create&Attach Custom Tag" onclick="createCustomTag()"  /> 
+                <span>Enter new tags with out typing mistakes</span>
+            </li>
+
+
+            <li>
+                <label>Product Tags</label>
+                <br>
+                <table class="altrowstable" id="created_tags_table" width="600">
+                    <tr>
+                        <th>Tag Category</th>
+                        <th>Tag String</th>
+                        <th>Tag Sub Category</th>
+                        <th>Delete Tag?</th>
+                    </tr>
+                </table>
+                <br>
+                <span>Tags show up here as you create them; you may correct errors by clicking on Untag</span>
+
+
+            </li>
+
             <input type="button" class="button" value="Curate and Finish" onClick="updateProvider()" id ="send_but_id"/>
 
             <input type="button" class="button" value="Archive" onClick="archieveProduct()" id ="archive_but_id"/>
@@ -1773,6 +1872,7 @@
 
 
     </form>
+
     <script>
         function clickedValuey(v) {
 
@@ -1833,6 +1933,8 @@
 //            }
 
         }
+
+
     </script>
     <form action="" method="post" class="smart-green">
 
@@ -1878,7 +1980,15 @@
 
 </form> 
 
-
+<style>
+    input[id=mysearch] { 	
+        padding: 30px;            /* Overridden by padding: 1px; */
+        font-family: Georgia;     /* Overridden by font: -webkit-small-control; */
+        border: 5px solid black;  /* Overridden by border: 2px inset; */
+        background: #e6b4e4;          /* Overridden by background-color: white; */
+        line-height: 3;           /* Irrelevant, I guess */
+    }
+</style>
 </body>
 
 
