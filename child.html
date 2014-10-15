@@ -2,7 +2,17 @@
 <html>
     <head>
         <title>Vue 2.0 Product Curation - Curate Product</title>
-
+        <link rel="stylesheet" type="text/css" href="src/jquery.multiselect.css" />
+        <link rel="stylesheet" type="text/css" href="src/jquery.multiselect.filter.css" />
+        <link rel="stylesheet" type="text/css" href="assets/style.css" />
+        <link rel="stylesheet" type="text/css" href="assets/prettify.css" />
+        <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/ui-lightness/jquery-ui.css" />
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="src/jquery.multiselect.js"></script>
+        <script type="text/javascript" src="src/jquery.multiselect.filter.js"></script>
+        <script type="text/javascript" src="assets/prettify.js"></script>
+        <script src="jquery.csv-0.71.js"></script>
         <style>
             #header {
                 background-color:white;
@@ -221,7 +231,7 @@
                 filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e4685d', endColorstr='#fc8d83',GradientType=0);
                 background-color:#e4685d;
             } 
-              .form-style-7 input[id="archive_but_id"]:active{
+            .form-style-7 input[id="archive_but_id"]:active{
                 position:relative;
                 top:1px;
             } 
@@ -389,6 +399,7 @@
             }.datagrid table tbody td:first-child { border-left: none; }.datagrid table tbody tr:last-child td { 
                 border-bottom: none; }
             </style>
+
             <script>
                 (function(i, s, o, g, r, a, m) {
                     i['GoogleAnalyticsObject'] = r;
@@ -404,6 +415,122 @@
 
                 ga('create', 'UA-55582645-2', 'auto');
                 ga('send', 'pageview');
+
+            </script>
+            <script type='text/javascript'>
+
+                var filetagsProducttype = [];
+                var filetagsOccasion = [];
+
+//                $(document).ready(function() {
+//                    var contentsOfFileAsStringtype = main('ProductTypeCuration.csv');
+//                    var contentsOfFileAsStringoccasion = main('OccasionsCuration.csv');
+//
+//
+//                    console.log('after reading the file contentsOfFileAsStringtype: ' + contentsOfFileAsStringtype);
+//                    var datatype = contentsOfFileAsStringtype;
+//                    //   console.log('after parsing the file:  contentsOfFileAsStringtype:' + datatype);
+//
+//                    console.log('after reading the file contentsOfFileAsStringoccasion ' + contentsOfFileAsStringoccasion);
+//                    var dataocc = contentsOfFileAsStringoccasion;
+//                    //  console.log('after parsing the file contentsOfFileAsStringoccasion: ' + dataocc);
+//
+//                    for (var i = 0; i < datatype.length; i++) {
+//                        var v = datatype[i].trim();
+//                        if (v !== null && v !== "") {
+//                            filetagsProducttype.push(v);
+//                        }
+//                    }
+//                    filetagsProducttype.sort();
+//                    for (var i = 0; i < dataocc.length; i++) {
+//                        var v = dataocc[i].trim();
+//                        if (v !== null && v !== "") {
+//                            filetagsOccasion.push(v);
+//                        }
+//                    }
+//                    filetagsOccasion.sort();
+//
+//                });
+
+                $(document).ready(function() {
+                    ajaxcallToPType('ProductTypeCuration.csv', filetagsProducttype);
+                    ajaxcallToPType('OccasionsCuration.csv', filetagsOccasion);
+
+                });
+                function ajaxcallToPType(pathOfFileToReadFrom, list) {
+                    var datatype = '';
+
+                    var ajax = $.ajax({
+                        url: pathOfFileToReadFrom,
+                        async: false,
+                        success: function(csvd) {
+                            // console.log('ajax succes: ' + csvd)
+                            datatype = $.csv2Array(csvd);
+                            console.log('ajax arry: ' + datatype)
+
+                        },
+                        dataType: "text",
+                    });
+
+                    ajax.complete(function(jqXHR) {
+                        // console.log('ajax complete ' + datatype);
+                        if (jqXHR.readyState === 4) {
+                            callfunction(datatype, list);
+                        }
+                    });
+                }
+
+                function callfunction(array, list) {
+                    for (var i = 0; i < array.length; i++) {
+                        var tmp = array[i];
+                        var line = tmp;
+                        for (var j = 0; j < line.length; j++) {
+                            v = line[j];
+                            v = $.trim(v);
+                            if (v !== '' && v.length > 0) {
+                                console.log('Words   :' + v + ':');
+                                list.push(v);
+                            }
+                        }
+                    }
+                    list.sort();
+                    console.log('sorted list: ' + list);
+                    excuteOccasion();
+                }
+
+
+//                function main(pathOfFileToRead)
+//                {
+//
+//
+//                    var contentsOfFileAsString = FileHelper.readStringFromFileAtPath
+//                            (
+//                                    pathOfFileToRead
+//                                    );
+//
+//                    //document.body.innerHTML = contentsOfFileAsString;
+//                    return  contentsOfFileAsString;
+//
+//                }
+//
+//                function FileHelper()
+//                {
+//                }
+//                {
+//                    FileHelper.readStringFromFileAtPath = function(pathOfFileToReadFrom)
+//                    {
+//                        var request = new XMLHttpRequest();
+//                        request.open("GET", pathOfFileToReadFrom, false);
+//                        request.send(null);
+//                        var returnValue = request.responseText;
+//
+//                        return returnValue;
+//                    
+//
+//                    }
+//                }
+
+
 
             </script>
             <script>
@@ -436,9 +563,9 @@
                                         //  console.log('test test search: ' + text);
                                         // var result = text.fontcolor("green");
 
-                                        list[i].style.color = "#b85eb4";
+                                        list[i].style.fontWeight = "bold";
                                     } else {
-                                        list[i].style.color = "#000000";
+                                        list[i].style.fontWeight = "normal";
                                     }
 
                                 }
@@ -446,7 +573,7 @@
                                 var list = row.getElementsByTagName('td');
                                 for (var i = 0; i < list.length; i++) {
 
-                                    list[i].style.color = "#000000";
+                                    list[i].style.fontWeight = "normal";
                                 }
                             }
                         }
@@ -472,6 +599,7 @@
             <script>
 
                 var productTypeList, occasionList, productDescriptionList;
+                var static_categoryNames = ["Product Type", "Occasion", "Product description"]
                 var cacheLocalTags = [];
                 var localTagsObject = {tagCategory: "", tagString: "", tagSubCategory: ""};
                 var initialValues = {Title: "", Description: "", ProductTags: null, CurrentProductState: "", PrductProviders: null};
@@ -638,6 +766,7 @@
                 }
                 function afterLoadingThePopup() {
                     var jsonResponse = JSON.parse(datafromparent);
+                    console.log('ready to parse response:' + datafromparent + "   *****after parse:" + jsonObject);
                     document.getElementById('id_title').value = jsonResponse.title;
                     document.getElementById('id_description').value = "";
                     //method to call to set current product state...
@@ -705,17 +834,18 @@
                     table.innerHTML = '';
                     var tbdy = document.createElement('tbody');
                     if (type === 0) {
-                        addingtagsToParticularTable(table, tbdy, productTypeList);
+                        addingtagsToParticularTable(table, tbdy, filetagsProducttype, static_categoryNames[0]);
                     } else if (type === 1) {
-                        addingtagsToParticularTable(table, tbdy, occasionList);
+                        addingtagsToParticularTable(table, tbdy, filetagsOccasion, static_categoryNames[1]);
                     } else if (type === 2) {
-                        addingtagsToParticularTable(table, tbdy, productDescriptionList);
+                        addingtagsToParticularTable(table, tbdy, productDescriptionList, static_categoryNames[2]);
                     }
                     setCallTagsTable();
                 }
 
                 var listofcolors = ['#81d8d0', '#ffb6c1', '#aa98a9', '#e39e54', '#6b6daf', '#843284'];
-                function addingtagsToParticularTable(table, tbodytag, listofwords) {
+                function addingtagsToParticularTable(table, tbodytag, listofwords, tagtype) {
+                    console.log('type: ' + tagtype + '  ' + 'words: ' + listofwords);
                     var capscount = 0;
                     var tr = document.createElement('tr');
                     var currentChar = '';
@@ -762,6 +892,7 @@
                             var td = document.createElement('td');
                             td.textContent = listofwords[i];
                             td.id = "nottoadd";
+
                             td.style.color = '#000000';
                             tr.appendChild(td);
                         } else {
@@ -772,6 +903,7 @@
                             td.textContent = listofwords[i];
                             td.style.color = '#000000';
                             td.id = "nottoadd";
+
                             tr.appendChild(td);
                         }
                     }
@@ -782,7 +914,7 @@
 
                 function add_Product_TagsNew() {
 
-                    var static_categoryNames = ["Product Type", "Occasion", "Product description"]
+
                     //add provider tags
                     var tag_category_array = new Array();
                     var tag_string_array = new Array();
@@ -1208,11 +1340,11 @@
 
                 function createTagRequest(category, string, subcat) {
                     console.log("createTagRequest fun:   CAT:" + category + " Tag String: " + string);
-                    if (category.toLowerCase() == "Product Type".toLowerCase()) {
+                    if (category.toLowerCase() == static_categoryNames[0].toLowerCase()) {
                         productTypeTagCount = productTypeTagCount + 1;
-                    } else if (category.toLowerCase() == "Occasion".toLowerCase()) {
+                    } else if (category.toLowerCase() == static_categoryNames[1].toLowerCase()) {
                         occasionTagCount = occasionTagCount + 1;
-                    } else if (category.toLowerCase() == "Product description".toLowerCase()) {
+                    } else if (category.toLowerCase() == static_categoryNames[2].toLowerCase()) {
                         productDescriptionTagCount = productDescriptionTagCount + 1;
                     }
 
@@ -1354,316 +1486,323 @@
                 }
             </script>
 
-            <link rel="stylesheet" type="text/css" href="src/jquery.multiselect.css" />
-            <link rel="stylesheet" type="text/css" href="src/jquery.multiselect.filter.css" />
-            <link rel="stylesheet" type="text/css" href="assets/style.css" />
-            <link rel="stylesheet" type="text/css" href="assets/prettify.css" />
-            <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/ui-lightness/jquery-ui.css" />
-            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
-            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
-            <script type="text/javascript" src="src/jquery.multiselect.js"></script>
-            <script type="text/javascript" src="src/jquery.multiselect.filter.js"></script>
-            <script type="text/javascript" src="assets/prettify.js"></script>
 
 
-            <link rel="stylesheet" href="radio/style.css"/>
+
+
             <style type="text/css">
             label {margin-right:20px;}
         </style>
-        <script type="text/javascript" src="radio/jspatch.js"></script>
+
 
         <script type="text/javascript">
 
-                function addTagsToTableVaz() {
+            function addTagsToTableVaz() {
 
-                    var tagtype;
-                    $("a[name^='ok']").each(function() {
-                        tagtype = this.textContent;
-                    });
-                    var elements = [];
-                    $("td[id^='toadd']").each(function() {
-                        var val = this.textContent;
-                        elements.push(val);
-                        if (val != undefined && this.textContent != '' && this.textContent != null) {
-                            //  tagsArray.push(val);
-                            //  addElementToTable(tagtype, val, '');
-                        }
-
-                    });
-
-                    var stringOfTagss = elements.toString();
-                    //for Occasion
-                    if (tagtype !== null && tagtype !== undefined && tagtype !== '') {
-                        var productType = tagtype;
-                        for (var p = 0; p < elements.length; p++) {
-
-
-                            for (var q = 0; q < tags.length; q++) {
-
-                                var cat = tags[q].tagCategory;
-                                var tagstr = tags[q].tagString;
-                                var tagSubStr = tags[q].tagSubCategory;
-                                if (cat !== null && cat !== undefined && cat.indexOf(tagtype) === 0 && tagstr.localeCompare(elements[p]) === 0) {
-                                    console.log('child testing for multipe tags: ' + tagstr);
-                                    var index = cacheLocalTags.indexOf(tagstr);
-                                    if (index == -1) {
-                                        cacheLocalTags.push(tagstr);
-                                        if (tagtype === 'Occasion')
-                                            occasionTagCount = occasionTagCount + 1;
-                                        if (tagtype === 'Product Type')
-                                            productTypeTagCount = productTypeTagCount + 1;
-                                        if (tagtype === 'Product description')
-                                            productDescriptionTagCount = productDescriptionTagCount + 1;
-                                        addElementToTable(tagtype, tagstr, tagSubStr);
-                                        tagsArray.push(tagstr);
-                                    } else {
-                                        //alert("duplicate tag");
-                                    }
-
-                                }
-                            }
-
-                        }
+                var tagtype;
+                $("a[name^='ok']").each(function() {
+                    tagtype = this.textContent;
+                });
+                var elements = [];
+                var elementTypes = [];
+                $("td[id^='toadd']").each(function() {
+                    var val = this.textContent;
+                    var typ = this.type;
+                    elements.push(val);
+                    elementTypes.push(typ);
+                    if (val != undefined && this.textContent != '' && this.textContent != null) {
+                        //  tagsArray.push(val);
+                        //  addElementToTable(tagtype, val, '');
                     }
+
+                });
+
+                console.log('tags ttttt: ' + elements.toString());
+                console.log('tags typpeeess: ' + tagtype);
+
+
+                //for Occasion
+                if (tagtype !== null && tagtype !== undefined && tagtype !== '') {
+
+                    for (var p = 0; p < elements.length; p++) {
+
+                        var tagstr = elements[p];
+
+//                        for (var q = 0; q < tags.length; q++) {
+//
+//                            var cat = tags[q].tagCategory;
+//                            var tagstr = tags[q].tagString;
+//                            var tagSubStr = tags[q].tagSubCategory;
+                        //     if (cat !== null && cat !== undefined && cat.indexOf(tagtype) === 0 && tagstr.localeCompare(elements[p]) === 0) {
+                        console.log('child testing for multipe tags: ' + tagstr);
+                        var index = cacheLocalTags.indexOf(tagstr);
+                        if (index == -1) {
+                            cacheLocalTags.push(tagstr);
+                            if (tagtype === static_categoryNames[1])
+                                occasionTagCount = occasionTagCount + 1;
+                            if (tagtype === static_categoryNames[0])
+                                productTypeTagCount = productTypeTagCount + 1;
+                            if (tagtype === 'Product description')
+                                productDescriptionTagCount = productDescriptionTagCount + 1;
+                            addElementToTable(tagtype, tagstr, '');
+                            tagsArray.push(tagstr);
+                        } else {
+                            //alert("duplicate tag");
+                        }
+
+                        //    }
+                        //  }
+
+                    }
+                }
 
 
 //                    alert("Type: " + tagtype + " List:" + stringOfElementIDs);
 
-                    //create TAG.
-                    //   createTagRequest(valC, tagString, subCatString);
+                //create TAG.
+                //   createTagRequest(valC, tagString, subCatString);
+                if (taggingStarted == false) {
+                    tagToProduct();
+                } else {
+
+                }
+
+            }
+
+            function addElementToTable(cat, str, substr) {
+
+                createTagReqAndAddTable(cat, str, substr, 0);
+
+            }
+
+            function createCustomTag() {
+                var valC, valS, valSC;
+                valC = document.getElementById("id_tag_cat").value;
+                valS = document.getElementById("id_tag_str").value;
+                valSC = document.getElementById("id_sub_str").value;
+                if (valS === null || valS.length < 1 || valS === undefined) {
+                    alert("Tag String must not empty");
+                    return;
+                }
+                if (valC === null || valC.length < 1 || valC === undefined) {
+                    alert("Tag Category must not empty");
+                    return;
+                }
+                var index = cacheLocalTags.indexOf(valS);
+                if (index === -1) {
+                    cacheLocalTags.push(valS);
+                    document.getElementById("id_tag_str").value = "";
+                    document.getElementById("id_tag_cat").value = '';
+                    console.log("CAT:" + valC + " Tag String: " + valS);
+                    valS = valS.trim();
+                    valS = toTitleCase(valS);
+                    createTagReqAndAddTable(valC, valS, valSC, 1);
+                } else {
+                    alert("duplicate tag");
+                }
+
+            }
+            function toTitleCase(str)
+            {
+                //make every starting letter capital.
+                return str.replace(/\w\S*/g, function(txt) {
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                });
+            }
+            function createTagReqAndAddTable(valC, valS, valSC, addtableonly) {
+                var row = document.createElement('tr');
+                var thC = document.createElement('th');
+                thC.textContent = valC;
+                var thS = document.createElement('th');
+                thS.textContent = valS;
+                var thSC = document.createElement('th');
+                thSC.textContent = valSC;
+                var del = document.createElement('th')
+                var btn = document.createElement('Button');
+                btn.textContent = 'Untag';
+                btn.onclick = function() {
+                    document.getElementById('created_tags_table').removeChild(row);
+                    var index = cacheLocalTags.indexOf(valS);
+                    if (index !== -1) {
+                        var removedTag = cacheLocalTags.splice(index, 1);
+
+
+                    }
+                    tagAssociateWithProduct(valS, "untag");
+
+                    if (valC.toLowerCase() == static_categoryNames[0].toLowerCase()) {
+                        productTypeTagCount = productTypeTagCount - 1;
+                    } else if (valC.toLowerCase() == static_categoryNames[1].toLowerCase()) {
+                        occasionTagCount = occasionTagCount - 1;
+                    } else if (valC.toLowerCase() == static_categoryNames[2].toLowerCase()) {
+                        productDescriptionTagCount = productDescriptionTagCount - 1;
+                    }
+                };
+                del.appendChild(btn);
+                row.appendChild(thC);
+                row.appendChild(thS);
+                row.appendChild(thSC);
+                row.appendChild(del);
+                document.getElementById('created_tags_table').appendChild(row);
+
+                appendtagToProduct = valS;
+
+                if (valSC === undefined)
+                    valSC === null;
+
+                //to attach local data
+
+                localTags.push(valS);
+                if (addtableonly === 1)
+                    createTagRequest(valC, valS, valSC)
+            }
+
+
+            function  createGenderTag() {
+
+                var vl = document.querySelector('input[name="gender"]:checked').value;
+                var index = cacheLocalTags.indexOf(vl);
+                if (index == -1) {
+                    tagsArray.push(vl);
+                    cacheLocalTags.push(vl);
+                    createTagReqAndAddTable('Product Description', vl, '', 0);
+                    productDescriptionTagCount = productDescriptionTagCount + 1;
                     if (taggingStarted == false) {
                         tagToProduct();
                     } else {
 
                     }
-
+                } else {
+                    alert("Warning: Duplicate tag");
                 }
+            }
+            function archieveProduct() {
 
-                function addElementToTable(cat, str, substr) {
+                var r = confirm("Do you want to Archive Product?");
+                if (r === true) {
 
-                    createTagReqAndAddTable(cat, str, substr, 0);
+                    var url = "https://vue-server-dev.appspot.com/api/product/" + jsonObject.id;
+                    if (XMLHttpRequest) {
+                        request = new XMLHttpRequest();
+                        if ("withCredentials" in request) {
+                            // Firefox 3.5 and Safari 4
+                            request.open('PUT', url, true);
+                            request.setRequestHeader('Custom-Header', 'javascript-client');
+                            request.setRequestHeader('Content-Type', 'application/json');
+                            request.onreadystatechange = function() {
 
-                }
+                                if (request.readyState !== 4)
+                                    return;
+                                if (request.status !== 200 && request.status !== 304) {
+                                    // alert('HTTP POST error ' + tagRequest.status + 'Response ' + tagRequest.responseText);
 
-                function createCustomTag() {
-                    var valC, valS, valSC;
-                    valC = document.getElementById("id_tag_cat").value;
-                    valS = document.getElementById("id_tag_str").value;
-                    valSC = document.getElementById("id_sub_str").value;
-                    if (valS === null || valS.length < 1 || valS === undefined) {
-                        alert("Tag String must not empty");
-                        return;
-                    }
-                    if (valC === null || valC.length < 1 || valC === undefined) {
-                        alert("Tag Category must not empty");
-                        return;
-                    }
-                    var index = cacheLocalTags.indexOf(valS);
-                    if (index === -1) {
-                        cacheLocalTags.push(valS);
-                        document.getElementById("id_tag_str").value = "";
-                        document.getElementById("id_tag_cat").value = '';
-                        console.log("CAT:" + valC + " Tag String: " + valS);
-                        valS = valS.trim();
-                        valS = toTitleCase(valS);
-                        createTagReqAndAddTable(valC, valS, valSC, 1);
-                    } else {
-                        alert("duplicate tag");
-                    }
+                                    return;
+                                }
+                                if (request.status === 200)
+                                {
+                                    window.opener.close();
+                                    close();
 
-                }
-                function toTitleCase(str)
-                {
-                    //make every starting letter capital.
-                    return str.replace(/\w\S*/g, function(txt) {
-                        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-                    });
-                }
-                function createTagReqAndAddTable(valC, valS, valSC, addtableonly) {
-                    var row = document.createElement('tr');
-                    var thC = document.createElement('th');
-                    thC.textContent = valC;
-                    var thS = document.createElement('th');
-                    thS.textContent = valS;
-                    var thSC = document.createElement('th');
-                    thSC.textContent = valSC;
-                    var del = document.createElement('th')
-                    var btn = document.createElement('Button');
-                    btn.textContent = 'Untag';
-                    btn.onclick = function() {
-                        document.getElementById('created_tags_table').removeChild(row);
-                        var index = cacheLocalTags.indexOf(valS);
-                        if (index !== -1) {
-                            var removedTag = cacheLocalTags.splice(index, 1);
-
-
+                                }
+                            };
+                            //product update request:
+                            request.send(JSON.stringify({id: jsonObject.id, ownerAisleId: jsonObject.ownerAisleId, ownerProductListId: jsonObject.ownerProductListId, creatorId: jsonObject.creatorId, curatorId: jsonObject.curatorId, title: jsonObject.title, description: jsonObject.description, currentProductState: "ARCHIVED", relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
                         }
-                        tagAssociateWithProduct(valS, "untag");
-
-                        if (valC.toLowerCase() == "Product Type".toLowerCase()) {
-                            productTypeTagCount = productTypeTagCount - 1;
-                        } else if (valC.toLowerCase() == "Occasion".toLowerCase()) {
-                            occasionTagCount = occasionTagCount - 1;
-                        } else if (valC.toLowerCase() == "Product Description".toLowerCase()) {
-                            productDescriptionTagCount = productDescriptionTagCount - 1;
-                        }
-                    };
-                    del.appendChild(btn);
-                    row.appendChild(thC);
-                    row.appendChild(thS);
-                    row.appendChild(thSC);
-                    row.appendChild(del);
-                    document.getElementById('created_tags_table').appendChild(row);
-
-                    appendtagToProduct = valS;
-
-                    if (valSC === undefined)
-                        valSC === null;
-
-                    //to attach local data
-
-                    localTags.push(valS);
-                    if (addtableonly === 1)
-                        createTagRequest(valC, valS, valSC)
-                }
-
-
-                function  createGenderTag() {
-
-                    var vl = document.querySelector('input[name="gender"]:checked').value;
-                    var index = cacheLocalTags.indexOf(vl);
-                    if (index == -1) {
-                        tagsArray.push(vl);
-                        cacheLocalTags.push(vl);
-                        createTagReqAndAddTable('Product Description', vl, '', 0);
-                        productDescriptionTagCount = productDescriptionTagCount + 1;
-                        if (taggingStarted == false) {
-                            tagToProduct();
-                        } else {
-
-                        }
-                    } else {
-                        alert("Warning: Duplicate tag");
                     }
-                }
-                function archieveProduct() {
-
-                    var r = confirm("Do you want to Archive Product?");
-                    if (r === true) {
-
-                        var url = "https://vue-server-dev.appspot.com/api/product/" + jsonObject.id;
-                        if (XMLHttpRequest) {
-                            request = new XMLHttpRequest();
-                            if ("withCredentials" in request) {
-                                // Firefox 3.5 and Safari 4
-                                request.open('PUT', url, true);
-                                request.setRequestHeader('Custom-Header', 'javascript-client');
-                                request.setRequestHeader('Content-Type', 'application/json');
-                                request.onreadystatechange = function() {
-
-                                    if (request.readyState !== 4)
-                                        return;
-                                    if (request.status !== 200 && request.status !== 304) {
-                                        // alert('HTTP POST error ' + tagRequest.status + 'Response ' + tagRequest.responseText);
-
-                                        return;
-                                    }
-                                    if (request.status === 200)
-                                    {
-                                        window.opener.close();
-                                        close();
-
-                                    }
-                                };
-                                //product update request:
-                                request.send(JSON.stringify({id: jsonObject.id, ownerAisleId: jsonObject.ownerAisleId, ownerProductListId: jsonObject.ownerProductListId, creatorId: jsonObject.creatorId, curatorId: jsonObject.curatorId, title: jsonObject.title, description: jsonObject.description, currentProductState: "ARCHIVED", relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
-                            }
-                        }
-                    } else {
-
-                    }
-                }
-
-
-                function setCallTagsTable() {
-                    $("#tablewithtags_id td").click(function() {
-                        rowClick(this);
-                    });
-                    $("#selecting_size_table td").click(function() {
-                        //   alert(this.textContent)
-                        clickedValue(this);
-                    });
-
-
+                } else {
 
                 }
+            }
 
-                function  excuteOccasion() {
-                    var eleoccasion = document.getElementById('occasion_id');
-                    eleoccasion.style.backgroundColor = "#e59b7f";
-                    eleoccasion.name = "ok";
-                    var eleproductType = document.getElementById('product_type_id');
-                    eleproductType.style.backgroundColor = "#7fc9e5";
-                    eleproductType.name = "no";
-                    var eleProductDes = document.getElementById('product_des_id');
-                    eleProductDes.style.backgroundColor = "#7fc9e5";
-                    eleProductDes.name = "no";
-                    addTagsToTable(1);
+
+            function setCallTagsTable() {
+                $("#tablewithtags_id td").click(function() {
+                    rowClick(this);
+                });
+                $("#selecting_size_table td").click(function() {
+                    //   alert(this.textContent)
+                    clickedValue(this);
+                });
+
+
+
+            }
+
+            function  excuteOccasion() {
+                var eleoccasion = document.getElementById('occasion_id');
+                eleoccasion.style.backgroundColor = "#e59b7f";
+                eleoccasion.name = "ok";
+                var eleproductType = document.getElementById('product_type_id');
+                eleproductType.style.backgroundColor = "#7fc9e5";
+                eleproductType.name = "no";
+                var eleProductDes = document.getElementById('product_des_id');
+                eleProductDes.style.backgroundColor = "#7fc9e5";
+                eleProductDes.name = "no";
+                addTagsToTable(1);
+            }
+
+            function  excuteProductType() {
+                var eleoccasion = document.getElementById('occasion_id');
+                eleoccasion.style.backgroundColor = "#7fc9e5";
+                eleoccasion.name = "no";
+                var eleproductType = document.getElementById('product_type_id');
+                eleproductType.style.backgroundColor = "#e59b7f";
+                eleproductType.name = "ok";
+                var eleProductDes = document.getElementById('product_des_id');
+                eleProductDes.style.backgroundColor = "#7fc9e5";
+                eleProductDes.name = "no";
+                addTagsToTable(0);
+            }
+            function excuteProductDescription() {
+                var eleoccasion = document.getElementById('occasion_id');
+                eleoccasion.style.backgroundColor = "#7fc9e5";
+                eleoccasion.name = "no";
+                var eleproductType = document.getElementById('product_type_id');
+                eleproductType.style.backgroundColor = "#7fc9e5";
+                eleproductType.name = "no";
+                var eleProductDes = document.getElementById('product_des_id');
+                eleProductDes.style.backgroundColor = "#e59b7f";
+                eleProductDes.name = "ok";
+                addTagsToTable(2);
+            }
+            function rowClick(vl) {
+
+                var color = '#ffffff'
+                try {
+                    color = rgb2hex(vl.style.backgroundColor);
+                } catch (e) {
+
                 }
 
-                function  excuteProductType() {
-                    var eleoccasion = document.getElementById('occasion_id');
-                    eleoccasion.style.backgroundColor = "#7fc9e5";
-                    eleoccasion.name = "no";
-                    var eleproductType = document.getElementById('product_type_id');
-                    eleproductType.style.backgroundColor = "#e59b7f";
-                    eleproductType.name = "ok";
-                    var eleProductDes = document.getElementById('product_des_id');
-                    eleProductDes.style.backgroundColor = "#7fc9e5";
-                    eleProductDes.name = "no";
-                    addTagsToTable(0);
-                }
-                function excuteProductDescription() {
-                    var eleoccasion = document.getElementById('occasion_id');
-                    eleoccasion.style.backgroundColor = "#7fc9e5";
-                    eleoccasion.name = "no";
-                    var eleproductType = document.getElementById('product_type_id');
-                    eleproductType.style.backgroundColor = "#7fc9e5";
-                    eleproductType.name = "no";
-                    var eleProductDes = document.getElementById('product_des_id');
-                    eleProductDes.style.backgroundColor = "#e59b7f";
-                    eleProductDes.name = "ok";
-                    addTagsToTable(2);
-                }
-                function rowClick(vl) {
 
-                    var color = '#ffffff'
-                    try {
-                        color = rgb2hex(vl.style.backgroundColor);
-                    } catch (e) {
-
-                    }
-
-
-                    if (color === '#e59b7f') {
-                        vl.style.backgroundColor = "#ffffff";
-                        vl.id = "nottoadd"
-                    } else {
-                        vl.style.backgroundColor = "#e59b7f";
-                        vl.id = "toadd"
-                    }
+                if (color === '#e59b7f') {
+                    vl.style.backgroundColor = "#ffffff";
+                    vl.id = "nottoadd"
+                } else {
+                    vl.style.backgroundColor = "#e59b7f";
+                    vl.id = "toadd"
                 }
-                var hexDigits = new Array
-                        ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f");
-                //Function to convert hex format to a rgb color
-                function rgb2hex(rgb) {
-                    rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-                    return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
-                }
+                    var elements = [];
+                $("td[id^='toadd']").each(function() {
+                    var val = this.textContent;
+                    var typ = this.type;
+                    elements.push(val);
+                   
 
-                function hex(x) {
-                    return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
-                }
+                });
+                document.getElementById('tag_selection_update').textContent = elements.length+' Tags selected clikck on Tag to product to attach'
+            }
+            var hexDigits = new Array
+                    ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f");
+            //Function to convert hex format to a rgb color
+            function rgb2hex(rgb) {
+                rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+                return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+            }
+
+            function hex(x) {
+                return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
+            }
         </script>
         <script type="text/javascript">
             //auto expand textarea
@@ -1701,7 +1840,7 @@
             <p  id="description_node_id"></p>
             <li>
                 <label for="id_description">Product Description</label>
-                <textarea id="id_description" name="id_description" placeholder="Copy Past Descriptio Here" style="width: 640px; height: 150px;" rows="5" cols="200">
+                <textarea id="id_description" name="id_description" placeholder="Copy-Past description here" style="width: 640px; height: 150px;" rows="5" cols="200">
                 </textarea>
                 <span>Review description for completeness and any mixed up words. Copy-Paste all relevant text from Product Description.</span>
             </li>
@@ -1874,7 +2013,7 @@
                     <!--                    <input type="search" class="light-table-filter" data-table="order-table" placeholder="Filter">-->
 
 
-                    <input type="search"  class="light-table-filter" data-table="order-table" placeholder="Search..." id='mysearch'>
+                    <input type="search"  class="light-table-filter" data-table="order-table" placeholder="   Filter here..." id='mysearch'>
 
 
                 </div>
@@ -1885,9 +2024,10 @@
                     </table></div>
 
                 <input type="button" class="button" value="Tag to product" onclick="addTagsToTableVaz()" />
-
+                <p id="tag_selection_update"></p>
+                <span>Select all relevant Product Type & Occasion. Add as many Product description Tags as possible.</span>
             </li>
-            <li> <label>Create Custom Tag</label>
+            <li> <label>Create Product description Tag</label>
                 <br>
                 <table    class="altrowstable" id="create_custom_tag"   width="600">
                     <tr>
@@ -2063,12 +2203,17 @@
 </form> 
 
 <style>
-    input[id=mysearch] { 	
+    input[id=mysearch] { 
+        text-decoration-color: #e59b7f;
         padding: 30px;            /* Overridden by padding: 1px; */
         font-family: Georgia;     /* Overridden by font: -webkit-small-control; */
         border: 5px solid black;  /* Overridden by border: 2px inset; */
-        background: #e6b4e4;          /* Overridden by background-color: white; */
+        background: #808080;          /* Overridden by background-color: white; */
         line-height: 3;           /* Irrelevant, I guess */
+
+    }
+    input[id=mysearch]::-webkit-input-placeholder{
+        color:#e59b7f;
     }
 </style>
 </body>

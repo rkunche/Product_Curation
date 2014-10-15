@@ -184,16 +184,16 @@
             }
 
             function getCrawledProducts() {
-                var boolval = false;
-                for (var i = 0; i < users.length; i++) {
-                    if (curatorID == users[i])
-                        boolval = true;
-                }
-                if (!boolval) {
-
-                    alert("Error: User " + curatorID + " does not exist");
-                    return;
-                }
+//                var boolval = false;
+//                for (var i = 0; i < users.length; i++) {
+//                    if (curatorID == users[i])
+//                        boolval = true;
+//                }
+//                if (!boolval) {
+//
+//                    alert("Error: User " + curatorID + " does not exist");
+//                    return;
+//                }
                 var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=" + productStatusTag + "&limit=" + numProducts;
                 if (XMLHttpRequest)
                 {
@@ -634,7 +634,7 @@
 
 
     <ul class='bxslider' id='bxslider_id'>
-        <div> <img src ='assets/no_image.jpeg' width="300" height="300"/></div>
+        <div> <img src ='images/fetch.gif' width="300" height="300"/></div>
     </ul>
 
     <script>
