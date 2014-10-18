@@ -77,23 +77,83 @@
                 top:1px;
             }
 
+
+            .myButtonFirst {
+                -moz-box-shadow:inset 0px 1px 0px 0px #54a3f7;
+                -webkit-box-shadow:inset 0px 1px 0px 0px #54a3f7;
+                box-shadow:inset 0px 1px 0px 0px #54a3f7;
+                background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #007dc1), color-stop(1, #3688c2));
+                background:-moz-linear-gradient(top, #007dc1 5%, #3688c2 100%);
+                background:-webkit-linear-gradient(top, #007dc1 5%, #3688c2 100%);
+                background:-o-linear-gradient(top, #007dc1 5%, #3688c2 100%);
+                background:-ms-linear-gradient(top, #007dc1 5%, #3688c2 100%);
+                background:linear-gradient(to bottom, #007dc1 5%, #3688c2 100%);
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#007dc1', endColorstr='#3688c2',GradientType=0);
+                background-color:#007dc1;
+                -moz-border-radius:6px;
+                -webkit-border-radius:6px;
+                border-radius:6px;
+                border:1px solid #124d77;
+                display:inline-block;
+                cursor:pointer;
+                color:#ffffff;
+                font-family:arial;
+                font-size:15px;
+                font-weight:bold;
+                padding:6px 24px;
+                text-decoration:none;
+                text-shadow:0px 1px 0px #154682;
+            }
+            .myButtonFirst:hover {
+                background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #3688c2), color-stop(1, #007dc1));
+                background:-moz-linear-gradient(top, #3688c2 5%, #007dc1 100%);
+                background:-webkit-linear-gradient(top, #3688c2 5%, #007dc1 100%);
+                background:-o-linear-gradient(top, #3688c2 5%, #007dc1 100%);
+                background:-ms-linear-gradient(top, #3688c2 5%, #007dc1 100%);
+                background:linear-gradient(to bottom, #3688c2 5%, #007dc1 100%);
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#3688c2', endColorstr='#007dc1',GradientType=0);
+                background-color:#3688c2;
+            }
+            .myButtonFirst:active {
+                position:relative;
+                top:1px;
+            }
+
+
         </style>
 
         <script>
-            (function(i, s, o, g, r, a, m) {
-                i['GoogleAnalyticsObject'] = r;
-                i[r] = i[r] || function() {
-                    (i[r].q = i[r].q || []).push(arguments)
-                }, i[r].l = 1 * new Date();
-                a = s.createElement(o),
-                        m = s.getElementsByTagName(o)[0];
-                a.async = 1;
-                a.src = g;
-                m.parentNode.insertBefore(a, m)
-            })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-            ga('create', 'UA-55582645-2', 'auto');
-            ga('send', 'pageview');
+            function  callGoogleAnalytics(userid) {
+                (function(i, s, o, g, r, a, m) {
+                    i['GoogleAnalyticsObject'] = r;
+                    i[r] = i[r] || function() {
+                        (i[r].q = i[r].q || []).push(arguments)
+                    }, i[r].l = 1 * new Date();
+                    a = s.createElement(o),
+                            m = s.getElementsByTagName(o)[0];
+                    a.async = 1;
+                    a.src = g;
+                    m.parentNode.insertBefore(a, m)
+                })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+                ga('create', 'UA-55582645-2', {'userId': userid});
+
+                ga('send', 'pageview');
+            }
+            function  trackFetchbutton(productStatusTag, numProducts) {
+                ga('send', 'event', 'button', 'click', 'Fetch Products', numProducts);
+
+            }
+            function trackCurateArchivebutton(buttonvalue) {
+                if (buttonvalue === 'Archived')
+                    buttonvalue = 'Archive Product'
+
+                if (buttonvalue === 'Curate Now')
+                    buttonvalue = 'Start Product Curation'
+
+                ga('send', 'event', 'button', 'click', buttonvalue, 1);
+            }
 
         </script>
     </head>
@@ -170,6 +230,7 @@
                 var srchString = unescape(location.search.substring(1, location.search.length));
                 var name = srchString.split("=");
                 curatorID = name[1];
+                callGoogleAnalytics(curatorID);
                 getTags();
                 searchString = "CRAWLED";
                 numElements = 1;
@@ -194,6 +255,7 @@
 //                    alert("Error: User " + curatorID + " does not exist");
 //                    return;
 //                }
+                trackFetchbutton(productStatusTag, numProducts);
                 var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=" + productStatusTag + "&limit=" + numProducts;
                 if (XMLHttpRequest)
                 {
@@ -295,10 +357,10 @@
                     }
 
                     var div = document.createElement("div");
-                    div.id = products[i].id;
 
-                    var divImage = document.createElement("div");
-                    divImage.appendChild(imag);
+                    div.id = products[i].id;
+                    div.style.marginBottom = "20px"
+
                     var p1 = document.createElement('p');
                     p1.style.width = "300px";
                     p1.textContent = products[i].title;
@@ -313,8 +375,9 @@
                     ul.appendChild(div);
                 }
                 console.log('vazeer ul inner html:' + ul.innerHTML);
-                reloadSlider();
                 resize_images(300, 300, 300, 300);
+                reloadSlider();
+
             }
             function resize_images(maxht, maxwt, minht, minwt) {
                 var imgs = document.getElementsByTagName('img');
@@ -352,8 +415,11 @@
 
 
             function createButton(td, curatethis_product, product) {
+
                 var button = document.createElement("input");
                 button.type = "button";
+                // button.className = 'myButtonFirst';
+
                 var archivebutton = document.createElement("input");
                 archivebutton.type = "button";
                 archivebutton.value = "Archive";
@@ -361,6 +427,8 @@
 //            archivebutton.style.color = "orange";
 //            archivebutton.style.outline = "solid orange";
                 archivebutton.className = 'myButtonArchive';
+
+
 
                 if (product.currentProductState == "CRAWLED") {
                     button.value = "Curate Now";
@@ -371,17 +439,44 @@
                     button.style.margin = "12px";
                 } else if (product.currentProductState == "NEEDS_RECURATION") {
                     button.value = "Recurate Now";
-                    button.style.backgroundColor = "#B6C6F2";
+                    //   button.style.backgroundColor = "#B6C6F2";
                     product.currentProductState = "CRAWLED";
+
+                    button.style.backgroundColor = "white";
+                    button.style.color = "black";
+                    button.style.outline = "thick solid #B6C6F2";
+                    button.style.padding = "5px";
+                    button.style.margin = "12px";
+
+
                 } else if (product.currentProductState == "CURATED_AND_VERIFIED") {
-                    button.style.backgroundColor = "#A8E6B6";
+                    //  button.style.backgroundColor = "#A8E6B6";
                     button.value = "Verified";
+
+                    button.style.backgroundColor = "white";
+                    button.style.color = "black";
+                    button.style.outline = "thick solid #A8E6B6";
+                    button.style.padding = "5px";
+                    button.style.margin = "12px";
+
+
                 } else if (product.currentProductState === "ARCHIVED") {
-                    button.style.backgroundColor = "#F1F498";
+                    //  button.style.backgroundColor = "#F1F498";
                     button.value = "Archived";
+
+                    button.style.backgroundColor = "white";
+                    button.style.color = "black";
+                    button.style.outline = "thick solid #fc8d83";
+                    button.style.padding = "5px";
+                    button.style.margin = "12px";
+
                 } else {
                     button.value = "Review Now";
-                    button.style.backgroundColor = "#059E24";
+                    button.style.backgroundColor = "white";
+                    button.style.color = "blue";
+                    button.style.outline = "thick solid blue";
+                    button.style.padding = "5px";
+                    button.style.margin = "12px";
                 }
                 obj = {
                     handleEvent: function() {
@@ -391,7 +486,7 @@
                             if (clickedProductId === products[i].id) {
                                 product = products[i];
                                 if (curatorID == null || curatorID == undefined || curatorID.length < 1) {
-                                    product.curatorId = "6419807607980032";
+                                    return;
                                 } else {
                                     product.curatorId = curatorID;
                                 }
@@ -401,6 +496,7 @@
                         }
 
                         buttonText = button.value;
+                        trackCurateArchivebutton(button.value);
                         if (product.currentProductState == "CURATED_AND_VERIFIED") {
                             // alert("already verifed");
                             var productString = JSON.stringify(product)
@@ -417,7 +513,7 @@
                     handleEvent: function() {
                         var r = confirm("Archiving the product, confirm?");
                         if (r === true) {
-
+                            trackCurateArchivebutton(button.value);
                             clickedProductId = product.id;
                             var url = "https://vue-server-dev.appspot.com/api/product/" + product.id;
                             if (XMLHttpRequest) {
@@ -443,7 +539,7 @@
                 button.addEventListener("click", obj, false);
                 archivebutton.addEventListener("click", archiveObj, false);
                 td.appendChild(button);
-                if (product.currentProductState !== "ARCHIVED") {
+                if (product.currentProductState !== "ARCHIVED" && product.currentProductState !== "CURATED_AND_VERIFIED") {
                     td.appendChild(archivebutton);
                 }
             }
@@ -535,13 +631,13 @@
 //to refresh the selected product after curation.
 
             function getAllCellValues() {
-                var table = document.getElementById("productTableId");
-                var cells = Array.prototype.slice.call(document.getElementById("productTableId").getElementsByTagName("td"));
+                var ul = document.getElementById("bxslider_id");
+                var cells = Array.prototype.slice.call(ul.getElementsByTagName("div"));
                 var cell;
                 for (var i in cells) {
                     if (clickedProductId == cells[i].id) {
                         cell = cells[i];
-                        var values = cell.getElementsByTagName("div");
+                        var valuesP = cell.getElementsByTagName("p");
                         var titleVal;
                         var stateVal;
                         for (var k = 0; k < products.length; k++) {
@@ -561,8 +657,10 @@
                                     button[0].style.backgroundColor = "#059E24";
                                     button[0].value = "Verified";
                                 } else if (stateVal === "ARCHIVED") {
+
                                     button[0].style.backgroundColor = "Orange";
                                     button[0].value = "Archived";
+
                                 } else {
                                     button[0].style.backgroundColor = "#059E24";
                                     button[0].value = "Review Now";
@@ -570,19 +668,19 @@
                                 break;
                             }
                         }
+
                         if (titleVal != undefined && stateVal != undefined) {
-                            values[0].innerHTML = "Title : " + titleVal;
-                            values[1].innerHTML = "State :  " + stateVal;
+                            valuesP.textContent = titleVal;
+                            // values[1].innerHTML = "State :  " + stateVal;
                         }
 
                         break;
                     }
-
+                   
                 }
 
+
             }
-
-
         </script>
 
         <div id="header"><h3>Vue 2.0 Product Curation - Fetch Products</h3></div>
@@ -596,7 +694,8 @@
                 </div></td>
             <td style="padding-right: 10px">
                 <Button id="fetchButton" onclick="getCrawledProducts();" >Fetch Products</Button>
-                <p></p>
+
+
             </td>
             <td style="padding-right: 10px"> <div>
                     <p>

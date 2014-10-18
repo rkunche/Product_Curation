@@ -399,22 +399,34 @@
             }.datagrid table tbody td:first-child { border-left: none; }.datagrid table tbody tr:last-child td { 
                 border-bottom: none; }
             </style>
+            <script type="text/javascript">
 
+                window.onunload = function() {
+                    window.opener.close();
+                };
+            </script>
             <script>
-                (function(i, s, o, g, r, a, m) {
-                    i['GoogleAnalyticsObject'] = r;
-                    i[r] = i[r] || function() {
-                        (i[r].q = i[r].q || []).push(arguments)
-                    }, i[r].l = 1 * new Date();
-                    a = s.createElement(o),
-                            m = s.getElementsByTagName(o)[0];
-                    a.async = 1;
-                    a.src = g;
-                    m.parentNode.insertBefore(a, m)
-                })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+                function  callGoogleAnalytics(userid) {
+                    (function(i, s, o, g, r, a, m) {
+                        i['GoogleAnalyticsObject'] = r;
+                        i[r] = i[r] || function() {
+                            (i[r].q = i[r].q || []).push(arguments)
+                        }, i[r].l = 1 * new Date();
+                        a = s.createElement(o),
+                                m = s.getElementsByTagName(o)[0];
+                        a.async = 1;
+                        a.src = g;
+                        m.parentNode.insertBefore(a, m)
+                    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-                ga('create', 'UA-55582645-2', 'auto');
-                ga('send', 'pageview');
+                    ga('create', 'UA-55582645-2', {'userId': userid});
+
+                    ga('send', 'pageview');
+                }
+
+                function trackbutton(value, count) {
+                    ga('send', 'event', 'button', 'click', value, count);
+                }
 
             </script>
             <script type='text/javascript'>
@@ -422,35 +434,7 @@
                 var filetagsProducttype = [];
                 var filetagsOccasion = [];
 
-//                $(document).ready(function() {
-//                    var contentsOfFileAsStringtype = main('ProductTypeCuration.csv');
-//                    var contentsOfFileAsStringoccasion = main('OccasionsCuration.csv');
-//
-//
-//                    console.log('after reading the file contentsOfFileAsStringtype: ' + contentsOfFileAsStringtype);
-//                    var datatype = contentsOfFileAsStringtype;
-//                    //   console.log('after parsing the file:  contentsOfFileAsStringtype:' + datatype);
-//
-//                    console.log('after reading the file contentsOfFileAsStringoccasion ' + contentsOfFileAsStringoccasion);
-//                    var dataocc = contentsOfFileAsStringoccasion;
-//                    //  console.log('after parsing the file contentsOfFileAsStringoccasion: ' + dataocc);
-//
-//                    for (var i = 0; i < datatype.length; i++) {
-//                        var v = datatype[i].trim();
-//                        if (v !== null && v !== "") {
-//                            filetagsProducttype.push(v);
-//                        }
-//                    }
-//                    filetagsProducttype.sort();
-//                    for (var i = 0; i < dataocc.length; i++) {
-//                        var v = dataocc[i].trim();
-//                        if (v !== null && v !== "") {
-//                            filetagsOccasion.push(v);
-//                        }
-//                    }
-//                    filetagsOccasion.sort();
-//
-//                });
+//              
 
                 $(document).ready(function() {
                     ajaxcallToPType('ProductTypeCuration.csv', filetagsProducttype);
@@ -499,36 +483,6 @@
                 }
 
 
-//                function main(pathOfFileToRead)
-//                {
-//
-//
-//                    var contentsOfFileAsString = FileHelper.readStringFromFileAtPath
-//                            (
-//                                    pathOfFileToRead
-//                                    );
-//
-//                    //document.body.innerHTML = contentsOfFileAsString;
-//                    return  contentsOfFileAsString;
-//
-//                }
-//
-//                function FileHelper()
-//                {
-//                }
-//                {
-//                    FileHelper.readStringFromFileAtPath = function(pathOfFileToReadFrom)
-//                    {
-//                        var request = new XMLHttpRequest();
-//                        request.open("GET", pathOfFileToReadFrom, false);
-//                        request.send(null);
-//                        var returnValue = request.responseText;
-//
-//                        return returnValue;
-//                    
-//
-//                    }
-//                }
 
 
 
@@ -646,6 +600,7 @@
                     console.log(datafromparent);
                     console.log(datafromparent);
                     jsonObject = JSON.parse(datafromparent);
+                    callGoogleAnalytics(jsonObject.curatorId);
                     if (jsonObject.currentProductState == "CRAWLED") {
                         buttonValue = "Curate And Finish";
                         partialCurated = true;
@@ -1181,6 +1136,7 @@
                     return curatedArray;
                 }
                 function updateProvider() {
+
                     var provider_node_text = document.getElementById('provider_node_id');
                     var colorWarningText = document.getElementById('color_node_id');
                     var sizeWarningText = document.getElementById('size_node_id');
@@ -1302,7 +1258,7 @@
                         sizeWarningText.innerHTML = "";
                     }
 
-
+                    trackbutton('Finish Product Curation', 1);
                     var url = "https://vue-server-dev.appspot.com/api/productprovider/" + jsonObject.productProviders[0].id;
                     if (XMLHttpRequest) {
                         providerUpdaterequest = new XMLHttpRequest();
@@ -1381,6 +1337,7 @@
                 var taging;
                 function tagAssociateWithProduct(tagString, tag) {
                     console.log("tagAssociateWithProduct fun success:    TAGString: " + tagString);
+                    temptagstringtoupdaterow = tagString;
                     taging = tag;
                     if (tag == "untag") {
                         var position = localTags.indexOf(tagString);
@@ -1408,22 +1365,40 @@
                         return;
                     if (productTagAssociateReq.status != 200 && productTagAssociateReq.status != 304) {
                         alert('HTTP POST error ' + productTagAssociateReq.status + 'Response ' + productTagAssociateReq.responseText);
+                        try {
+                            var row = document.getElementById(temptagstringtoupdaterow);
+                            var th = document.createElement('th');
+                            th.textContent = 'failedto attach';
+                            row.appendChild(th);
+
+                        } catch (e) {
+
+                        }
                         return;
                     }
                     if (productTagAssociateReq.status == 200)
                     {
                         console.log("tagAssociatHandler fun success response:    " + productTagAssociateReq.responseText);
                         console.log("tagAssociateWithProduct fun success:      ");
+                        try {
+                            var row = document.getElementById(temptagstringtoupdaterow);
+                            var th = document.createElement('th');
+                            th.textContent = 'succesfully attached';
+                            row.appendChild(th);
 
+                        } catch (e) {
+
+                        }
                     }
 
                 }
 
-
+                var temptagstringtoupdaterow;
                 var taggingStarted = false;
                 function tagToProduct() {
                     taggingStarted = true;
                     var tagString = tagsArray.splice(0, 1);
+                    temptagstringtoupdaterow = tagString;
                     if (tagString === undefined || tagString.length < 1) {
                         taggingStarted = false;
                         return;
@@ -1449,11 +1424,30 @@
                         return;
                     if (tagRequest.status !== 200 && tagRequest.status !== 304) {
                         // alert('HTTP POST error ' + tagRequest.status + 'Response ' + tagRequest.responseText);
+                        try {
+                            var row = document.getElementById(temptagstringtoupdaterow);
+                            var th = document.createElement('th');
+                            th.textContent = 'failedto attach';
+                            row.appendChild(th);
+
+                        } catch (e) {
+
+                        }
                         tagToProduct();
                         return;
                     }
                     if (tagRequest.status === 200)
                     {
+
+                        try {
+                            var row = document.getElementById(temptagstringtoupdaterow);
+                            var th = document.createElement('th');
+                            th.textContent = 'succesfully attached';
+                            row.appendChild(th);
+
+                        } catch (e) {
+
+                        }
                         if (tagsArray.length == 0) {
                             // alert("Tags are attached to product");
                         }
@@ -1517,6 +1511,8 @@
 
                 });
 
+                trackbutton('Tag to Product', elements.length);
+
                 console.log('tags ttttt: ' + elements.toString());
                 console.log('tags typpeeess: ' + tagtype);
 
@@ -1576,6 +1572,7 @@
             }
 
             function createCustomTag() {
+                trackbutton('Create and Attach Custom Tag', 1);
                 var valC, valS, valSC;
                 valC = document.getElementById("id_tag_cat").value;
                 valS = document.getElementById("id_tag_str").value;
@@ -1592,7 +1589,7 @@
                 if (index === -1) {
                     cacheLocalTags.push(valS);
                     document.getElementById("id_tag_str").value = "";
-                    document.getElementById("id_tag_cat").value = '';
+                    // document.getElementById("id_tag_cat").value = '';
                     console.log("CAT:" + valC + " Tag String: " + valS);
                     valS = valS.trim();
                     valS = toTitleCase(valS);
@@ -1611,12 +1608,16 @@
             }
             function createTagReqAndAddTable(valC, valS, valSC, addtableonly) {
                 var row = document.createElement('tr');
+                row.id = valS;
                 var thC = document.createElement('th');
                 thC.textContent = valC;
                 var thS = document.createElement('th');
                 thS.textContent = valS;
                 var thSC = document.createElement('th');
                 thSC.textContent = valSC;
+
+
+
                 var del = document.createElement('th')
                 var btn = document.createElement('Button');
                 btn.textContent = 'Untag';
@@ -1643,6 +1644,9 @@
                 row.appendChild(thS);
                 row.appendChild(thSC);
                 row.appendChild(del);
+
+
+
                 document.getElementById('created_tags_table').appendChild(row);
 
                 appendtagToProduct = valS;
@@ -1659,13 +1663,13 @@
 
 
             function  createGenderTag() {
-
+                trackbutton('Attach Gender Tag', 1);
                 var vl = document.querySelector('input[name="gender"]:checked').value;
                 var index = cacheLocalTags.indexOf(vl);
                 if (index == -1) {
                     tagsArray.push(vl);
                     cacheLocalTags.push(vl);
-                    createTagReqAndAddTable('Product Description', vl, '', 0);
+                    createTagReqAndAddTable(static_categoryNames[2], vl, '', 0);
                     productDescriptionTagCount = productDescriptionTagCount + 1;
                     if (taggingStarted == false) {
                         tagToProduct();
@@ -1680,7 +1684,7 @@
 
                 var r = confirm("Do you want to Archive Product?");
                 if (r === true) {
-
+                    trackbutton('Archive Product', 1);
                     var url = "https://vue-server-dev.appspot.com/api/product/" + jsonObject.id;
                     if (XMLHttpRequest) {
                         request = new XMLHttpRequest();
@@ -1719,13 +1723,16 @@
                 $("#tablewithtags_id td").click(function() {
                     rowClick(this);
                 });
+             //  forSizeTable();
+
+            }
+            
+            function forSizeTable(){
                 $("#selecting_size_table td").click(function() {
                     //   alert(this.textContent)
                     clickedValue(this);
-                });
-
-
-
+                
+                }); 
             }
 
             function  excuteOccasion() {
@@ -1782,15 +1789,15 @@
                     vl.style.backgroundColor = "#e59b7f";
                     vl.id = "toadd"
                 }
-                    var elements = [];
+                var elements = [];
                 $("td[id^='toadd']").each(function() {
                     var val = this.textContent;
                     var typ = this.type;
                     elements.push(val);
-                   
+
 
                 });
-                document.getElementById('tag_selection_update').textContent = elements.length+' Tags selected clikck on Tag to product to attach'
+                document.getElementById('tag_selection_update').textContent = elements.length + ' Tags selected click on Tag to product to attach'
             }
             var hexDigits = new Array
                     ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f");
@@ -1844,23 +1851,6 @@
                 </textarea>
                 <span>Review description for completeness and any mixed up words. Copy-Paste all relevant text from Product Description.</span>
             </li>
-
-            <li>
-                <label for="id_gender">Add Gender Tag</label>
-                <br>
-                <input type="radio" name="gender" value="Women" id="r2" checked="checked">Women
-                <input type="radio" name="gender" value="Men" id="r1">Men
-                <input type="radio" name="gender" value="Unisex" id="r3">Unisex
-                <input type="radio" name="gender" value="Boys" id="r4">Boys
-                <input type="radio" name="gender" value="Girls" id="r5">Girls<br>
-                <input type="button" class="button" value="Add Gender Tag" onclick="createGenderTag()"  />
-                <span>Select One and Create Gender Tag</span>
-            </li>
-
-
-
-
-
 
 
             <li>
@@ -1970,38 +1960,7 @@
             <li>
                 <label>Create Tags</label>
                 <br>
-                <!--                <table class="altrowstable" id="alternatecolor"  width="600">
-                
-                                    <tr>
-                                        <th><strong>Product Type:</strong>
-                                    <div style="padding:20px">
-                                        <select id="select_tagCategory" name="selection" multiple="multiple"  style="width: 150px">
-                
-                                        </select>
-                                        </th>
-                
-                                        <th><strong>Occasion:</strong>
-                                        <div style="padding:20px">
-                                            <select id="select_tagString" name="selection"  multiple="multiple"  style="width: 150px" data-native-menu="false">
-                
-                                            </select>
-                                        </div>
-                
-                                        </th>
-                
-                                        <th><strong>Product Description:</strong>
-                                        <div style="padding:20px">
-                                            <select id="select_tagSubCategory" name="selection" multiple="multiple"   style="width: 150px" data-native-menu="false">
-                
-                
-                                            </select>
-                                        </div>
-                
-                                        </th>
-                
-                                        </tr>
-                
-                                </table>-->
+
 
                 <div id="navcontainer" >
                     <ul id="navlist">
@@ -2063,7 +2022,17 @@
                 <input type="button" class="button" value="Create&Attach Custom Tag" onclick="createCustomTag()"  /> 
                 <span>Enter new tags with out typing mistakes</span>
             </li>
-
+            <li>
+                <label for="id_gender">Add Gender Tag</label>
+                <br>
+                <input type="radio" name="gender" value="Women" id="r2" checked="checked">Women
+                <input type="radio" name="gender" value="Men" id="r1">Men
+                <input type="radio" name="gender" value="Unisex" id="r3">Unisex
+                <input type="radio" name="gender" value="Boys" id="r4">Boys
+                <input type="radio" name="gender" value="Girls" id="r5">Girls<br>
+                <input type="button" class="button" value="Add Gender Tag" onclick="createGenderTag()"  />
+                <span>Select One and Create Gender Tag</span>
+            </li>
 
             <li>
                 <label>Product Tags</label>
@@ -2097,7 +2066,7 @@
 
     <script>
         function clickedValuey(v) {
-
+          clickedValue(v);
         }
 
         function  getSelectedOnes() {
