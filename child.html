@@ -563,6 +563,7 @@
                 Array.prototype.clear = function() {
                     this.length = 0;
                 };
+                var incomingstate = '';
                 var datafromparent;
                 var jsonObject;
                 var providerUpdaterequest;
@@ -601,13 +602,15 @@
                     console.log(datafromparent);
                     jsonObject = JSON.parse(datafromparent);
                     callGoogleAnalytics(jsonObject.curatorId);
-                    if (jsonObject.currentProductState == "CRAWLED") {
+                    if (jsonObject.currentProductState === "CRAWLED" || jsonObject.currentProductState === 'NEEDS_RECURATION') {
                         buttonValue = "Curate And Finish";
                         partialCurated = true;
                     } else {
                         partialCurated = false;
                         buttonValue = "Review And Finish";
                     }
+                    setEndButtonValue(buttonValue);
+
 
                     tagCreationReqeustCount = 0;
                     tagArray.clear();
@@ -714,6 +717,14 @@
                     afterLoadingThePopup();
                 }, false);
 
+
+                function setEndButtonValue(value) {
+                    var ele = document.getElementById('send_but_id');
+                    if (ele !== null) {
+                        ele.value = value;
+                    }
+                }
+
                 function dataloader() {
                     var val = document.getElementById('divid');
                     val.innerHTML = datafromparent;
@@ -723,9 +734,16 @@
                     var jsonResponse = JSON.parse(datafromparent);
                     console.log('ready to parse response:' + datafromparent + "   *****after parse:" + jsonObject);
                     document.getElementById('id_title').value = jsonResponse.title;
-                    document.getElementById('id_description').value = "";
+
+                    if (jsonResponse.currentProductState === 'CRAWLED') {
+                        document.getElementById('id_description').value = "";
+                    } else {
+                        document.getElementById('id_description').value = jsonResponse.description;
+                    }
+
                     //method to call to set current product state...
                     set_current_ProductState(jsonResponse.currentProductState);
+                    incomingstate = jsonResponse.currentProductState;
                     // document.getElementById('single_select_1').value = jsonResponse.currentProductState;
 
 
@@ -935,11 +953,13 @@
                 function  set_current_ProductState(value) {
 
                     var product_state_sel = document.getElementById('single_select_1');
-                    if (jsonObject.currentProductState === 'CRAWLED') {
+                    if (jsonObject.currentProductState === 'CRAWLED' || jsonObject.currentProductState === 'NEEDS_RECURATION') {
                         var enums = ['CURATED'];
                     } else {
                         var enums = ['CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
                     }
+
+
                     // var enums = ['CRAWLED', 'CURATED', 'CURATED_AND_VERIFIED', 'NEEDS_RECURATION'];
                     var td = document.createElement('td');
                     var name = "current_product_status";
@@ -1103,13 +1123,13 @@
                     {
                         //updateProvider();
                         if (curatorReview == "Curate Now") {
-                            alert('Info: Curated Successfully : ' + request.responseText);
+                            alert('Info: Curated Successfully : ');
                         } else {
-                            alert('Info: Reviewed Successfully :' + request.responseText);
+                            alert('Info: Reviewed Successfully :');
                         }
 
-                        //window.opener.close();
-                        //close();
+                        window.opener.close();
+                        close();
                     }
                     if (request.status != 200 && request.status != 304) {
                         //alert('HTTP POST error ' + request.status + 'Response ' + request.responseText);
@@ -1134,6 +1154,15 @@
                         curatedArray = null;
                     }
                     return curatedArray;
+                }
+
+                function callConfirmationDialogue() {
+                    var r = confirm("Curating a previously " + incomingstate + " product: " + document.getElementById("id_title").value);
+                    if (r == true) {
+                        updateProvider();
+                    } else {
+
+                    }
                 }
                 function updateProvider() {
 
@@ -1723,16 +1752,16 @@
                 $("#tablewithtags_id td").click(function() {
                     rowClick(this);
                 });
-             //  forSizeTable();
+                //  forSizeTable();
 
             }
-            
-            function forSizeTable(){
+
+            function forSizeTable() {
                 $("#selecting_size_table td").click(function() {
                     //   alert(this.textContent)
                     clickedValue(this);
-                
-                }); 
+
+                });
             }
 
             function  excuteOccasion() {
@@ -2051,7 +2080,7 @@
 
             </li>
             <li>
-                <input type="button" class="button" value="Curate and Finish" onClick="updateProvider()" id ="send_but_id"/>
+                <input type="button" class="button" value="Curate and Finish" onClick="callConfirmationDialogue()" id ="send_but_id"/>
 
                 <input type="button" width="200" height="200"  value="Archive" onClick="archieveProduct()" id ="archive_but_id"/>
 
@@ -2066,7 +2095,7 @@
 
     <script>
         function clickedValuey(v) {
-          clickedValue(v);
+            clickedValue(v);
         }
 
         function  getSelectedOnes() {
@@ -2184,6 +2213,7 @@
     input[id=mysearch]::-webkit-input-placeholder{
         color:#e59b7f;
     }
+    input[id=mysearch]:focus { color: white }
 </style>
 </body>
 

@@ -355,6 +355,7 @@
                     } catch (e) {
                         imag.src = "assets/no_image.jpeg";
                     }
+                    
 
                     var div = document.createElement("div");
 
@@ -374,7 +375,9 @@
                     // li.appendChild(div)
                     ul.appendChild(div);
                 }
-                console.log('vazeer ul inner html:' + ul.innerHTML);
+                
+          
+               // console.log('vazeer ul inner html:' + ul.innerHTML);
                 resize_images(300, 300, 300, 300);
                 reloadSlider();
 
@@ -440,7 +443,7 @@
                 } else if (product.currentProductState == "NEEDS_RECURATION") {
                     button.value = "Recurate Now";
                     //   button.style.backgroundColor = "#B6C6F2";
-                    product.currentProductState = "CRAWLED";
+                   //vaz comment product.currentProductState = "CRAWLED";
 
                     button.style.backgroundColor = "white";
                     button.style.color = "black";
@@ -482,6 +485,7 @@
                     handleEvent: function() {
 
                         clickedProductId = product.id;
+                       
                         for (var i = 0; i < products.length; i++) {
                             if (clickedProductId === products[i].id) {
                                 product = products[i];
@@ -509,6 +513,7 @@
                     },
                     dude: product.title
                 };
+              
                 archiveObj = {
                     handleEvent: function() {
                         var r = confirm("Archiving the product, confirm?");
@@ -618,6 +623,7 @@
 
                             products[i] = curatedProduct;
                             getAllCellValues();
+                           
                             break;
                         }
                     }
