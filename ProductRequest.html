@@ -180,6 +180,8 @@
             var curatorID;
             var otherWindowObserver;
             var buttonText;
+
+            var productsNeedTobeArchived = [];
             //prototype for clear the array values.
             Array.prototype.clear = function() {
                 this.length = 0;
@@ -255,8 +257,18 @@
 //                    alert("Error: User " + curatorID + " does not exist");
 //                    return;
 //                }
+
                 trackFetchbutton(productStatusTag, numProducts);
-                var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=" + productStatusTag + "&limit=" + numProducts;
+               // var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=" + productStatusTag + "&limit=" + numProducts;
+
+                if (productStatusTag === 'CRAWLED') {
+                     url = "https://vue-server-dev.appspot.com/api/product/search/genericsearch?queryString=(state=UNKNOWN%20OR%20state=CRAWLED)&offset=0&limit=" + numProducts + "&randomize=false"
+                }
+                else {
+                       url = "https://vue-server-dev.appspot.com/api/product/search/genericsearch?queryString=(state=" + productStatusTag + ")&offset=0&limit=" + numProducts + "&randomize=false"
+                }
+
+
                 if (XMLHttpRequest)
                 {
                     request = new XMLHttpRequest();
@@ -271,15 +283,17 @@
             }
             //get result handler
             function getHandler() {
+
                 if (request.readyState != 4)
                     return;
                 if (request.status == 200)
                 {
 
                     var jsonResponse = JSON.parse(request.responseText);
+
                     //clear the old data in array and populate with new product data.
                     if (products.length > 0) {
-                        document.getElementById("productTableId").innerHTML = "";
+                        document.getElementById("bxslider_id").innerHTML = "";
                         //return;
                     }
                     products.clear();
@@ -289,10 +303,26 @@
                             creatorId: jsonTempObject.creatorId, curatorId: jsonTempObject.curatorId, title: jsonTempObject.title, description: jsonTempObject.description,
                             currentProductState: jsonTempObject.currentProductState, relatedProductIds: jsonTempObject.relatedProductIds, productImages: jsonTempObject.productImages,
                             productProviders: jsonTempObject.productProviders, comments: jsonTempObject.comments, productTags: jsonTempObject.productTags, ratings: jsonTempObject.ratings};
-                        products.push(productObject);
+
+                        var imagesarray = jsonTempObject.productImages[0];
+                      //  console.log('array:  ' + imagesarray);
+                        if (imagesarray === null || imagesarray === undefined) {
+                            imgurl = ''
+                        } else {
+                            var imgurl = imagesarray.externalURL;
+                        }
+
+                        var productvalidty = jsonTempObject.productProviders[0].availability;
+                        if ((imgurl.lastIndexOf('http', 0) !== 0) || productvalidty === 'OUT_OF_STOCK') {
+                            productsNeedTobeArchived.push(productObject)
+                        } else {
+                            products.push(productObject);
+                        }
                     }
                     // prepareTable();
                     preparebxSlider();
+                    //archive the remaining products
+                    archiveTheProducts();
                 }
                 if (request.status != 200 && request.status != 304) {
                     alert('HTTP GET error ' + request.status);
@@ -341,6 +371,7 @@
             function  preparebxSlider() {
                 var ul = document.getElementById('bxslider_id');
                 ul.innerHTML = '';
+
                 for (var i = 0; i < products.length; i++) {
 
 
@@ -351,11 +382,17 @@
                     var imag = document.createElement("img");
 
                     try {
+                        var imgurl = products[i].productImages[0].externalURL;
                         imag.src = products[i].productImages[0].externalURL;
+                        console.log('img url: ' + imgurl);
+                        if (imgurl.lastIndexOf('http', 0) !== 0) {
+                            imag.src = "assets/no_image.jpeg";
+                        }
+                        //  imag.src = "assets/no_image.jpeg";
                     } catch (e) {
                         imag.src = "assets/no_image.jpeg";
                     }
-                    
+
 
                     var div = document.createElement("div");
 
@@ -375,9 +412,9 @@
                     // li.appendChild(div)
                     ul.appendChild(div);
                 }
-                
-          
-               // console.log('vazeer ul inner html:' + ul.innerHTML);
+
+
+                // console.log('vazeer ul inner html:' + ul.innerHTML);
                 resize_images(300, 300, 300, 300);
                 reloadSlider();
 
@@ -433,7 +470,7 @@
 
 
 
-                if (product.currentProductState == "CRAWLED") {
+                if (product.currentProductState == "CRAWLED" || product.currentProductState==='UNKNOWN'||product.currentProductState===null) {
                     button.value = "Curate Now";
                     button.style.backgroundColor = "white";
                     button.style.color = "blue";
@@ -443,7 +480,7 @@
                 } else if (product.currentProductState == "NEEDS_RECURATION") {
                     button.value = "Recurate Now";
                     //   button.style.backgroundColor = "#B6C6F2";
-                   //vaz comment product.currentProductState = "CRAWLED";
+                    //vaz comment product.currentProductState = "CRAWLED";
 
                     button.style.backgroundColor = "white";
                     button.style.color = "black";
@@ -485,7 +522,7 @@
                     handleEvent: function() {
 
                         clickedProductId = product.id;
-                       
+
                         for (var i = 0; i < products.length; i++) {
                             if (clickedProductId === products[i].id) {
                                 product = products[i];
@@ -513,7 +550,7 @@
                     },
                     dude: product.title
                 };
-              
+
                 archiveObj = {
                     handleEvent: function() {
                         var r = confirm("Archiving the product, confirm?");
@@ -548,6 +585,41 @@
                     td.appendChild(archivebutton);
                 }
             }
+
+
+
+            function archiveTheProducts() {
+                for (var i = 0; i < productsNeedTobeArchived.length; i++) {
+                    var tempProduct = productsNeedTobeArchived[i];
+                    console.log('ARCHIVE REQUEST FOR PRODUCT: ' + JSON.stringify(tempProduct));
+                    var url = "https://vue-server-dev.appspot.com/api/product/" + tempProduct.id;
+                    if (XMLHttpRequest) {
+                        curateProductRequest = new XMLHttpRequest();
+                        if ("withCredentials" in curateProductRequest) {
+                            // Firefox 3.5 and Safari 4
+                            curateProductRequest.open('PUT', url, true);
+                            curateProductRequest.setRequestHeader('Custom-Header', 'javascript-client');
+                            curateProductRequest.setRequestHeader('Content-Type', 'application/json');
+                            curateProductRequest.onreadystatechange = function() {
+                                if (curateProductRequest.status == 200)
+                                {
+                                    console.log('ARCHIVE REQUEST FOR PRODUCT****SUCCESS: ' + JSON.stringify(tempProduct));
+                                }
+
+                            };
+
+//                                //product update request:
+                            curateProductRequest.send(JSON.stringify({id: tempProduct.id, ownerAisleId: tempProduct.ownerAisleId, ownerProductListId: tempProduct.ownerProductListId, creatorId: tempProduct.creatorId, curatorId: tempProduct.curatorId, title: tempProduct.title, description: tempProduct.description, currentProductState: "ARCHIVED", relatedProductIds: null, productTags: null, productImages: null, productProviders: null, comments: null, ratings: null}));
+                        } else {
+
+                        }
+                    }
+                }
+
+            }
+
+
+
             //on curate button click function
             function curatethis_product() {
                 alert("curate product called " + this.name);
@@ -623,7 +695,7 @@
 
                             products[i] = curatedProduct;
                             getAllCellValues();
-                           
+
                             break;
                         }
                     }
@@ -682,7 +754,7 @@
 
                         break;
                     }
-                   
+
                 }
 
 
@@ -749,6 +821,7 @@
         $(document).ready(function() {
             slider = $('.bxslider').bxSlider({
                 mode: 'horizontal',
+                infiniteLoop: false,
                 slideWidth: 300,
                 minSlides: 1,
                 maxSlides: 6,
@@ -762,6 +835,7 @@
 
             slider.reloadSlider({
                 mode: 'horizontal',
+                infiniteLoop: false,
                 slideWidth: 300,
                 minSlides: 1,
                 maxSlides: 6,
