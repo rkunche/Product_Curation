@@ -259,13 +259,13 @@
 //                }
 
                 trackFetchbutton(productStatusTag, numProducts);
-               // var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=" + productStatusTag + "&limit=" + numProducts;
+                // var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=" + productStatusTag + "&limit=" + numProducts;
 
                 if (productStatusTag === 'CRAWLED') {
-                     url = "https://vue-server-dev.appspot.com/api/product/search/genericsearch?queryString=(state=UNKNOWN%20OR%20state=CRAWLED)&offset=0&limit=" + numProducts + "&randomize=false"
+                    url = "https://vue-server-dev.appspot.com/api/product/search/genericsearch?queryString=(state=UNKNOWN%20OR%20state=CRAWLED)&offset=0&limit=" + numProducts + "&randomize=false"
                 }
                 else {
-                       url = "https://vue-server-dev.appspot.com/api/product/search/genericsearch?queryString=(state=" + productStatusTag + ")&offset=0&limit=" + numProducts + "&randomize=false"
+                    url = "https://vue-server-dev.appspot.com/api/product/search/genericsearch?queryString=(state=" + productStatusTag + ")&offset=0&limit=" + numProducts + "&randomize=false"
                 }
 
 
@@ -305,14 +305,18 @@
                             productProviders: jsonTempObject.productProviders, comments: jsonTempObject.comments, productTags: jsonTempObject.productTags, ratings: jsonTempObject.ratings};
 
                         var imagesarray = jsonTempObject.productImages[0];
-                      //  console.log('array:  ' + imagesarray);
+                        //  console.log('array:  ' + imagesarray);
                         if (imagesarray === null || imagesarray === undefined) {
                             imgurl = ''
                         } else {
                             var imgurl = imagesarray.externalURL;
                         }
 
-                        var productvalidty = jsonTempObject.productProviders[0].availability;
+                        var availbilityarray = jsonTempObject.productProviders[0];
+                         var productvalidty = '';
+                        if (availbilityarray !== null && availbilityarray !== undefined) {
+                             productvalidty = availbilityarray.availability;
+                        }
                         if ((imgurl.lastIndexOf('http', 0) !== 0) || productvalidty === 'OUT_OF_STOCK') {
                             productsNeedTobeArchived.push(productObject)
                         } else {
@@ -391,6 +395,7 @@
                         //  imag.src = "assets/no_image.jpeg";
                     } catch (e) {
                         imag.src = "assets/no_image.jpeg";
+                        console.log('exception: '+e)
                     }
 
 
@@ -469,14 +474,17 @@
                 archivebutton.className = 'myButtonArchive';
 
 
-
-                if (product.currentProductState == "CRAWLED" || product.currentProductState==='UNKNOWN'||product.currentProductState===null) {
+                console.log(product.title + '  state: ' + product.currentProductState);
+                if (product.currentProductState == "CRAWLED" || product.currentProductState === 'UNKNOWN' || product.currentProductState === null) {
                     button.value = "Curate Now";
                     button.style.backgroundColor = "white";
                     button.style.color = "blue";
                     button.style.outline = "thick solid blue";
                     button.style.padding = "5px";
                     button.style.margin = "12px";
+
+                    //to make all null product states are and unknown states to CRAWLED
+                    product.currentProductState = "CRAWLED";
                 } else if (product.currentProductState == "NEEDS_RECURATION") {
                     button.value = "Recurate Now";
                     //   button.style.backgroundColor = "#B6C6F2";
@@ -690,15 +698,18 @@
                 {
 
                     var curatedProduct = JSON.parse(curateProductRequest.responseText);
+                    console.log('response text after update: ' + curateProductRequest.responseText);
                     for (var i = 0; i < products.length; i++) {
                         if (clickedProductId === products[i].id) {
 
                             products[i] = curatedProduct;
+                            console.log('response text in cache: ' + JSON.stringify(products[i]));
                             getAllCellValues();
 
                             break;
                         }
                     }
+
 
                 }
                 if (curateProductRequest.status !== 200 && curateProductRequest.status !== 304) {
@@ -723,14 +734,14 @@
                                 titleVal = products[k].title;
                                 stateVal = products[k].currentProductState;
                                 var button = cell.getElementsByTagName("input");
-                                if (stateVal === "CRAWLED") {
+                                if (stateVal == "CRAWLED" || stateVal === 'UNKNOWN' || stateVal === null) {
                                     button[0].style.backgroundColor = "#9C3325";
                                     button[0].style.color = "white";
                                 } else if (stateVal === "NEEDS_RECURATION") {
                                     button[0].value = "Recurate Now";
                                     button[0].style.backgroundColor = "#9C3325";
                                     button[0].style.color = "white";
-                                    products[k].currentProductState = "CRAWLED";
+                                    //  products[k].currentProductState = "CRAWLED";
                                 } else if (stateVal === "CURATED_AND_VERIFIED") {
                                     button[0].style.backgroundColor = "#059E24";
                                     button[0].value = "Verified";

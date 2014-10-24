@@ -1122,7 +1122,7 @@
                     if (request.status == 200)
                     {
                         //updateProvider();
-                        if (curatorReview == "Curate Now") {
+                        if (curatorReview == "Curate Now" || curatorReview == "Recurate Now") {
                             alert('Info: Curated Successfully : ');
                         } else {
                             alert('Info: Reviewed Successfully :');
@@ -1158,11 +1158,7 @@
 
                 function callConfirmationDialogue() {
                     var r = confirm("Curating a previously " + incomingstate + " product: " + document.getElementById("id_title").value);
-                    if (r == true) {
-                        updateProvider();
-                    } else {
-
-                    }
+                    return r;
                 }
                 function updateProvider() {
 
@@ -1286,6 +1282,18 @@
 
                         sizeWarningText.innerHTML = "";
                     }
+
+
+                     //check points
+                    if (!getCuratedInfo()) {
+                        return;
+                    }
+                    var v = callConfirmationDialogue();
+                    if (!v) {
+                        return;
+                    }
+
+
 
                     trackbutton('Finish Product Curation', 1);
                     var url = "https://vue-server-dev.appspot.com/api/productprovider/" + jsonObject.productProviders[0].id;
@@ -2080,7 +2088,7 @@
 
             </li>
             <li>
-                <input type="button" class="button" value="Curate and Finish" onClick="callConfirmationDialogue()" id ="send_but_id"/>
+                <input type="button" class="button" value="Curate and Finish" onClick="updateProvider()" id ="send_but_id"/>
 
                 <input type="button" width="200" height="200"  value="Archive" onClick="archieveProduct()" id ="archive_but_id"/>
 
