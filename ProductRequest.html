@@ -182,6 +182,7 @@
             var buttonText;
 
             var productsNeedTobeArchived = [];
+            var inprogress = false;
             //prototype for clear the array values.
             Array.prototype.clear = function() {
                 this.length = 0;
@@ -246,7 +247,21 @@
                 }, 1000);
             }
 
+            // Returns a random integer between min (included) and max (excluded)
+// Using Math.round() will give you a non-uniform distribution!
+            function getRandomInt(min, max) {
+                return Math.floor(Math.random() * (max - min)) + min;
+            }
+
+
             function getCrawledProducts() {
+                
+                if(inprogress===false){
+                    inprogress = true;
+                    document.getElementById('fetchButton').textContent = "Fetching Products"
+                }else if(inprogress===true){
+                    return;
+                }
 //                var boolval = false;
 //                for (var i = 0; i < users.length; i++) {
 //                    if (curatorID == users[i])
@@ -258,16 +273,24 @@
 //                    return;
 //                }
 
+
+
+
                 trackFetchbutton(productStatusTag, numProducts);
                 // var url = "https://vue-server-dev.appspot.com/api/product/search?productstate=" + productStatusTag + "&limit=" + numProducts;
 
+                var option = getRandomInt(0, 2);
+                var offset = getRandomInt(1, 50);
                 if (productStatusTag === 'CRAWLED') {
-                    url = "https://vue-server-dev.appspot.com/api/product/search/genericsearch?queryString=(state=UNKNOWN%20OR%20state=CRAWLED)&offset=0&limit=" + numProducts + "&randomize=false"
+                    if (option === 0) {
+                        url = "https://vue-server-dev.appspot.com/api/product/search/genericsearch?queryString=(state=UNKNOWN)&offset=0&limit="+numProducts+"&randomize=true"
+                    } else {
+                        url = "https://vue-server-dev.appspot.com/api/product/search/genericsearch?queryString=(state=CRAWLED)&offset="+offset+"&limit="+numProducts+"&randomize=false"
+                    }
+                } else {
+                        url = "https://vue-server-dev.appspot.com/api/product/search/genericsearch?queryString=(state=" + productStatusTag + ")&offset=" + offset + "&limit=" + numProducts + "&randomize=false"
                 }
-                else {
-                    url = "https://vue-server-dev.appspot.com/api/product/search/genericsearch?queryString=(state=" + productStatusTag + ")&offset=0&limit=" + numProducts + "&randomize=false"
-                }
-
+                console.log('url fired: ' + url);
 
                 if (XMLHttpRequest)
                 {
@@ -288,13 +311,16 @@
                     return;
                 if (request.status == 200)
                 {
+                    
+                     inprogress = false;
+                      document.getElementById('fetchButton').textContent = "Fetch Products"
 
                     var jsonResponse = JSON.parse(request.responseText);
 
                     //clear the old data in array and populate with new product data.
                     if (products.length > 0) {
                         document.getElementById("bxslider_id").innerHTML = "";
-                        //return;
+                     
                     }
                     products.clear();
                     for (var i = 0; i < jsonResponse.length; i++) {
@@ -313,9 +339,9 @@
                         }
 
                         var availbilityarray = jsonTempObject.productProviders[0];
-                         var productvalidty = '';
+                        var productvalidty = '';
                         if (availbilityarray !== null && availbilityarray !== undefined) {
-                             productvalidty = availbilityarray.availability;
+                            productvalidty = availbilityarray.availability;
                         }
                         if ((imgurl.lastIndexOf('http', 0) !== 0) || productvalidty === 'OUT_OF_STOCK') {
                             productsNeedTobeArchived.push(productObject)
@@ -395,7 +421,7 @@
                         //  imag.src = "assets/no_image.jpeg";
                     } catch (e) {
                         imag.src = "assets/no_image.jpeg";
-                        console.log('exception: '+e)
+                        console.log('exception: ' + e)
                     }
 
 
